@@ -6,13 +6,18 @@ import OrSeparator from "../components/auth/OrSeparator";
 import { Image, Text, View, StyleSheet } from "react-native";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
+import Checkbox from "expo-checkbox";
+import AuthTextButton from "../components/auth/AuthTextButton";
+import { AlertContext } from "../components/alert/AlertContextProvider";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const navigation = useNavigation();
+  const { setAlert } = useContext(AlertContext);
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
@@ -21,7 +26,12 @@ const LoginScreen = () => {
         console.log("Logged in with:", user.email);
       })
       .catch((error) => {
-        console.error("Error logging in:", error);
+        if (error.code === "auth/user-not-found" || error.code === "auth/invalid-email" || error.code === "auth/invalid-credential") {
+          setAlert("Incorrect account details.", "red");
+        } else {
+          setAlert("Could not log you in at this time", "red");
+          console.log(error.code)
+        }
       });
   };
 
@@ -41,13 +51,19 @@ const LoginScreen = () => {
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={true}
         />
-        <AuthButton title="Forgot password?" onPress={() => console.log("Forgot password pressed")} />
+        <View style={styles.underPassword}>
+          <View style={styles.rememberMe}>
+            <Checkbox value={rememberMe} onValueChange={setRememberMe} color="#C7B8EA"/>
+            <AuthTextButton title="Remember Me" onPress={() => setRememberMe(!rememberMe)} fontSize={14}/>
+          </View>
+          <AuthTextButton title="Forgotten Password?" onPress={() => navigation.navigate("ForgottenPassword")} fontSize={14}/>
+        </View>
         <AuthButton title="Login" onPress={handleLogin} />
         <OrSeparator />
         <SocialLogin />
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Not got an Account? </Text>
-          <AuthButton title="Sign Up" onPress={() => navigation.navigate("SignUp")} />
+          <AuthTextButton title="Sign Up" onPress={() => navigation.navigate("SignUp")} fontSize={16}/>
         </View>
       </View>
     </Container>
@@ -60,7 +76,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#000",
   },
   logo: {
     width: 100,
@@ -84,6 +99,16 @@ const styles = StyleSheet.create({
   signupText: {
     fontSize: 16,
     color: "#fff",
+  },
+  underPassword: {
+    flexDirection: "row",
+    marginBottom: 20,
+    justifyContent: "center",
+  },
+  rememberMe: {
+    flexDirection: "row",
+    flex: 1,
+    gap: 6,
   },
 });
 

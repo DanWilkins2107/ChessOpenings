@@ -1,11 +1,14 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import AuthButton from "./AuthButton";
+import { AlertContext } from "../alert/AlertContextProvider";
+import { useContext } from "react";
 
 const SocialLogin = () => {
+  const { setAlert } = useContext(AlertContext);
   return (
     <View style={styles.container}>
-      <AuthButton title="Apple Login" onPress={() => console.log("Apple login pressed")} />
-      <AuthButton title="Google Login" onPress={() => console.log("Google login pressed")} />
+      <AuthButton title="Apple Login" onPress={() => setAlert("red", "red")} />
+      <AuthButton title="Google Login" onPress={() => setAlert("green", "green")} />
     </View>
   );
 };

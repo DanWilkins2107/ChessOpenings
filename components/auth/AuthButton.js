@@ -10,14 +10,16 @@ const AuthButton = ({ title, onPress }) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#C7B8EA",
+    backgroundColor: "#1EA896",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
+    width: "75%",
   },
   buttonText: {
     fontSize: 16,
     color: "#fff",
+    textAlign: "center",
   },
 });
 
