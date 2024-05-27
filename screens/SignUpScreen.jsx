@@ -5,23 +5,28 @@ import SocialLogin from "../components/auth/SocialLogin";
 import OrSeparator from "../components/auth/OrSeparator";
 import { Image, Text, View, StyleSheet } from "react-native";
 import { auth } from "../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-const LoginScreen = () => {
+const SignUpScreen = () => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigation = useNavigation();
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
+  const handleSignUp = () => {
+    if (password !== confirmPassword) {
+      console.error("Passwords do not match");
+      return;
+    }
+    createUserWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        console.log("Logged in with:", user.email);
+        console.log("Signed up with:", user.email);
       })
       .catch((error) => {
-        console.error("Error logging in:", error);
+        console.error("Error signing up:", error);
       });
   };
 
@@ -29,7 +34,7 @@ const LoginScreen = () => {
     <Container>
       <View style={styles.container}>
         <Image source={require("../assets/favicon.png")} style={styles.logo} />
-        <Text style={styles.loginTitle}>Login</Text>
+        <Text style={styles.signupTitle}>Sign Up</Text>
         <AuthInput
           placeholder="Email"
           value={email}
@@ -41,13 +46,18 @@ const LoginScreen = () => {
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={true}
         />
-        <AuthButton title="Forgot password?" onPress={() => console.log("Forgot password pressed")} />
-        <AuthButton title="Login" onPress={handleLogin} />
+        <AuthInput
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={(text) => setConfirmPassword(text)}
+          secureTextEntry={true}
+        />
+        <AuthButton title="Sign Up" onPress={handleSignUp} />
         <OrSeparator />
         <SocialLogin />
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Not got an Account? </Text>
-          <AuthButton title="Sign Up" onPress={() => navigation.navigate("SignUp")} />
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginText}>Already have an account? </Text>
+          <AuthButton title="Login" onPress={() => navigation.navigate("Login")} />
         </View>
       </View>
     </Container>
@@ -60,31 +70,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#000",
   },
   logo: {
     width: 100,
     height: 100,
     marginBottom: 20,
   },
-  loginTitle: {
+  signupTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
     color: "#fff",
     textAlign: "center",
   },
-  signupContainer: {
+  loginContainer: {
     borderTopWidth: 1,
     borderTopColor: "#00d4ff",
     marginTop: 20,
     paddingTop: 20,
     flexDirection: "row",
   },
-  signupText: {
+  loginText: {
     fontSize: 16,
     color: "#fff",
   },
 });
 
-export default LoginScreen;
+export default SignUpScreen;
