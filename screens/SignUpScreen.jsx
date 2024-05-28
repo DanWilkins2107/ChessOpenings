@@ -35,7 +35,6 @@ const SignUpScreen = () => {
     <Container>
       <View style={styles.container}>
         <Image source={require("../assets/favicon.png")} style={styles.logo} />
-        <Text style={styles.signupTitle}>Sign Up</Text>
         <AuthInput
           placeholder="Email"
           value={email}
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 100,
-    marginBottom: 20,
+    marginBottom: 80,
   },
   signupTitle: {
     fontSize: 24,

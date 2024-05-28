@@ -39,7 +39,6 @@ const LoginScreen = () => {
     <Container>
       <View style={styles.container}>
         <Image source={require("../assets/favicon.png")} style={styles.logo} />
-        <Text style={styles.loginTitle}>Login</Text>
         <AuthInput
           placeholder="Email"
           value={email}
@@ -80,14 +79,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 100,
-    marginBottom: 20,
-  },
-  loginTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#fff",
-    textAlign: "center",
+    marginBottom: 80,
   },
   signupContainer: {
     borderTopWidth: 1,

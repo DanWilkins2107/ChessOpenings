@@ -26,7 +26,6 @@ const ForgottenPasswordScreen = () => {
     <Container>
       <View style={styles.container}>
         <Image source={require("../assets/favicon.png")} style={styles.logo} />
-        <Text style={styles.forgottenPasswordTitle}>Forgotten Password</Text>
         <AuthInput
           placeholder="Email"
           value={email}
