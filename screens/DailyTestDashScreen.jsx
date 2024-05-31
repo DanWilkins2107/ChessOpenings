@@ -5,7 +5,6 @@ import {
   Text,
   Image,
   Button,
-  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ProgressBar from "../components/dailytest/ProgressBar";

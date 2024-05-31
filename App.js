@@ -10,6 +10,7 @@ import { AlertProvider } from "./components/alert/AlertContextProvider";
 import Alert from "./components/alert/Alert";
 import DashboardScreen from "./screens/DashboardScreen.jsx";
 import DailyTestDashScreen from "./screens/DailyTestDashScreen.jsx";
+import CustomTestingScreen from "./screens/CustomTestingScreen.jsx";
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,7 @@ const authScreens = [
 const userScreens = [
   { name: "Dashboard", component: DashboardScreen },
   { name: "DailyTestDash", component: DailyTestDashScreen },
+  { name: "CustomTesting", component: CustomTestingScreen },
 ];
 
 const App = () => {
