@@ -1,36 +1,130 @@
-import React from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
-
-const pieceImages = {
-  b: {
-    b: require("./pieces/bb.png"),
-    k: require("./pieces/bk.png"),
-    n: require("./pieces/bn.png"),
-    p: require("./pieces/bp.png"),
-    q: require("./pieces/bq.png"),
-    r: require("./pieces/br.png"),
-  },
-  w: {
-    b: require("./pieces/wb.png"),
-    k: require("./pieces/wk.png"),
-    n: require("./pieces/wn.png"),
-    p: require("./pieces/wp.png"),
-    q: require("./pieces/wq.png"),
-    r: require("./pieces/wr.png"),
-  },
-};
+import { useState, useRef, useEffect } from 'react';
+import { View, Image, Text, StyleSheet, Dimensions, PanResponder } from 'react-native';
 
 const Chessboard = ({ position }) => {
-  const rows = "abcdefgh".split("");
-  const columns = "87654321".split("");
+  const rows = 'abcdefgh'.split('');
+  const columns = '87654321'.split('');
+  const [activePiece, setActivePiece] = useState(null);
+  const [coordinates, setCoordinates] = useState(null);
+  const [mousePressed, setMousePressed] = useState(false);
+  const [chessboardPosition, setChessboardPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [hoveredSquare, setHoveredSquare] = useState(null);
+
+  const chessboardRef = useRef(null);
+
+  useEffect(() => {
+    if (chessboardRef.current) {
+      chessboardRef.current.measure((x, y, width, height, pageX, pageY) => {
+        setChessboardPosition({ x: pageX, y: pageY, width, height });
+      });
+    }
+  }, [chessboardRef]);
+
+  const pieceImages = {
+    b: {
+      b: require("./pieces/bb.png"),
+      k: require("./pieces/bk.png"),
+      n: require("./pieces/bn.png"),
+      p: require("./pieces/bp.png"),
+      q: require("./pieces/bq.png"),
+      r: require("./pieces/br.png"),
+    },
+    w: {
+      b: require("./pieces/wb.png"),
+      k: require("./pieces/wk.png"),
+      n: require("./pieces/wn.png"),
+      p: require("./pieces/wp.png"),
+      q: require("./pieces/wq.png"),
+      r: require("./pieces/wr.png"),
+    },
+  };
+
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponderCapture: (event) => {
+      const { pageX, pageY } = event.nativeEvent;
+      if (chessboardPosition.width > 0 && chessboardPosition.height > 0) {
+        const squareWidth = chessboardPosition.width / 8;
+        const squareHeight = chessboardPosition.height / 8;
+        const columnIndex = Math.floor((pageX - chessboardPosition.x) / squareWidth);
+        const rowIndex = Math.floor((pageY - chessboardPosition.y) / squareHeight);
+  
+        if (columnIndex >= 0 && columnIndex < 8 && rowIndex >= 0 && rowIndex < 8) {
+          setHoveredSquare(rows[columnIndex] + columns[rowIndex]);
+  
+          const piece = position[rowIndex][columnIndex]; // Corrected indexing
+          if (piece) {
+            setActivePiece(rows[columnIndex] + columns[rowIndex]);
+          } else {
+            setActivePiece(null);
+          }
+        } else {
+          setHoveredSquare(null);
+        }
+      }
+      return false;
+    },
+    onPanResponderGrant: (event) => {
+      const { pageX, pageY } = event.nativeEvent;
+      setCoordinates({ x: pageX, y: pageY });
+      setMousePressed(true);
+    },
+    onPanResponderMove: (event) => {
+      const { pageX, pageY } = event.nativeEvent;
+      setCoordinates({ x: pageX, y: pageY });
+
+      if (chessboardPosition.width > 0 && chessboardPosition.height > 0) {
+        const squareWidth = chessboardPosition.width / 8;
+        const squareHeight = chessboardPosition.height / 8;
+        const columnIndex = Math.floor((pageX - chessboardPosition.x) / squareWidth);
+        const rowIndex = Math.floor((pageY - chessboardPosition.y) / squareHeight);
+
+        if (columnIndex >= 0 && columnIndex < 8 && rowIndex >= 0 && rowIndex < 8) {
+          setHoveredSquare(rows[columnIndex] + columns[rowIndex]);
+        } else {
+          setHoveredSquare(null);
+        }
+      }
+    },
+    onPanResponderRelease: (event) => {
+      const { pageX, pageY } = event.nativeEvent;
+      if (chessboardPosition.width > 0 && chessboardPosition.height > 0) {
+        const squareWidth = chessboardPosition.width / 8;
+        const squareHeight = chessboardPosition.height / 8;
+        const columnIndex = Math.floor((pageX - chessboardPosition.x) / squareWidth);
+        const rowIndex = Math.floor((pageY - chessboardPosition.y) / squareHeight);
+
+        if (columnIndex >= 0 && columnIndex < 8 && rowIndex >= 0 && rowIndex < 8) {
+          const square = rows[columnIndex] + columns[rowIndex];
+          if (square !== activePiece) {
+            setActivePiece(null);
+          }
+        } else {
+          setActivePiece(null);
+        }
+      }
+      setMousePressed(false);
+    },
+  });
 
   return (
-    <View style={styles.chessboardContainer}>
-      <View style={styles.chessboard}>
+    <View style={styles.chessboardContainer} {...panResponder.panHandlers}>
+      <View
+        ref={chessboardRef}
+        style={styles.chessboard}
+        onLayout={() => {
+          if (chessboardRef.current) {
+            chessboardRef.current.measure((x, y, width, height, pageX, pageY) => {
+              setChessboardPosition({ x: pageX, y: pageY, width, height });
+            });
+          }
+        }}
+      >
         {columns.map((column, columnIndex) => (
           <View key={column} style={styles.row}>
             {rows.map((row, rowIndex) => {
               const piece = position[columnIndex][rowIndex];
+              const square = rows[rowIndex] + columns[columnIndex];
               return (
                 <View
                   key={row}
@@ -39,6 +133,9 @@ const Chessboard = ({ position }) => {
                     (columnIndex + rowIndex) % 2 === 0
                       ? styles.whiteSquare
                       : styles.blackSquare,
+                    square === activePiece
+                      ? styles.activeSquare
+                      : null,
                   ]}
                 >
                   {piece && (
@@ -81,6 +178,24 @@ const Chessboard = ({ position }) => {
           </View>
         ))}
       </View>
+      <Text style={[styles.coordinates, styles.redText]}>
+        {coordinates ? `X: ${coordinates.x}, Y: ${coordinates.y}` : ''}
+      </Text>
+      <Text style={[styles.mousePressed, styles.redText]}>
+        {mousePressed ? 'Mouse Pressed' : 'Mouse Released'}
+      </Text>
+      <Text style={[styles.topLeftCoordinates, styles.redText]}>
+        Top Left: X: {chessboardPosition.x}, Y: {chessboardPosition.y}
+      </Text>
+      <Text style={[styles.bottomRightCoordinates, styles.redText]}>
+        Bottom Right: X: {chessboardPosition.x + chessboardPosition.width}, Y: {chessboardPosition.y + chessboardPosition.height}
+      </Text>
+      <Text style={[styles.hoveredSquare, styles.redText]}>
+        Hovered Square: {hoveredSquare}
+      </Text>
+      <Text style={[styles.activePiece, styles.redText]}>
+        Active Piece: {activePiece}
+      </Text>
     </View>
   );
 };
@@ -118,6 +233,9 @@ const styles = StyleSheet.create({
   },
   blackSquare: {
     backgroundColor: "gray",
+  },
+  activeSquare: {
+    backgroundColor: "lightblue",
   },
   piece: {
     width: "80%",
@@ -162,6 +280,39 @@ const styles = StyleSheet.create({
   axisText: {
     textAlign: "center",
     fontWeight: "bold",
+  },
+  coordinates: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  mousePressed: {
+    position: "absolute",
+    top: 20,
+    left: 0,
+  },
+  topLeftCoordinates: {
+    position: "absolute",
+    top: 40,
+    left: 0,
+  },
+  bottomRightCoordinates: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+  },
+  hoveredSquare: {
+    position: "absolute",
+    top: 60,
+    left: 0,
+  },
+  activePiece: {
+    position: "absolute",
+    top: 80,
+    left: 0,
+  },
+  redText: {
+    color: 'red',
   },
 });
 
