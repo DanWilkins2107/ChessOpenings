@@ -11,6 +11,8 @@ import Alert from "./components/alert/Alert";
 import DashboardScreen from "./screens/DashboardScreen.jsx";
 import DailyTestDashScreen from "./screens/DailyTestDashScreen.jsx";
 import CustomTestingScreen from "./screens/CustomTestingScreen.jsx";
+import ViewStudyScreen from "./screens/ViewStudyScreen.jsx";
+import AddStudyScreen from "./screens/AddStudyScreen.jsx";
 
 const Stack = createStackNavigator();
 
@@ -24,6 +26,8 @@ const userScreens = [
   { name: "Dashboard", component: DashboardScreen },
   { name: "DailyTestDash", component: DailyTestDashScreen },
   { name: "CustomTesting", component: CustomTestingScreen },
+  { name: "ViewStudies", component: ViewStudyScreen },
+  { name: "AddStudy", component: AddStudyScreen },
 ];
 
 const App = () => {

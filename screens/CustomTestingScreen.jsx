@@ -1,5 +1,7 @@
 import Container from "../components/Container";
-import { Text, ScrollView, Button } from "react-native";
+import { Text, ScrollView, View, StyleSheet } from "react-native";
+import { useState } from "react";
+import Header from "../components/Header";
 
 const CustomTestingScreen = () => {
   const pgnParser = require("pgn-parser");
@@ -20,40 +22,80 @@ const CustomTestingScreen = () => {
   const [game] = pgnParser.parse(pgn);
   const gameMoves = game.moves;
 
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
+
+  class MoveNode {
+    constructor(move, annotation) {
+      this.move = move;
+      this.annotation = annotation;
+      this.children = [];
+    }
+
+    addChild(node) {
+      this.children.push(node);
+    }
+  }
+
   const pgnSort = (moves) => {
-    let sortedMoves = [];
-    for (i = 0; i < moves.length; i++) {
-      console.log(`MOVE ${i}:`, moves[i])
-      console.log("KEYS:", Object.keys(moves[i]))
-      // Check if there is a object title called ravs
-      if (Object.keys(moves[i]).includes("ravs")) {
-        // If there is, recursively call pgnSort on the ravs object
-        // Also call pgnSort on the moves object from this point onwards
-        let mainLine = pgnSort(moves.slice(i + 1, moves.length))
-        let variation = pgnSort(moves[i].ravs[0].moves);
-        let newArray = [mainLine, variation];
-        sortedMoves.push(newArray);
+    const root = new MoveNode(null, null);
+    let currentNode = root;
+
+    for (let i = 0; i < moves.length; i++) {
+      let move = moves[i].move;
+      // Check for move annotations and remove them
+      if (move.includes("!!") || move.includes("!") || move.includes("?")) {
+        move = move.replace(/!!|!|\?/g, "");
+      }
+      const child = new MoveNode(move, moves[i].annotation);
+      currentNode.addChild(child);
+
+      if (moves[i].ravs) {
+        for (let j = 0; j < moves[i].ravs.length; j++) {
+          const ravChild = pgnSort(moves[i].ravs[j].moves);
+          child.addChild(ravChild); // Add ravs to the current child instead of currentNode
+        }
+      }
+
+      if (!moves[i].ravs || moves[i].ravs.length === 0) {
+        currentNode = child;
       } else {
-        // If there is no object title called ravs, push the move into the sortedMoves array
-        sortedMoves.push([moves[i].move]);
+        currentNode = root;
       }
     }
-    return sortedMoves
+
+    return root;
   };
 
-  const onPress = () => {
-    console.log("HELP MEEEE")
-    console.log("Final", pgnSort(gameMoves));
+  const displayMoves = (node, indent = 0) => {
+    if (node.move) {
+      console.log("  ".repeat(indent) + node.move);
+    }
+    for (const child of node.children) {
+      displayMoves(child, indent + 1);
+    }
   };
+
+  const sortedMoves = pgnSort(gameMoves);
+  displayMoves(sortedMoves);
 
   return (
-    <Container>
-      <ScrollView>
-        <Button title="Help" onPress={onPress}/>
-        <Text>{JSON.stringify(gameMoves)}</Text>
+    <Container style={styles.container}>
+      <Header showBackButton />
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Text>{JSON.stringify(sortedMoves, null, 2)}</Text>
       </ScrollView>
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
+});
 
 export default CustomTestingScreen;
