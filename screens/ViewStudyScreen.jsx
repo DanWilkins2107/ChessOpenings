@@ -5,7 +5,7 @@ import Chessboard from "../components/chessboard/chessboard.jsx";
 import Header from "../components/Header.jsx";
 import Container from "../components/Container.jsx";
 
-const App = () => {
+const ViewStudyScreen = () => {
     const [chess, setChess] = useState(new Chess());
 
     return (
@@ -28,4 +28,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default ViewStudyScreen;

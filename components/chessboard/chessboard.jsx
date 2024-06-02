@@ -4,6 +4,7 @@ import { View, Image, Text, StyleSheet, PanResponder } from "react-native";
 const Chessboard = ({ chess }) => {
     const position = chess.board();
     const turnToMove = chess.turn();
+    const [isChessboardRendered, setIsChessboardRendered] = useState(false);
     const rows = "abcdefgh".split("");
     const columns = "87654321".split("");
     const [activePiece, setActivePiece] = useState(null);
@@ -27,10 +28,15 @@ const Chessboard = ({ chess }) => {
     const chessboardRef = useRef(null);
 
     useEffect(() => {
+        console.log("useEffect called");
         if (chessboardRef.current) {
+            console.log("chessboardRef is available");
             chessboardRef.current.measure((x, y, width, height, pageX, pageY) => {
+                console.log("measured chessboard position as: ", pageX, pageY, width, height);
                 setChessboardPosition({ x: pageX, y: pageY, width, height });
             });
+        } else {
+            console.log("chessboardRef is not available");
         }
     }, [chessboardRef]);
 
@@ -129,11 +135,13 @@ const Chessboard = ({ chess }) => {
             <View
                 ref={chessboardRef}
                 style={styles.chessboard}
-                onLayout={() => {
-                    if (chessboardRef.current) {
-                        chessboardRef.current.measure((x, y, width, height, pageX, pageY) => {
-                            setChessboardPosition({ x: pageX, y: pageY, width, height });
-                        });
+                onLayout={(event) => {
+                    if (!isChessboardRendered) {
+                        setIsChessboardRendered(true);
+                    } else {
+                        const { x, y, width, height } = event.nativeEvent.layout;
+                        console.log("measured chessboard position as: ", x, y, width, height);
+                        setChessboardPosition({ x, y, width, height });
                     }
                 }}
             >
