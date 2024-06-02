@@ -6,18 +6,26 @@ import Header from "../components/Header.jsx";
 import Container from "../components/Container.jsx";
 
 const App = () => {
-  const [chess, setChess] = useState(new Chess());
+    const [chess, setChess] = useState(new Chess());
 
-  return (
-    <Container>
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Header showBackButton />
-        <View style={{ width: "90%", height: "90%", borderColor: "red", borderStyle: "solid", borderWidth: "2px"}}>
-          <Chessboard position={chess.board()} />
-        </View>
-      </View>
-    </Container>
-  );
+    return (
+        <Container>
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Header showBackButton />
+                <View
+                    style={{
+                        width: "90%",
+                        height: "90%",
+                        borderColor: "red",
+                        borderStyle: "solid",
+                        borderWidth: "2px",
+                    }}
+                >
+                    <Chessboard chess={chess} />
+                </View>
+            </View>
+        </Container>
+    );
 };
 
 export default App;
