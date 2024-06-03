@@ -1,10 +1,11 @@
+import { set } from "firebase/database";
 import { useState, useRef, useEffect } from "react";
 import { View, Image, Text, StyleSheet, PanResponder } from "react-native";
 
 const Chessboard = ({ chess }) => {
     const position = chess.board();
     const turnToMove = chess.turn();
-    const [isChessboardRendered, setIsChessboardRendered] = useState(false);
+    const [isChessboardMeasured, setIsChessboardMeasured] = useState(false);
     const rows = "abcdefgh".split("");
     const columns = "87654321".split("");
     const [activePiece, setActivePiece] = useState(null);
@@ -27,18 +28,11 @@ const Chessboard = ({ chess }) => {
 
     const chessboardRef = useRef(null);
 
-    useEffect(() => {
-        console.log("useEffect called");
-        if (chessboardRef.current) {
-            console.log("chessboardRef is available");
-            chessboardRef.current.measure((x, y, width, height, pageX, pageY) => {
-                console.log("measured chessboard position as: ", pageX, pageY, width, height);
-                setChessboardPosition({ x: pageX, y: pageY, width, height });
-            });
-        } else {
-            console.log("chessboardRef is not available");
-        }
-    }, [chessboardRef]);
+    const measureChessboard = () => {
+        chessboardRef.current.measure((x, y, width, height, pageX, pageY) => {
+            setChessboardPosition({ x: pageX, y: pageY, width: width, height: height });
+        });
+    };
 
     const pieceImages = {
         b: {
@@ -62,6 +56,10 @@ const Chessboard = ({ chess }) => {
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onStartShouldSetPanResponderCapture: (event) => {
+            if (!isChessboardMeasured) {
+                measureChessboard();
+                setIsChessboardMeasured(true);
+            }
             const { pageX, pageY } = event.nativeEvent;
             const columnIndex = Math.floor(
                 (pageX - chessboardPosition.x) / (chessboardPosition.width / 8)
@@ -131,18 +129,12 @@ const Chessboard = ({ chess }) => {
     });
 
     return (
-        <View style={styles.chessboardContainer} {...panResponder.panHandlers}>
+        <View style={styles.chessboardContainer} {...panResponder.panHandlers} >
             <View
                 ref={chessboardRef}
                 style={styles.chessboard}
-                onLayout={(event) => {
-                    if (!isChessboardRendered) {
-                        setIsChessboardRendered(true);
-                    } else {
-                        const { x, y, width, height } = event.nativeEvent.layout;
-                        console.log("measured chessboard position as: ", x, y, width, height);
-                        setChessboardPosition({ x, y, width, height });
-                    }
+                onTouchStart={(event) => {
+                  measureChessboard();
                 }}
             >
                 {columns.map((column, columnIndex) => (
@@ -217,6 +209,9 @@ const Chessboard = ({ chess }) => {
             <Text style={[styles.hoveredSquare, styles.redText]}>
                 Hovered Square: {hoveredSquare}
             </Text>
+            <Text style={[styles.measure, styles.redText]}>
+                Hovered Square: {JSON.stringify(chessboardPosition)}
+            </Text>
             <Text style={[styles.activePiece, styles.redText]}>Active Piece: {activePiece}</Text>
             <Text style={[styles.activePieceMoves, styles.redText]}>
                 Active Piece Moves: {activePieceMoves.join(", ")}
@@ -241,7 +236,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         borderWidth: 1,
         borderStyle: "solid",
-        borderColor: "black", // Changed from orange to black
+        borderColor: "black", 
     },
     row: {
         flex: 1,
@@ -341,9 +336,15 @@ const styles = StyleSheet.create({
         top: 100,
         left: 0,
     },
+    measure: {
+      position: "absolute",
+      top: 120,
+      left: 0,
+    },
     redText: {
         color: "red",
     },
+
 });
 
 export default Chessboard;
