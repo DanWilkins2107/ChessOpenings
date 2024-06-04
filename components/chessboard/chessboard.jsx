@@ -1,8 +1,7 @@
-import { set } from "firebase/database";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { View, Image, Text, StyleSheet, PanResponder } from "react-native";
 
-const Chessboard = ({ chess }) => {
+const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
     const position = chess.board();
     const turnToMove = chess.turn();
     const [isChessboardMeasured, setIsChessboardMeasured] = useState(false);
@@ -11,14 +10,13 @@ const Chessboard = ({ chess }) => {
     const [activePiece, setActivePiece] = useState(null);
     const [activePieceMoves, setActivePieceMoves] = useState([]);
     const [coordinates, setCoordinates] = useState(null);
-    const [mousePressed, setMousePressed] = useState(false);
     const [chessboardPosition, setChessboardPosition] = useState({
         x: 0,
         y: 0,
         width: 0,
         height: 0,
     });
-    const [hoveredSquare, setHoveredSquare] = useState(null);
+    const [draggingPiece, setDraggingPiece] = useState(null);
 
     const findMoveSquares = (square) => {
         const moves = chess.moves({ square: square, verbose: true });
@@ -60,39 +58,11 @@ const Chessboard = ({ chess }) => {
                 measureChessboard();
                 setIsChessboardMeasured(true);
             }
-            const { pageX, pageY } = event.nativeEvent;
-            const columnIndex = Math.floor(
-                (pageX - chessboardPosition.x) / (chessboardPosition.width / 8)
-            );
-            const rowIndex = Math.floor(
-                (pageY - chessboardPosition.y) / (chessboardPosition.height / 8)
-            );
-
-            if (columnIndex >= 0 && columnIndex < 8 && rowIndex >= 0 && rowIndex < 8) {
-                setHoveredSquare(rows[columnIndex] + columns[rowIndex]);
-                const piece = position[rowIndex][columnIndex];
-                const square = rows[columnIndex] + columns[rowIndex];
-                if (piece && piece.color === turnToMove && square !== activePiece) {
-                    setActivePiece(square);
-                    setActivePieceMoves(findMoveSquares(square));
-                } else {
-                    setActivePiece(null);
-                    setActivePieceMoves([]);
-                }
-            } else {
-                setHoveredSquare(null);
-            }
             return false;
         },
         onPanResponderGrant: (event) => {
             const { pageX, pageY } = event.nativeEvent;
             setCoordinates({ x: pageX, y: pageY });
-            setMousePressed(true);
-        },
-        onPanResponderMove: (event) => {
-            const { pageX, pageY } = event.nativeEvent;
-            setCoordinates({ x: pageX, y: pageY });
-
             const columnIndex = Math.floor(
                 (pageX - chessboardPosition.x) / (chessboardPosition.width / 8)
             );
@@ -101,10 +71,26 @@ const Chessboard = ({ chess }) => {
             );
 
             if (columnIndex >= 0 && columnIndex < 8 && rowIndex >= 0 && rowIndex < 8) {
-                setHoveredSquare(rows[columnIndex] + columns[rowIndex]);
+                const piece = position[rowIndex][columnIndex];
+                const square = rows[columnIndex] + columns[rowIndex];
+                if (piece && piece.color === turnToMove) {
+                    setActivePiece(square);
+                    setActivePieceMoves(findMoveSquares(square));
+                    setDraggingPiece(true);
+                } else {
+                    setActivePiece(null);
+                    setActivePieceMoves([]);
+                    setDraggingPiece(false);
+                }
             } else {
-                setHoveredSquare(null);
+                setActivePiece(null);
+                setActivePieceMoves([]);
+                setDraggingPiece(false);
             }
+        },
+        onPanResponderMove: (event) => {
+            const { pageX, pageY } = event.nativeEvent;
+            setCoordinates({ x: pageX, y: pageY });
         },
         onPanResponderRelease: (event) => {
             const { pageX, pageY } = event.nativeEvent;
@@ -116,25 +102,26 @@ const Chessboard = ({ chess }) => {
 
                 if (columnIndex >= 0 && columnIndex < 8 && rowIndex >= 0 && rowIndex < 8) {
                     const square = rows[columnIndex] + columns[rowIndex];
-                    if (square !== activePiece) {
+                    if (square !== activePiece && activePiece) {
+                        moveFunction(activePiece, square);
                         setActivePiece(null);
                         setActivePieceMoves([]);
                     }
                 } else {
                     setActivePiece(null);
+                    setActivePieceMoves([]);
                 }
             }
-            setMousePressed(false);
+            setDraggingPiece(false);
         },
     });
-
     return (
-        <View style={styles.chessboardContainer} {...panResponder.panHandlers} >
+        <View style={[styles.chessboardContainer, { backgroundColor: backgroundColor }]} {...panResponder.panHandlers}>
             <View
                 ref={chessboardRef}
                 style={styles.chessboard}
                 onTouchStart={(event) => {
-                  measureChessboard();
+                    measureChessboard();
                 }}
             >
                 {columns.map((column, columnIndex) => (
@@ -156,8 +143,42 @@ const Chessboard = ({ chess }) => {
                                     {piece && (
                                         <Image
                                             source={pieceImages[piece.color][piece.type]}
-                                            style={styles.piece}
+                                            style={[
+                                                styles.piece,
+                                                draggingPiece && activePiece === square
+                                                    ? {
+                                                         position: "absolute",
+                                                         transform: [
+                                                             {
+                                                                 translateX:
+                                                                     coordinates.x -
+                                                                     chessboardPosition.x -
+                                                                     (chessboardPosition.width *
+                                                                         (rowIndex + 0.5)) /
+                                                                     8,
+                                                             },
+                                                             {
+                                                                 translateY:
+                                                                     coordinates.y -
+                                                                     chessboardPosition.y -
+                                                                     (chessboardPosition.height *
+                                                                         (columnIndex + 0.5)) /
+                                                                     8,
+                                                             },
+                                                         ],
+                                                     }
+                                                    : null,
+                                            ]}
                                         />
+                                    )}
+                                    {activePieceMoves.includes(square) && (
+                                        <View style={styles.validMove}>
+                                            {piece ? (
+                                                <View style={styles.validMoveSquare} />
+                                            ) : (
+                                                <View style={styles.validMoveCircle} />
+                                            )}
+                                        </View>
                                     )}
                                 </View>
                             );
@@ -196,25 +217,19 @@ const Chessboard = ({ chess }) => {
             <Text style={[styles.coordinates, styles.redText]}>
                 {coordinates ? `X: ${coordinates.x}, Y: ${coordinates.y}` : ""}
             </Text>
-            <Text style={[styles.mousePressed, styles.redText]}>
-                {mousePressed ? "Mouse Pressed" : "Mouse Released"}
+            <Text style={[styles.relativeCoordinates, styles.redText]}>
+                {coordinates
+                    ? `Rel X: ${coordinates.x - chessboardPosition.x}, Rel Y: ${
+                          coordinates.y - chessboardPosition.y
+                      }`
+                    : ""}
             </Text>
-            <Text style={[styles.topLeftCoordinates, styles.redText]}>
-                Top Left: X: {chessboardPosition.x}, Y: {chessboardPosition.y}
-            </Text>
-            <Text style={[styles.bottomRightCoordinates, styles.redText]}>
-                Bottom Right: X: {chessboardPosition.x + chessboardPosition.width}, Y:{" "}
-                {chessboardPosition.y + chessboardPosition.height}
-            </Text>
-            <Text style={[styles.hoveredSquare, styles.redText]}>
-                Hovered Square: {hoveredSquare}
-            </Text>
-            <Text style={[styles.measure, styles.redText]}>
-                Hovered Square: {JSON.stringify(chessboardPosition)}
-            </Text>
-            <Text style={[styles.activePiece, styles.redText]}>Active Piece: {activePiece}</Text>
-            <Text style={[styles.activePieceMoves, styles.redText]}>
-                Active Piece Moves: {activePieceMoves.join(", ")}
+            <Text style={[styles.squareSize, styles.redText]}>
+                {chessboardPosition.width > 0
+                    ? `Square size: ${chessboardPosition.width / 8} x ${
+                          chessboardPosition.height / 8
+                      }`
+                    : ""}
             </Text>
         </View>
     );
@@ -224,7 +239,6 @@ const styles = StyleSheet.create({
     chessboardContainer: {
         width: "100%",
         aspectRatio: 1,
-        backgroundColor: "white",
     },
     chessboard: {
         position: "absolute",
@@ -236,12 +250,16 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         borderWidth: 1,
         borderStyle: "solid",
-        borderColor: "black", 
+        borderColor: "black",
     },
     row: {
         flex: 1,
         display: "flex",
         flexDirection: "row",
+    },
+    piece: {
+        width: "80%",
+        height: "80%",
     },
     square: {
         flex: 1,
@@ -256,10 +274,6 @@ const styles = StyleSheet.create({
     },
     activeSquare: {
         backgroundColor: "lightblue",
-    },
-    piece: {
-        width: "80%",
-        height: "80%",
     },
     axis: {
         position: "absolute",
@@ -306,45 +320,40 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
     },
-    mousePressed: {
+    relativeCoordinates: {
         position: "absolute",
         top: 20,
         left: 0,
     },
-    topLeftCoordinates: {
+    squareSize: {
         position: "absolute",
         top: 40,
         left: 0,
     },
-    bottomRightCoordinates: {
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-    },
-    hoveredSquare: {
-        position: "absolute",
-        top: 60,
-        left: 0,
-    },
-    activePiece: {
-        position: "absolute",
-        top: 80,
-        left: 0,
-    },
-    activePieceMoves: {
-        position: "absolute",
-        top: 100,
-        left: 0,
-    },
-    measure: {
-      position: "absolute",
-      top: 120,
-      left: 0,
-    },
     redText: {
         color: "red",
     },
-
+    validMove: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    validMoveCircle: {
+        width: "20%",
+        height: "20%",
+        borderRadius: "10%",
+        backgroundColor: "#ADD8E6",
+    },
+    validMoveSquare: {
+        width: "90%",
+        height: "90%",
+        borderWidth: "5%",
+        borderColor: "#ADD8E6",
+    },
 });
 
 export default Chessboard;

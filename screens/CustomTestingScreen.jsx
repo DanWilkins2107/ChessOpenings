@@ -1,7 +1,9 @@
 import Container from "../components/Container";
-import { Text, ScrollView, View, StyleSheet } from "react-native";
-import { useState } from "react";
+import { ScrollView, StyleSheet } from "react-native";
 import Header from "../components/Header";
+import PGNViewer from "../components/chessboard/pgnViewer";
+import MoveNavigator from "../components/chessboard/moveNavigator";
+import pgnToTree from "../functions/pgnToTree";
 
 const CustomTestingScreen = () => {
     const pgnParser = require("pgn-parser");
@@ -22,67 +24,14 @@ const CustomTestingScreen = () => {
     const [game] = pgnParser.parse(pgn);
     const gameMoves = game.moves;
 
-    const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
-
-    class MoveNode {
-        constructor(move, annotation) {
-            this.move = move;
-            this.annotation = annotation;
-            this.children = [];
-        }
-
-        addChild(node) {
-            this.children.push(node);
-        }
-    }
-
-    const pgnSort = (moves) => {
-        const root = new MoveNode(null, null);
-        let currentNode = root;
-
-        for (let i = 0; i < moves.length; i++) {
-            let move = moves[i].move;
-            // Check for move annotations and remove them
-            if (move.includes("!!") || move.includes("!") || move.includes("?")) {
-                move = move.replace(/!!|!|\?/g, "");
-            }
-            const child = new MoveNode(move, moves[i].annotation);
-            currentNode.addChild(child);
-
-            if (moves[i].ravs) {
-                for (let j = 0; j < moves[i].ravs.length; j++) {
-                    const ravChild = pgnSort(moves[i].ravs[j].moves);
-                    child.addChild(ravChild); // Add ravs to the current child instead of currentNode
-                }
-            }
-
-            if (!moves[i].ravs || moves[i].ravs.length === 0) {
-                currentNode = child;
-            } else {
-                currentNode = root;
-            }
-        }
-
-        return root;
-    };
-
-    const displayMoves = (node, indent = 0) => {
-        if (node.move) {
-            console.log("  ".repeat(indent) + node.move);
-        }
-        for (const child of node.children) {
-            displayMoves(child, indent + 1);
-        }
-    };
-
-    const sortedMoves = pgnSort(gameMoves);
-    displayMoves(sortedMoves);
+    const tree = pgnToTree(gameMoves);
 
     return (
         <Container style={styles.container}>
             <Header showBackButton />
             <ScrollView contentContainerStyle={styles.scrollView}>
-                <Text>{JSON.stringify(sortedMoves, null, 2)}</Text>
+                <PGNViewer tree={tree} />
+                <MoveNavigator tree={tree} />
             </ScrollView>
         </Container>
     );
