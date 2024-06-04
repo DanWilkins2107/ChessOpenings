@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { View, Image, Text, StyleSheet, PanResponder } from "react-native";
 
 const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
@@ -8,6 +8,7 @@ const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
     const rows = "abcdefgh".split("");
     const columns = "87654321".split("");
     const [activePiece, setActivePiece] = useState(null);
+    const [startSquare, setStartSquare] = useState(null);
     const [activePieceMoves, setActivePieceMoves] = useState([]);
     const [coordinates, setCoordinates] = useState(null);
     const [chessboardPosition, setChessboardPosition] = useState({
@@ -17,6 +18,44 @@ const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
         height: 0,
     });
     const [draggingPiece, setDraggingPiece] = useState(null);
+    const [blurSquare, setBlurSquare] = useState(null);
+    const [blurColour, setBlurColour] = useState(null);
+
+    useEffect(() => {
+        const isCheck = chess.isCheck();
+        const isCheckmate = chess.isCheckmate();
+        const isStalemate = chess.isStalemate();
+
+        if (isCheck || isCheckmate || isStalemate) {
+            const kingColor = turnToMove === "w" ? "w" : "b";
+            const kingSquare = findKingSquare(position, kingColor);
+
+            setBlurSquare(kingSquare);
+
+            if (isCheckmate) {
+                setBlurColour("red");
+            } else if (isCheck) {
+                setBlurColour("green");
+            } else if (isStalemate) {
+                setBlurColour("orange");
+            }
+        } else {
+            setBlurSquare(null);
+            setBlurColour(null);
+        }
+    }, [position, turnToMove]);
+
+    const findKingSquare = (position, kingColor) => {
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                const piece = position[i][j];
+                if (piece && piece.type === "k" && piece.color === kingColor) {
+                    return rows[j] + columns[i];
+                }
+            }
+        }
+        return null;
+    };
 
     const findMoveSquares = (square) => {
         const moves = chess.moves({ square: square, verbose: true });
@@ -53,14 +92,11 @@ const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
-        onStartShouldSetPanResponderCapture: (event) => {
+        onPanResponderGrant: (event) => {
             if (!isChessboardMeasured) {
                 measureChessboard();
                 setIsChessboardMeasured(true);
             }
-            return false;
-        },
-        onPanResponderGrant: (event) => {
             const { pageX, pageY } = event.nativeEvent;
             setCoordinates({ x: pageX, y: pageY });
             const columnIndex = Math.floor(
@@ -73,19 +109,47 @@ const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
             if (columnIndex >= 0 && columnIndex < 8 && rowIndex >= 0 && rowIndex < 8) {
                 const piece = position[rowIndex][columnIndex];
                 const square = rows[columnIndex] + columns[rowIndex];
-                if (piece && piece.color === turnToMove) {
-                    setActivePiece(square);
-                    setActivePieceMoves(findMoveSquares(square));
-                    setDraggingPiece(true);
-                } else {
+                if (activePiece && square) {
+                    moveFunction(activePiece, square);
+                    setStartSquare(null);
                     setActivePiece(null);
                     setActivePieceMoves([]);
-                    setDraggingPiece(false);
+                }
+                if (startSquare === null) {
+                    // If startSquare is null, set it to the clicked square if it's a piece of the color whose turn it is
+                    if (piece && piece.color === turnToMove) {
+                        setDraggingPiece(square);
+                        setStartSquare(square);
+                        setActivePiece(square);
+                        setActivePieceMoves(findMoveSquares(square));
+                    } else {
+                        setActivePiece(null);
+                        setActivePieceMoves([]);
+                    }
+                } else if (startSquare === square) {
+                    // If startSquare is the same as the clicked square, reset startSquare and activePiece
+                    setStartSquare(null);
+                    setActivePiece(null);
+                    setActivePieceMoves([]);
+                } else {
+                    // If startSquare is not null and not the same as the clicked square, check if the clicked square is a piece of the color whose turn it is
+                    if (piece && piece.color === turnToMove) {
+                        // If it is, set the clicked square as the new startSquare and activePiece
+                        setStartSquare(square);
+                        setActivePiece(square);
+                        setActivePieceMoves(findMoveSquares(square));
+                    } else {
+                        // If it's not, make a move from startSquare to the clicked square
+                        moveFunction(startSquare, square);
+                        setStartSquare(null);
+                        setActivePiece(null);
+                        setActivePieceMoves([]);
+                    }
                 }
             } else {
+                setStartSquare(null);
                 setActivePiece(null);
                 setActivePieceMoves([]);
-                setDraggingPiece(false);
             }
         },
         onPanResponderMove: (event) => {
@@ -113,10 +177,14 @@ const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
                 }
             }
             setDraggingPiece(false);
+            setStartSquare(null);
         },
     });
     return (
-        <View style={[styles.chessboardContainer, { backgroundColor: backgroundColor }]} {...panResponder.panHandlers}>
+        <View
+            style={[styles.chessboardContainer, { backgroundColor: backgroundColor }]}
+            {...panResponder.panHandlers}
+        >
             <View
                 ref={chessboardRef}
                 style={styles.chessboard}
@@ -147,26 +215,26 @@ const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
                                                 styles.piece,
                                                 draggingPiece && activePiece === square
                                                     ? {
-                                                         position: "absolute",
-                                                         transform: [
-                                                             {
-                                                                 translateX:
-                                                                     coordinates.x -
-                                                                     chessboardPosition.x -
-                                                                     (chessboardPosition.width *
-                                                                         (rowIndex + 0.5)) /
-                                                                     8,
-                                                             },
-                                                             {
-                                                                 translateY:
-                                                                     coordinates.y -
-                                                                     chessboardPosition.y -
-                                                                     (chessboardPosition.height *
-                                                                         (columnIndex + 0.5)) /
-                                                                     8,
-                                                             },
-                                                         ],
-                                                     }
+                                                          position: "absolute",
+                                                          transform: [
+                                                              {
+                                                                  translateX:
+                                                                      coordinates.x -
+                                                                      chessboardPosition.x -
+                                                                      (chessboardPosition.width *
+                                                                          (rowIndex + 0.5)) /
+                                                                          8,
+                                                              },
+                                                              {
+                                                                  translateY:
+                                                                      coordinates.y -
+                                                                      chessboardPosition.y -
+                                                                      (chessboardPosition.height *
+                                                                          (columnIndex + 0.5)) /
+                                                                          8,
+                                                              },
+                                                          ],
+                                                      }
                                                     : null,
                                             ]}
                                         />
@@ -179,6 +247,17 @@ const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
                                                 <View style={styles.validMoveCircle} />
                                             )}
                                         </View>
+                                    )}
+                                    {blurSquare === square && (
+                                        <View
+                                            style={[
+                                                styles.blur,
+                                                {
+                                                    shadowColor: blurColour,
+                                                    backgroundColor: blurColour,
+                                                },
+                                            ]}
+                                        />
                                     )}
                                 </View>
                             );
@@ -214,23 +293,6 @@ const Chessboard = ({ chess, moveFunction, backgroundColor }) => {
                     </View>
                 ))}
             </View>
-            <Text style={[styles.coordinates, styles.redText]}>
-                {coordinates ? `X: ${coordinates.x}, Y: ${coordinates.y}` : ""}
-            </Text>
-            <Text style={[styles.relativeCoordinates, styles.redText]}>
-                {coordinates
-                    ? `Rel X: ${coordinates.x - chessboardPosition.x}, Rel Y: ${
-                          coordinates.y - chessboardPosition.y
-                      }`
-                    : ""}
-            </Text>
-            <Text style={[styles.squareSize, styles.redText]}>
-                {chessboardPosition.width > 0
-                    ? `Square size: ${chessboardPosition.width / 8} x ${
-                          chessboardPosition.height / 8
-                      }`
-                    : ""}
-            </Text>
         </View>
     );
 };
@@ -258,8 +320,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     piece: {
-        width: "80%",
-        height: "80%",
+        width: "100%",
+        height: "100%",
     },
     square: {
         flex: 1,
@@ -315,24 +377,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontWeight: "bold",
     },
-    coordinates: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-    },
-    relativeCoordinates: {
-        position: "absolute",
-        top: 20,
-        left: 0,
-    },
-    squareSize: {
-        position: "absolute",
-        top: 40,
-        left: 0,
-    },
-    redText: {
-        color: "red",
-    },
     validMove: {
         position: "absolute",
         top: 0,
@@ -353,6 +397,18 @@ const styles = StyleSheet.create({
         height: "90%",
         borderWidth: "5%",
         borderColor: "#ADD8E6",
+    },
+    blur: {
+        position: "absolute",
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: "100%",
+        width: "20%",
+        height: "20%",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.7,
+        shadowRadius: "80%",
+        elevation: 200,
     },
 });
 

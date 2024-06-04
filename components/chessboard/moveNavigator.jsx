@@ -1,23 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, Button, ScrollView, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Button, ScrollView, StyleSheet } from 'react-native';
 
-function MoveNavigator({ tree }) {
-  const [current, setCurrent] = useState(tree);
-  const [path, setPath] = useState([tree]);
-
-  const handleParentPress = () => {
-    if (path.length > 1) {
-      const newPath = path.slice(0, path.length - 1);
-      setCurrent(newPath[newPath.length - 1]);
-      setPath(newPath);
-    }
-  };
-
-  const handleChildPress = (child) => {
-    setCurrent(child);
-    setPath([...path, child]);
-  };
-
+function MoveNavigator({
+    tree,
+    path,
+    currentNode,
+    handleParentPress,
+    handleChildPress,
+    onMove,
+  }) {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.parentColumn}>
@@ -26,10 +17,10 @@ function MoveNavigator({ tree }) {
         )}
       </ScrollView>
       <ScrollView style={styles.mainColumn}>
-        <Button title={current.move} color="#000" />
+        <Button title={currentNode.move} color="#000" />
       </ScrollView>
       <ScrollView style={styles.childrenColumn}>
-        {current.children.map((child, index) => (
+        {currentNode.children.map((child, index) => (
           <Button key={index} title={child.move} onPress={() => handleChildPress(child)} color="#000" />
         ))}
       </ScrollView>
