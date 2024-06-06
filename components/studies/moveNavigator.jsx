@@ -8,11 +8,11 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
 
   const handleSiblingPress = (sibling) => {
     navigateToParentNode(currentNode, setCurrentNode, chess);
-    navigateToChildNode(sibling.move, currentNode.parent, setCurrentNode, chess);
+    navigateToChildNode(sibling.move, currentNode.parent, setCurrentNode, chess, true);
   };
 
   const handleChildPress = (child) => {
-    navigateToChildNode(child.move, currentNode, setCurrentNode, chess);
+    navigateToChildNode(child.move, currentNode, setCurrentNode, chess, true);
   };
 
   return (
@@ -31,6 +31,9 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
             color={sibling === currentNode ? '#000' : '#ccc'}
           />
         ))}
+        {!currentNode.parent && (
+          <Button title={currentNode.move} color="#000" />
+        )}
       </ScrollView>
       <ScrollView style={styles.childrenColumn}>
         {currentNode.children.map((child, index) => (

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Button, Text, View } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Header from "../components/Header.jsx";
 import Container from "../components/Container.jsx";
 import MessageBox from "../components/chessboard/messagebox.jsx";
-import MoveNavigator from "../components/studies/moveNavigator.jsx";
+import MoveNavigator from "../components/studies/MoveNavigator.jsx";
 import Navigation from "../components/studies/Navigation.jsx";
 import { navigateToParentNode, navigateToChildNode } from "../functions/treeFunctions";
+import treeToPgn from "../functions/treeToPgn.js";
 
 const ViewStudyScreen = () => {
     const [chess] = useState(new Chess());
@@ -21,7 +22,7 @@ const ViewStudyScreen = () => {
         move: "Start",
         children: [],
         parent: null,
-    }
+    };
     const [currentNode, setCurrentNode] = useState(tree);
     const [path, setPath] = useState([tree]);
     const [pov, setPov] = useState("w");
@@ -40,47 +41,50 @@ const ViewStudyScreen = () => {
             navigateToChildNode(move.san, currentNode, setCurrentNode, chess, false);
             setPath((prevPath) => [...prevPath, currentNode]);
             updateMoveMessage();
-        } catch (error) {
-        }
+        } catch (error) {}
     };
 
     const handleParentPress = () => {
-        navigateToParentNode(tree, currentNode, setCurrentNode, chess);
-        updateMoveMessage();
-    };
-
-    const handleChildPress = (child) => {
-        navigateToChildNode(child.move, currentNode, setCurrentNode, chess, tree);
+        navigateToParentNode(currentNode, setCurrentNode, chess);
         updateMoveMessage();
     };
 
     const handleRightPress = () => {
-        navigateToChildNode(null, currentNode, setCurrentNode, chess, tree);
+        navigateToChildNode(null, currentNode, setCurrentNode, chess, true);
         updateMoveMessage();
     };
 
     const handleDoubleRightPress = () => {
-        let newNode = currentNode;
-        while (newNode.children.length > 0) {
-            newNode = newNode.children[0];
-            chess.move(newNode.move);
+        let lastChild = currentNode;
+        while (lastChild.children.length > 0) {
+            lastChild = lastChild.children[0];
         }
-        setPath((prevPath) => [...prevPath, newNode]);
-        setCurrentNode(newNode);
+        setCurrentNode(lastChild);
+        const moves = [];
+        let tempNode = lastChild;
+        while (tempNode.parent) {
+            moves.push(tempNode.move);
+            tempNode = tempNode.parent;
+        }
+        chess.reset();
+        for (let i = moves.length - 1; i >= 0; i--) {
+            chess.move(moves[i]);
+        }
         updateMoveMessage();
     };
 
     const handleBackToStartPress = () => {
-        if (path.length > 1) {
-            const newPath = [path[0]];
-            const parentNode = newPath[0];
-            setCurrentNode(parentNode);
-            setPath(newPath);
-            chess.reset();
+        if (currentNode.parent) {
+            let tempNode = currentNode;
+            while (tempNode.parent) {
+                tempNode = tempNode.parent;
+                chess.undo();
+            }
+            setCurrentNode(tempNode);
+            setPath([tempNode]);
             updateMoveMessage();
         }
     };
-
     return (
         <Container>
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -120,6 +124,7 @@ const ViewStudyScreen = () => {
                         chess={chess}
                         setCurrentNode={setCurrentNode}
                     />
+                    <Button onPress={() => console.log(treeToPgn(currentNode))} title="Save" />
                 </View>
             </View>
         </Container>
