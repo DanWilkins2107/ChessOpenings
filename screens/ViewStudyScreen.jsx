@@ -1,17 +1,27 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Header from "../components/Header.jsx";
 import Container from "../components/Container.jsx";
 import MessageBox from "../components/chessboard/messagebox.jsx";
 import MoveNavigator from "../components/chessboard/moveNavigator.jsx";
+import ChapterSelector from "../components/studies/ChapterSelector.jsx";
+import FlipButton from "../components/chessboard/flipbutton.jsx";
+
+const chapters = [
+    { name: "Chapter 1" },
+    { name: "Chapter 2" },
+    { name: "Chapter 3" },
+    // ...
+];
 
 const ViewStudyScreen = () => {
     const [chess, setChess] = useState(new Chess());
     const [backgroundColor, setBackgroundColor] = useState("white");
+    const [chapterState, setChapterState] = useState(chapters[0]);
     const [message, setMessage] = useState({
-        text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
+        text: `It's White's turn`,
         color: "black",
         backgroundColor: "white",
     });
@@ -21,6 +31,7 @@ const ViewStudyScreen = () => {
     });
     const [currentNode, setCurrentNode] = useState(tree);
     const [path, setPath] = useState([tree]);
+    const [pov, setPov] = useState("w");
 
     const addChildNode = (parentNode, childNode) => {
         setTree((prevTree) => {
@@ -59,7 +70,7 @@ const ViewStudyScreen = () => {
             setMessage({
                 text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
                 color: `${chess.turn() === "b" ? "white" : "black"}`,
-                backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`
+                backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`,
             });
             const newNode = {
                 move: move.san,
@@ -86,12 +97,22 @@ const ViewStudyScreen = () => {
                 chess.undo(); // Undo the move
             }
         }
+        setMessage({
+            text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
+            color: `${chess.turn() === "b" ? "white" : "black"}`,
+            backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`,
+        });
     };
-    
+
     const handleChildPress = (child) => {
         setPath((prevPath) => [...prevPath, child]);
         setCurrentNode(child);
         chess.move(child.move); // Make the move
+        setMessage({
+            text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
+            color: `${chess.turn() === "b" ? "white" : "black"}`,
+            backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`,
+        });
     };
 
     const handleMoveNavigation = (node) => {
@@ -123,7 +144,18 @@ const ViewStudyScreen = () => {
                         chess={chess}
                         moveFunction={moveFunction}
                         backgroundColor={backgroundColor}
+                        pov={pov}
                     />
+                    <FlipButton
+                        onClick={
+                            () => {
+                                (pov === "w") ? setPov("b") : setPov("w");
+                            }
+                        }
+                    />
+                    <Text>
+                        {pov}
+                    </Text>
                     <MessageBox
                         message={message.text}
                         textColor={message.color}
@@ -136,6 +168,7 @@ const ViewStudyScreen = () => {
                         handleParentPress={handleParentPress}
                         handleChildPress={handleChildPress}
                         onMove={handleMoveNavigation}
+                        turn={chess.turn()}
                     />
                 </View>
             </View>

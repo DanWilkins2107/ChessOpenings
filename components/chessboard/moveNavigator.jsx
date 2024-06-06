@@ -1,14 +1,9 @@
 import React from 'react';
-import { View, Button, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, Button } from 'react-native';
 
-function MoveNavigator({
-    tree,
-    path,
-    currentNode,
-    handleParentPress,
-    handleChildPress,
-    onMove,
-  }) {
+const MoveNavigator = ({ tree, path, currentNode, handleParentPress, handleChildPress, onMove, turn }) => {
+  const isWhiteTurn = turn === 'w';
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.parentColumn}>
@@ -26,11 +21,11 @@ function MoveNavigator({
       </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '20%',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
