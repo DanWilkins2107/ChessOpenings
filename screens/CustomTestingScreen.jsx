@@ -2,7 +2,6 @@ import Container from "../components/Container";
 import { ScrollView, StyleSheet } from "react-native";
 import Header from "../components/Header";
 import PGNViewer from "../components/chessboard/pgnViewer";
-import MoveNavigator from "../components/chessboard/moveNavigator";
 import pgnToTree from "../functions/pgnToTree";
 
 const CustomTestingScreen = () => {
@@ -31,7 +30,6 @@ const CustomTestingScreen = () => {
             <Header showBackButton />
             <ScrollView contentContainerStyle={styles.scrollView}>
                 <PGNViewer tree={tree} />
-                <MoveNavigator tree={tree} />
             </ScrollView>
         </Container>
     );

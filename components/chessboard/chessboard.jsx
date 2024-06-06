@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { View, Image, Text, StyleSheet, PanResponder } from "react-native";
 
 const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
@@ -87,6 +87,10 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
         });
     }, [chessboardRef, isChessboardMeasured]);
 
+    useEffect(() => {
+        measureChessboard();
+    }, [measureChessboard]);
+
     const pieceImages = useMemo(
         () => ({
             b: {
@@ -111,10 +115,6 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
 
     const onPanResponderGrant = useCallback(
         (event) => {
-            if (!isChessboardMeasured) {
-                measureChessboard();
-                setIsChessboardMeasured(true);
-            }
             const { pageX, pageY } = event.nativeEvent;
             setCoordinates({ x: pageX, y: pageY });
             const columnIndex = Math.floor(
@@ -230,11 +230,12 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
+        onStartShouldSetPanResponderCapture: () => true,
         onPanResponderGrant,
         onPanResponderMove,
         onPanResponderRelease,
     });
-    
+
     return (
         <View
             style={[styles.chessboardContainer, { backgroundColor: backgroundColor }]}
@@ -249,7 +250,7 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
             >
                 <>
                     {columns.map((column, columnIndex) => (
-                        <>
+                        <React.Fragment key={columnIndex}>
                             {rows.map((row, rowIndex) => {
                                 const piece = position[columnIndex][rowIndex];
                                 const square = rows[rowIndex] + columns[columnIndex];
@@ -301,7 +302,7 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
                                     );
                                 }
                             })}
-                        </>
+                        </React.Fragment>
                     ))}
                     {activePiece && (
                         <View

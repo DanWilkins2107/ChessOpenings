@@ -1,131 +1,84 @@
 import React, { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { View } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Header from "../components/Header.jsx";
 import Container from "../components/Container.jsx";
 import MessageBox from "../components/chessboard/messagebox.jsx";
-import MoveNavigator from "../components/chessboard/moveNavigator.jsx";
-import ChapterSelector from "../components/studies/ChapterSelector.jsx";
-import FlipButton from "../components/chessboard/flipbutton.jsx";
-
-const chapters = [
-    { name: "Chapter 1" },
-    { name: "Chapter 2" },
-    { name: "Chapter 3" },
-    // ...
-];
+import MoveNavigator from "../components/studies/moveNavigator.jsx";
+import Navigation from "../components/studies/Navigation.jsx";
+import { navigateToParentNode, navigateToChildNode } from "../functions/treeFunctions";
 
 const ViewStudyScreen = () => {
-    const [chess, setChess] = useState(new Chess());
+    const [chess] = useState(new Chess());
     const [backgroundColor, setBackgroundColor] = useState("white");
-    const [chapterState, setChapterState] = useState(chapters[0]);
     const [message, setMessage] = useState({
         text: `It's White's turn`,
         color: "black",
         backgroundColor: "white",
     });
-    const [tree, setTree] = useState({
+    let tree = {
         move: "Start",
         children: [],
-    });
+        parent: null,
+    }
     const [currentNode, setCurrentNode] = useState(tree);
     const [path, setPath] = useState([tree]);
     const [pov, setPov] = useState("w");
 
-    const addChildNode = (parentNode, childNode) => {
-        setTree((prevTree) => {
-            const newTree = { ...prevTree };
-            const addChild = (node, child) => {
-                const existingChild = node.children.find((c) => c.move === child.move);
-                if (existingChild) {
-                    existingChild.children = child.children;
-                } else {
-                    node.children.push(child);
-                }
-            };
-            const findNode = (node, move) => {
-                if (node.move === move) {
-                    return node;
-                }
-                for (const child of node.children) {
-                    const found = findNode(child, move);
-                    if (found) {
-                        return found;
-                    }
-                }
-                return null;
-            };
-            const parentNodeInTree = findNode(newTree, parentNode.move);
-            if (parentNodeInTree) {
-                addChild(parentNodeInTree, childNode);
-            }
-            return newTree;
+    const updateMoveMessage = () => {
+        setMessage({
+            text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
+            color: `${chess.turn() === "b" ? "white" : "black"}`,
+            backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`,
         });
     };
 
     const moveFunction = (from, to) => {
         try {
             const move = chess.move({ from: from, to: to });
-            setMessage({
-                text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
-                color: `${chess.turn() === "b" ? "white" : "black"}`,
-                backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`,
-            });
-            const newNode = {
-                move: move.san,
-                children: [],
-            };
-            const existingChild = currentNode.children.find((child) => child.move === newNode.move);
-            if (existingChild) {
-                setCurrentNode(existingChild);
-            } else {
-                addChildNode(currentNode, newNode);
-                setCurrentNode(newNode);
-            }
-            setPath((prevPath) => [...prevPath, newNode]);
-        } catch (error) {}
+            navigateToChildNode(move.san, currentNode, setCurrentNode, chess, false);
+            setPath((prevPath) => [...prevPath, currentNode]);
+            updateMoveMessage();
+        } catch (error) {
+        }
     };
 
     const handleParentPress = () => {
-        if (path.length > 1) {
-            const newPath = path.slice(0, path.length - 1);
-            const parentNode = newPath[newPath.length - 1];
-            if (parentNode) {
-                setCurrentNode(parentNode);
-                setPath(newPath);
-                chess.undo(); // Undo the move
-            }
-        }
-        setMessage({
-            text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
-            color: `${chess.turn() === "b" ? "white" : "black"}`,
-            backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`,
-        });
+        navigateToParentNode(tree, currentNode, setCurrentNode, chess);
+        updateMoveMessage();
     };
 
     const handleChildPress = (child) => {
-        setPath((prevPath) => [...prevPath, child]);
-        setCurrentNode(child);
-        chess.move(child.move); // Make the move
-        setMessage({
-            text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
-            color: `${chess.turn() === "b" ? "white" : "black"}`,
-            backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`,
-        });
+        navigateToChildNode(child.move, currentNode, setCurrentNode, chess, tree);
+        updateMoveMessage();
     };
 
-    const handleMoveNavigation = (node) => {
-        setCurrentNode(node);
-        chess.reset();
-        node.children.forEach((child) => {
-            chess.move(child.move);
-        });
-        setMessage({
-            text: `It's ${chess.turn() === "w" ? "White" : "Black"}'s turn`,
-            color: `${chess.turn() === "b" ? "white" : "black"}`,
-            backgroundColor: `${chess.turn() === "w" ? "white" : "black"}`,
-        });
+    const handleRightPress = () => {
+        navigateToChildNode(null, currentNode, setCurrentNode, chess, tree);
+        updateMoveMessage();
+    };
+
+    const handleDoubleRightPress = () => {
+        let newNode = currentNode;
+        while (newNode.children.length > 0) {
+            newNode = newNode.children[0];
+            chess.move(newNode.move);
+        }
+        setPath((prevPath) => [...prevPath, newNode]);
+        setCurrentNode(newNode);
+        updateMoveMessage();
+    };
+
+    const handleBackToStartPress = () => {
+        if (path.length > 1) {
+            const newPath = [path[0]];
+            const parentNode = newPath[0];
+            setCurrentNode(parentNode);
+            setPath(newPath);
+            chess.reset();
+            updateMoveMessage();
+        }
     };
 
     return (
@@ -146,29 +99,26 @@ const ViewStudyScreen = () => {
                         backgroundColor={backgroundColor}
                         pov={pov}
                     />
-                    <FlipButton
-                        onClick={
-                            () => {
-                                (pov === "w") ? setPov("b") : setPov("w");
-                            }
-                        }
-                    />
-                    <Text>
-                        {pov}
-                    </Text>
+                    <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                        <Navigation
+                            onDoubleLeftPress={handleBackToStartPress}
+                            onLeftPress={handleParentPress}
+                            onFlipPress={() => {
+                                pov === "w" ? setPov("b") : setPov("w");
+                            }}
+                            onRightPress={handleRightPress}
+                            onDoubleRightPress={handleDoubleRightPress}
+                        />
+                    </View>
                     <MessageBox
                         message={message.text}
                         textColor={message.color}
                         backgroundColor={message.backgroundColor}
                     />
                     <MoveNavigator
-                        tree={tree}
-                        path={path}
                         currentNode={currentNode}
-                        handleParentPress={handleParentPress}
-                        handleChildPress={handleChildPress}
-                        onMove={handleMoveNavigation}
-                        turn={chess.turn()}
+                        chess={chess}
+                        setCurrentNode={setCurrentNode}
                     />
                 </View>
             </View>
