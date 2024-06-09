@@ -1,8 +1,7 @@
 import Container from "../components/Container";
-import AuthInput from "../components/auth/AuthInput";
 import AuthButton from "../components/auth/AuthButton";
 import SocialLogin from "../components/auth/SocialLogin";
-import OrSeparator from "../components/auth/OrSeparator";
+import LineSeparator from "../components/auth/LineSeparator";
 import { Image, Text, View, StyleSheet } from "react-native";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -11,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import Checkbox from "expo-checkbox";
 import AuthTextButton from "../components/auth/AuthTextButton";
 import { AlertContext } from "../components/alert/AlertContextProvider";
+import FormField from "../components/FormField";
 
 const LoginScreen = () => {
     const [email, setEmail] = useState("");
@@ -43,12 +43,12 @@ const LoginScreen = () => {
         <Container>
             <View style={styles.container}>
                 <Image source={require("../assets/favicon.png")} style={styles.logo} />
-                <AuthInput
+                <FormField
                     placeholder="Email"
                     value={email}
                     onChangeText={(text) => setEmail(text)}
                 />
-                <AuthInput
+                <FormField
                     placeholder="Password"
                     value={password}
                     onChangeText={(text) => setPassword(text)}
@@ -74,8 +74,9 @@ const LoginScreen = () => {
                     />
                 </View>
                 <AuthButton title="Login" onPress={handleLogin} />
-                <OrSeparator />
-                <SocialLogin />
+                <LineSeparator text="OR"/>
+                <SocialLogin keyword={"in"}/>
+                <LineSeparator text=""/>
                 <View style={styles.signupContainer}>
                     <Text style={styles.signupText}>Not got an Account? </Text>
                     <AuthTextButton
@@ -102,10 +103,6 @@ const styles = StyleSheet.create({
         marginBottom: 80,
     },
     signupContainer: {
-        borderTopWidth: 1,
-        borderTopColor: "#00d4ff",
-        marginTop: 20,
-        paddingTop: 20,
         flexDirection: "row",
     },
     signupText: {

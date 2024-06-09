@@ -1,22 +1,43 @@
-import { View, StyleSheet } from "react-native";
-import AuthButton from "./AuthButton";
-import { AlertContext } from "../alert/AlertContextProvider";
-import { useContext } from "react";
+import { View, StyleSheet, Button, TouchableOpacity, Text } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-const SocialLogin = () => {
-  const { setAlert } = useContext(AlertContext);
+const SocialLogin = ({keyword}) => {
   return (
     <View style={styles.container}>
-      <AuthButton title="Apple Login" onPress={() => setAlert("red", "red")} />
-      <AuthButton title="Google Login" onPress={() => setAlert("green", "green")} />
+      <TouchableOpacity style={[styles.button, {backgroundColor: "black"}]}>
+        <Text style={[{color: "white"}, styles.text]}>{`Sign ${keyword} with Apple`}</Text>
+        <Icon name="apple" size={25} color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, {backgroundColor: "white"}]}>
+        <Text style={styles.text}>{`Sign ${keyword} with Google`}</Text>
+        <Icon name="google" size={25} color="black" />
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    gap: "10%",
+    height: "10%",
   },
+  button: {
+    width: "40%",
+    display: "flex",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "10%",
+    gap: "5%",
+  }, 
+  text: {
+    fontSize: 12,
+    fontWeight: "bold",
+  }
+
 });
 
 export default SocialLogin;

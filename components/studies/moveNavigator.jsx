@@ -21,6 +21,7 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
         {currentNode.parent && (
           <Button title={currentNode.parent.move} onPress={handleParentPress} color="#000" />
         )}
+   
       </ScrollView>
       <ScrollView style={styles.mainColumn}>
         {currentNode.parent && currentNode.parent.children.map((sibling, index) => (

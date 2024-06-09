@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
 
-const TextInputComponent = ({ placeholder, value, onChangeText, secureTextEntry }) => {
+const FormField = ({ placeholder, value, onChangeText, secureTextEntry }) => {
   return (
     <TextInput
       style={styles.input}
@@ -24,4 +24,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TextInputComponent;
+export default FormField;

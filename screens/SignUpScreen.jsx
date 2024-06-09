@@ -1,14 +1,14 @@
 import Container from "../components/Container";
-import AuthInput from "../components/auth/AuthInput";
 import AuthButton from "../components/auth/AuthButton";
 import SocialLogin from "../components/auth/SocialLogin";
-import OrSeparator from "../components/auth/OrSeparator";
+import LineSeparator from "../components/auth/LineSeparator";
 import AuthTextButton from "../components/auth/AuthTextButton";
 import { Image, Text, View, StyleSheet } from "react-native";
 import { auth } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import FormField from "../components/FormField";
 
 const SignUpScreen = () => {
     const navigation = useNavigation();
@@ -35,26 +35,27 @@ const SignUpScreen = () => {
         <Container>
             <View style={styles.container}>
                 <Image source={require("../assets/favicon.png")} style={styles.logo} />
-                <AuthInput
+                <FormField
                     placeholder="Email"
                     value={email}
                     onChangeText={(text) => setEmail(text)}
                 />
-                <AuthInput
+                <FormField
                     placeholder="Password"
                     value={password}
                     onChangeText={(text) => setPassword(text)}
                     secureTextEntry={true}
                 />
-                <AuthInput
+                <FormField
                     placeholder="Confirm Password"
                     value={confirmPassword}
                     onChangeText={(text) => setConfirmPassword(text)}
                     secureTextEntry={true}
                 />
                 <AuthButton title="Sign Up" onPress={handleSignUp} style={styles.signupButton} />
-                <OrSeparator />
-                <SocialLogin />
+                <LineSeparator text="OR"/>
+                <SocialLogin keyword="up"/>
+                <LineSeparator text=""/>
                 <View style={styles.loginContainer}>
                     <Text style={styles.loginText}>Already have an account? </Text>
                     <AuthTextButton
@@ -91,10 +92,6 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     loginContainer: {
-        borderTopWidth: 1,
-        borderTopColor: "#00d4ff",
-        marginTop: 20,
-        paddingTop: 20,
         flexDirection: "row",
     },
     loginText: {

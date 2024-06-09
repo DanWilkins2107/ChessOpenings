@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Text, View } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
@@ -24,8 +24,11 @@ const ViewStudyScreen = () => {
         parent: null,
     };
     const [currentNode, setCurrentNode] = useState(tree);
-    const [path, setPath] = useState([tree]);
     const [pov, setPov] = useState("w");
+
+    useEffect(() => {
+        updateMoveMessage();
+    }, [chess.turn()]);
 
     const updateMoveMessage = () => {
         setMessage({
@@ -39,19 +42,15 @@ const ViewStudyScreen = () => {
         try {
             const move = chess.move({ from: from, to: to });
             navigateToChildNode(move.san, currentNode, setCurrentNode, chess, false);
-            setPath((prevPath) => [...prevPath, currentNode]);
-            updateMoveMessage();
         } catch (error) {}
     };
 
     const handleParentPress = () => {
         navigateToParentNode(currentNode, setCurrentNode, chess);
-        updateMoveMessage();
     };
 
     const handleRightPress = () => {
         navigateToChildNode(null, currentNode, setCurrentNode, chess, true);
-        updateMoveMessage();
     };
 
     const handleDoubleRightPress = () => {
@@ -70,7 +69,6 @@ const ViewStudyScreen = () => {
         for (let i = moves.length - 1; i >= 0; i--) {
             chess.move(moves[i]);
         }
-        updateMoveMessage();
     };
 
     const handleBackToStartPress = () => {
@@ -81,8 +79,6 @@ const ViewStudyScreen = () => {
                 chess.undo();
             }
             setCurrentNode(tempNode);
-            setPath([tempNode]);
-            updateMoveMessage();
         }
     };
     return (
@@ -124,7 +120,7 @@ const ViewStudyScreen = () => {
                         chess={chess}
                         setCurrentNode={setCurrentNode}
                     />
-                    <Button onPress={() => console.log(treeToPgn(currentNode))} title="Save" />
+                    <Button onPress={() => console.log(treeToPgn(currentNode))} title="Save"/>
                 </View>
             </View>
         </Container>

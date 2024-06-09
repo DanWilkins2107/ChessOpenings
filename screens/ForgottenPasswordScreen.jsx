@@ -1,5 +1,4 @@
 import Container from "../components/Container";
-import AuthInput from "../components/auth/AuthInput";
 import AuthButton from "../components/auth/AuthButton";
 import AuthTextButton from "../components/auth/AuthTextButton";
 import { Image, Text, View, StyleSheet } from "react-native";
@@ -7,6 +6,7 @@ import { auth } from "../firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import FormField from "../components/FormField";
 
 const ForgottenPasswordScreen = () => {
     const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ const ForgottenPasswordScreen = () => {
         <Container>
             <View style={styles.container}>
                 <Image source={require("../assets/favicon.png")} style={styles.logo} />
-                <AuthInput
+                <FormField
                     placeholder="Email"
                     value={email}
                     onChangeText={(text) => setEmail(text)}

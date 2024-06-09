@@ -2,12 +2,18 @@ import Container from "../components/Container";
 import { Image, View, StyleSheet, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import DashButton from "../components/dashboard/DashButton";
+import { auth } from "../firebase";
+
 
 const DashboardScreen = () => {
     const navigation = useNavigation();
-
-    const handleLogout = () => {
-        // Your logout logic here
+    
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
