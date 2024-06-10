@@ -38,17 +38,6 @@ const SelectIcon = ({ selectedIcon, onSelectIcon }) => {
             <TouchableOpacity style={styles.rightRectangle} onPress={handlePress}>
                 <Icon name={isModalVisible ? "times" : "plus"} size={30} color="#000" />
             </TouchableOpacity>
-            <Modal visible={isModalVisible} transparent={true} animationType="slide">
-                <View style={styles.modalContainer}>
-                    <View style={styles.modal}>
-                        {icons.map((item, index) => (
-                            <TouchableOpacity key={index} onPress={() => handleSelect(item)}>
-                                <Image source={item} style={styles.icon} />
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-            </Modal>
         </View>
     );
 };
@@ -79,17 +68,14 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
     },
-    modalContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
     modal: {
         backgroundColor: "white",
         padding: 20,
         borderRadius: 10,
         width: 300,
         height: 300,
+        position: "absolute",
+        zIndex: 5,
     },
 });
 

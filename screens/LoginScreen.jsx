@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     },
     signupContainer: {
         flexDirection: "row",
+        gap: 2,
     },
     signupText: {
         fontSize: 16,

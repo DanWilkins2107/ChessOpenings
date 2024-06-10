@@ -48,6 +48,12 @@ const DashboardScreen = () => {
                 />
                 <DashButton
                     image={require("../assets/favicon.png")}
+                    title="Change Plan"
+                    description="Upgrade or downgrade your plan."
+                    onPress={() => navigation.navigate("ChangePlan")}
+                />
+                <DashButton
+                    image={require("../assets/favicon.png")}
                     title="Settings"
                     description="View and edit your settings."
                     onPress={handleLogout}

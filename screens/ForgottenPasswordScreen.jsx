@@ -4,21 +4,27 @@ import AuthTextButton from "../components/auth/AuthTextButton";
 import { Image, Text, View, StyleSheet } from "react-native";
 import { auth } from "../firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import FormField from "../components/FormField";
+import { AlertContext } from "../components/alert/AlertContextProvider";
 
 const ForgottenPasswordScreen = () => {
     const [email, setEmail] = useState("");
     const navigation = useNavigation();
+    const { setAlert } = useContext(AlertContext);
 
     const handleResetPassword = () => {
         sendPasswordResetEmail(auth, email)
             .then(() => {
-                console.log("Password reset email sent");
+                setAlert("Password reset email sent.", "green");
             })
             .catch((error) => {
-                console.error("Error sending password reset email:", error);
+                if (error.code === "auth/invalid-email" || error.code === "auth/missing-email") {
+                    setAlert("Please enter a valid email.", "red");
+                } else {
+                    setAlert("Could not send password reset email at this time.", "red");
+                }
             });
     };
 

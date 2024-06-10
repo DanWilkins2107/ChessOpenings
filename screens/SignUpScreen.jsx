@@ -6,19 +6,21 @@ import AuthTextButton from "../components/auth/AuthTextButton";
 import { Image, Text, View, StyleSheet } from "react-native";
 import { auth } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import FormField from "../components/FormField";
+import { AlertContext } from "../components/alert/AlertContextProvider";
 
 const SignUpScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const { setAlert } = useContext(AlertContext);
 
     const handleSignUp = () => {
         if (password !== confirmPassword) {
-            console.log("Passwords do not match");
+            setAlert("Passwords do not match.", "red");
             return;
         }
         createUserWithEmailAndPassword(auth, email, password)
@@ -27,7 +29,16 @@ const SignUpScreen = () => {
                 console.log("Signed up with:", user.email);
             })
             .catch((error) => {
-                console.error("Error signing up:", error);
+                if (error.code === "auth/invalid-email") {
+                    setAlert("Please enter a valid email.", "red");
+                } else if (
+                    error.code === "auth/weak-password" ||
+                    error.code === "auth/missing-password"
+                ) {
+                    setAlert("Passwords must be six letters.", "red");
+                } else if (error.code === "auth/email-already-in-use") {
+                    setAlert("Email already in use", "red");
+                } else setAlert("Could not sign you up at this time", "red");
             });
     };
 
@@ -53,9 +64,9 @@ const SignUpScreen = () => {
                     secureTextEntry={true}
                 />
                 <AuthButton title="Sign Up" onPress={handleSignUp} style={styles.signupButton} />
-                <LineSeparator text="OR"/>
-                <SocialLogin keyword="up"/>
-                <LineSeparator text=""/>
+                <LineSeparator text="OR" />
+                <SocialLogin keyword="up" />
+                <LineSeparator text="" />
                 <View style={styles.loginContainer}>
                     <Text style={styles.loginText}>Already have an account? </Text>
                     <AuthTextButton
@@ -93,6 +104,7 @@ const styles = StyleSheet.create({
     },
     loginContainer: {
         flexDirection: "row",
+        gap: 2,
     },
     loginText: {
         fontSize: 16,
