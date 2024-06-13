@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, View } from "react-native";
+import { Button, View } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Header from "../components/Header.jsx";
@@ -9,6 +9,21 @@ import MoveNavigator from "../components/studies/MoveNavigator.jsx";
 import Navigation from "../components/studies/Navigation.jsx";
 import { navigateToParentNode, navigateToChildNode } from "../functions/treeFunctions";
 import treeToPgn from "../functions/treeToPgn.js";
+import { db } from '../firebase';
+import { ref, update } from 'firebase/database';
+import { randomUUID } from 'expo-crypto';
+
+const uploadPgn = async (pgnData) => {
+  const uuid = randomUUID();
+  const pgnRef = ref(db, `pgns/${uuid}`);
+
+  try {
+    await update(pgnRef, pgnData);
+    console.log(`PGN uploaded successfully with UUID: ${uuid}`);
+  } catch (error) {
+    console.error(`Error uploading PGN: ${error}`);
+  }
+};
 
 const ViewStudyScreen = () => {
     const [chess] = useState(new Chess());
@@ -81,6 +96,7 @@ const ViewStudyScreen = () => {
             setCurrentNode(tempNode);
         }
     };
+    
     return (
         <Container>
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -120,7 +136,7 @@ const ViewStudyScreen = () => {
                         chess={chess}
                         setCurrentNode={setCurrentNode}
                     />
-                    <Button onPress={() => console.log(treeToPgn(currentNode))} title="Save"/>
+                    <Button onPress={() => uploadPgn(treeToPgn(currentNode))} title="Save"/>
                 </View>
             </View>
         </Container>

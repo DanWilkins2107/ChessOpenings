@@ -8,6 +8,9 @@ import PgnInput from "../components/addstudy/PgnInput";
 import UrlButton from "../components/addstudy/UrlButton";
 import FormField from "../components/FormField";
 import IconSelector from "../components/addstudy/IconSelector";
+import { db } from "../firebase";
+import { ref, set } from "firebase/database";
+import { randomUUID } from "expo-crypto";
 
 const AddStudyScreen = () => {
     const [pgnText, setPgnText] = useState("");
@@ -15,6 +18,31 @@ const AddStudyScreen = () => {
     const [studyTitle, setStudyTitle] = useState("");
     const [selectedIcon, setSelectedIcon] = useState(null);
 
+    const createStudy = async () => {
+        const studyUuid = randomUUID();
+        const pgnUuid = randomUUID();
+        const studyRef = ref(db, `studies/${studyUuid}`);
+        const pgnRef = ref(db, `pgns/${pgnUuid}`);
+
+        try {
+            await set(pgnRef, null);
+
+            await set(studyRef, {
+                title: studyTitle,
+                icon: selectedIcon,
+                chapters: [
+                    {
+                        name: "Chapter 1",
+                        pgn: pgnUuid,
+                        fen: null,
+                    },
+                ],
+            });
+            console.log(`Study created successfully with UUID: ${studyUuid}`);
+        } catch (error) {
+            console.error(`Error creating study: ${error}`);
+        }
+    };
     return (
         <Container>
             <KeyboardAvoidingView style={styles.container}>
@@ -28,11 +56,11 @@ const AddStudyScreen = () => {
                     <IconSelector selectedIcon={selectedIcon} onSelectIcon={setSelectedIcon} />
                     <AddStudyButton
                         title="Create From Scratch"
-                        onPress={() => console.log("Create From Scratch")}
+                        onPress={createStudy}
                         colors={["#2196F3", "#1976D2"]}
                         textColor="#fff"
                     />
-                    <LineSeparator text="OR"/>
+                    <LineSeparator text="OR" />
                     <PgnInput pgnText={pgnText} setPgnText={setPgnText} />
                     <AddStudyButton
                         title="Import PGN"
@@ -40,7 +68,7 @@ const AddStudyScreen = () => {
                         colors={["#2196F3", "#1976D2"]}
                         textColor="#fff"
                     />
-                    <LineSeparator text="OR"/>
+                    <LineSeparator text="OR" />
                     <UrlButton
                         url={lichessStudyUrl}
                         setUrl={setLichessStudyUrl}

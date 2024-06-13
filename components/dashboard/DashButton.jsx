@@ -1,39 +1,29 @@
 import { Image, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-const DashButton = ({ image, title, description, onPress }) => {
+const DashButton = ({ image, title, description, onPress, backgroundColor }) => {
     return (
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-            <LinearGradient
-                colors={["blue", "darkblue"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradient}
-            >
-                <View style={styles.buttonContent}>
-                    <Image source={image} style={styles.buttonImage} />
-                    <View style={styles.buttonTextContainer}>
-                        <Text style={styles.buttonText}>{title}</Text>
-                        <Text style={styles.buttonDescription}>{description}</Text>
-                    </View>
+        <TouchableOpacity style={[styles.button, {backgroundColor: backgroundColor}]} onPress={onPress}>
+            <View style={styles.buttonContent}>
+                <Image source={image} style={styles.buttonImage} />
+                <View style={styles.buttonTextContainer}>
+                    <Text style={styles.buttonText}>{title}</Text>
+                    <Text style={styles.buttonDescription}>{description}</Text>
                 </View>
-            </LinearGradient>
+            </View>
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
     button: {
-        width: "100%",
-        height: 150,
-        marginBottom: 20,
-    },
-    gradient: {
         flex: 1,
+        height: 150,
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
         padding: 20,
+        overflow: "hidden",
     },
     buttonContent: {
         flexDirection: "row",
