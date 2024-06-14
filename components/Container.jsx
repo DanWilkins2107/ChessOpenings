@@ -6,7 +6,7 @@ const Container = ({ children }) => {
   return (
     <View style={styles.fill}>
       <LinearGradient
-        colors={['#4949a2', '#191462']}
+        colors={['#1a1625', '#191462', "#1a1625"]}
         style={styles.fill}
       >
         <SafeAreaView style={styles.innerContainer}>{children}</SafeAreaView>

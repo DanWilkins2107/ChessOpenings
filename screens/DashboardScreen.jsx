@@ -22,12 +22,13 @@ const DashboardScreen = () => {
                 <Image source={require("../assets/favicon.png")} style={styles.logo} />
             </View>
             <ScrollView style={styles.container}>
+                {/* Try muted tones but a muted blue */}
                 <DashButton
                     image={require("../assets/favicon.png")}
                     title="Daily Test"
                     description="Take a daily test to improve your skills."
                     onPress={() => navigation.navigate("DailyTestDash")}
-                    backgroundColor={"#2196F3"}
+                    backgroundColor={"#AB4E68"}
                 />
                 <View style={styles.lineContainer}>
                     <DashButton
@@ -35,14 +36,14 @@ const DashboardScreen = () => {
                         title="Custom Testing"
                         description="Create a custom test to focus on specific areas."
                         onPress={() => navigation.navigate("CustomTesting")}
-                        backgroundColor={"#1EA896"}
+                        backgroundColor={"#607D8B"}
                     />
                     <DashButton
                         image={require("../assets/favicon.png")}
                         title="Train All"
                         description="Study all of your studies."
                         onPress={() => navigation.navigate("ViewStudies")}
-                        backgroundColor={"#FFC107"}
+                        backgroundColor={"#607D8B"}
                     />
                 </View>
                 <LineSeparator text="" />
@@ -60,14 +61,14 @@ const DashboardScreen = () => {
                         title="Add Study"
                         description="Add a new study to your collection."
                         onPress={() => navigation.navigate("AddStudy")}
-                        backgroundColor={"#4CAF50"}
+                        backgroundColor={"#1EA896"}
                     />
                     <DashButton
                         image={require("../assets/favicon.png")}
                         title="Settings"
                         description="View and edit your settings."
-                        onPress={handleLogout}
-                        backgroundColor={"#607D8B"}
+                        onPress={() => navigation.navigate("Settings")}
+                        backgroundColor={"#1EA896"}
                     />
                 </View>
                 <LineSeparator text="" />

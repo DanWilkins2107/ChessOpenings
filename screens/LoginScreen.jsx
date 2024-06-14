@@ -5,12 +5,13 @@ import LineSeparator from "../components/auth/LineSeparator";
 import { Image, Text, View, StyleSheet } from "react-native";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Checkbox from "expo-checkbox";
 import AuthTextButton from "../components/auth/AuthTextButton";
 import { AlertContext } from "../components/alert/AlertContextProvider";
 import FormField from "../components/FormField";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
     const [email, setEmail] = useState("");
@@ -19,11 +20,34 @@ const LoginScreen = () => {
     const navigation = useNavigation();
     const { setAlert } = useContext(AlertContext);
 
+    useEffect(() => {
+        const getCredentials = async () => {
+            try {
+                const credentials = await AsyncStorage.getItem('credentials');
+                if (credentials) {
+                    const { email, password } = JSON.parse(credentials);
+                    setEmail(email);
+                    setPassword(password);
+                    setRememberMe(true);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getCredentials();
+    }, []);
+
     const handleLogin = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredentials) => {
                 const user = userCredentials.user;
                 console.log("Logged in with:", user.email);
+                if (rememberMe) {
+                    const credentials = JSON.stringify({ email, password });
+                    AsyncStorage.setItem('credentials', credentials);
+                } else {
+                    AsyncStorage.removeItem('credentials');
+                }
             })
             .catch((error) => {
                 if (
@@ -95,16 +119,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        paddingHorizontal: 20,
+        paddingHorizontal: '5%', // Changed to percentage
     },
     logo: {
         width: 100,
         height: 100,
-        marginBottom: 80,
+        marginBottom: '10%', // Changed to percentage
     },
     signupContainer: {
         flexDirection: "row",
-        gap: 2,
+        gap: '2%', // Changed to percentage
     },
     signupText: {
         fontSize: 16,
@@ -112,13 +136,13 @@ const styles = StyleSheet.create({
     },
     underPassword: {
         flexDirection: "row",
-        marginBottom: 20,
+        marginBottom: '5%', // Changed to percentage
         justifyContent: "center",
     },
     rememberMe: {
         flexDirection: "row",
         flex: 1,
-        gap: 6,
+        gap: '3%', // Changed to percentage
     },
 });
 
