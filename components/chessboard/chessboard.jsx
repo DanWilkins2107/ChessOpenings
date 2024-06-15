@@ -33,6 +33,7 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
     const [draggingPiece, setDraggingPiece] = useState(null);
     const [blurSquare, setBlurSquare] = useState(null);
     const [blurColour, setBlurColour] = useState(null);
+    const [draggingOverSquare, setDraggingOverSquare] = useState(null);
 
     useEffect(() => {
         const isCheck = chess.isCheck();
@@ -73,11 +74,11 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
         [position, turnToMove]
     );
 
-    const findMoveSquares = (square) => {
+    const findMoveSquares = useCallback((square) => {
         const moves = chess.moves({ square: square, verbose: true });
         const moveSquares = moves.map((move) => move.to);
         return moveSquares;
-    };
+    }, []);
 
     const chessboardRef = useRef(null);
 
@@ -189,8 +190,21 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
         (event) => {
             const { pageX, pageY } = event.nativeEvent;
             setCoordinates({ x: pageX, y: pageY });
+            if (chessboardPosition.width > 0 && chessboardPosition.height > 0) {
+                const squareWidth = chessboardPosition.width / 8;
+                const squareHeight = chessboardPosition.height / 8;
+                const columnIndex = Math.floor((pageX - chessboardPosition.x) / squareWidth);
+                const rowIndex = Math.floor((pageY - chessboardPosition.y) / squareHeight);
+
+                if (columnIndex >= 0 && columnIndex < 8 && rowIndex >= 0 && rowIndex < 8) {
+                    const square = rows[columnIndex] + columns[rowIndex];
+                    setDraggingOverSquare(square);
+                } else {
+                    setDraggingOverSquare(null);
+                }
+            }
         },
-        [setCoordinates]
+        [chessboardPosition, rows, columns, setCoordinates]
     );
 
     const onPanResponderRelease = useCallback(
@@ -215,6 +229,7 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
                 }
             }
             setDraggingPiece(false);
+            setDraggingOverSquare(null);
             setStartSquare(null);
         },
         [
@@ -292,7 +307,6 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
                                                     style={[
                                                         styles.blur,
                                                         {
-                                                            shadowColor: blurColour,
                                                             backgroundColor: blurColour,
                                                         },
                                                     ]}
@@ -304,6 +318,22 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
                             })}
                         </React.Fragment>
                     ))}
+                    {activePiece && draggingOverSquare && (
+                        <View
+                            style={[
+                                styles.square,
+                                {
+                                    position: "absolute",
+                                    top: `${(columns.indexOf(draggingOverSquare[1]) / 8) * 100}%`,
+                                    left: `${(rows.indexOf(draggingOverSquare[0]) / 8) * 100}%`,
+                                    width: "12.5%",
+                                    height: "12.5%",
+                                },
+                            ]}
+                        >
+                            <View style={styles.draggingOverCircle} />
+                        </View>
+                    )}
                     {activePiece && (
                         <View
                             style={[
@@ -510,22 +540,33 @@ const styles = StyleSheet.create({
         backgroundColor: "#ADD8E6",
     },
     validMoveSquare: {
-        width: "90%",
-        height: "90%",
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         borderWidth: "5%",
-        borderColor: "#ADD8E6",
+        borderColor: '#ADD8E6',
+        borderRadius: "10%",
     },
     blur: {
+        position: 'absolute',
+        top: '5%',
+        left: '5%',
+        width: '90%',
+        height: '90%',
+        borderRadius: '50%',
+        opacity: 0.5,
+    },
+    draggingOverCircle: {
         position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: "100%",
-        width: "20%",
-        height: "20%",
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.7,
-        shadowRadius: "80%",
-        elevation: 200,
+        top: "-40%",
+        left: "-40%",
+        width: "180%",
+        height: "180%",
+        borderRadius: "90%",
+        backgroundColor: "black",
+        opacity: 0.2,
     },
 });
 
