@@ -148,21 +148,20 @@ const ViewStudyScreen = () => {
                         <View style={styles.tab}>
                             <Text>Chapter Selector (TODO)</Text>
                         </View>
-                        <View style={styles.tab}>
-                            <Text>Stockfish Analysis (TODO)</Text>
-                        </View>
                     </PagerView>
                     <View style={styles.circleContainer}>
                         <View style={styles.arrow}>
                             <Text>LEFT TODO</Text>
                         </View>
                         <View style={styles.buttonContainer}>
-                            {[0, 1, 2, 3].map((index) => {
+                            {[0, 1, 2].map((index) => {
                                 return (
-                                    <View style={[
-                                        styles.circle,
-                                        index === currentPage && { backgroundColor: "white" }
-                                      ]}/>
+                                    <View
+                                        style={[
+                                            styles.circle,
+                                            index === currentPage && { backgroundColor: "white" },
+                                        ]}
+                                    />
                                 );
                             })}
                         </View>
@@ -218,7 +217,7 @@ const styles = {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-    }
+    },
 };
 
 export default ViewStudyScreen;
