@@ -11,6 +11,12 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
     navigateToChildNode(sibling.move, currentNode.parent, setCurrentNode, chess, true);
   };
 
+  const handleParentSiblingPress = (parentSibling) => {
+    navigateToParentNode(currentNode, setCurrentNode, chess);
+    navigateToParentNode(currentNode.parent, setCurrentNode, chess);
+    navigateToChildNode(parentSibling.move, currentNode.parent.parent, setCurrentNode, chess, true);
+  };
+
   const handleChildPress = (child) => {
     navigateToChildNode(child.move, currentNode, setCurrentNode, chess, true);
   };
@@ -18,10 +24,17 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.parentColumn}>
-        {currentNode.parent && (
+        {currentNode.parent && currentNode.parent.parent && currentNode.parent.parent.children.map((parentSibling, index) => (
+          <Button
+            key={index}
+            title={parentSibling.move}
+            onPress={() => handleParentSiblingPress(parentSibling)}
+            color={parentSibling === currentNode.parent ? '#000' : '#666'}
+          />
+        ))}
+        {currentNode.parent && (!currentNode.parent.parent || !currentNode.parent.parent.children.includes(currentNode.parent)) && (
           <Button title={currentNode.parent.move} onPress={handleParentPress} color="#000" />
         )}
-   
       </ScrollView>
       <ScrollView style={styles.mainColumn}>
         {currentNode.parent && currentNode.parent.children.map((sibling, index) => (
@@ -29,7 +42,7 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
             key={index}
             title={sibling.move}
             onPress={() => handleSiblingPress(sibling)}
-            color={sibling === currentNode ? '#000' : '#ccc'}
+            color={sibling === currentNode ? '#000' : '#666'}
           />
         ))}
         {!currentNode.parent && (
@@ -47,9 +60,9 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: '20%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    flex: 1,
   },
   parentColumn: {
     flex: 1,

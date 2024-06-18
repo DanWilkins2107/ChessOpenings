@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const NavigationButton = ({ icon, onPress }) => {

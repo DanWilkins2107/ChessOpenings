@@ -1,9 +1,10 @@
 import Container from "../components/Container";
-import { Image, View, StyleSheet, ScrollView } from "react-native";
+import { Image, View, StyleSheet, ScrollView, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import DashButton from "../components/dashboard/DashButton";
 import { auth } from "../firebase";
 import LineSeparator from "../components/auth/LineSeparator";
+import DailyTestButton from "../components/dashboard/DailyTestButton";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const DashboardScreen = () => {
     const navigation = useNavigation();
@@ -21,72 +22,59 @@ const DashboardScreen = () => {
             <View style={styles.logoContainer}>
                 <Image source={require("../assets/favicon.png")} style={styles.logo} />
             </View>
-            <ScrollView style={styles.container}>
-                {/* Try muted tones but a muted blue */}
-                <DashButton
-                    image={require("../assets/favicon.png")}
-                    title="Daily Test"
-                    description="Take a daily test to improve your skills."
-                    onPress={() => navigation.navigate("DailyTestDash")}
-                    backgroundColor={"#AB4E68"}
-                />
-                <View style={styles.lineContainer}>
-                    <DashButton
-                        image={require("../assets/favicon.png")}
-                        title="Custom Testing"
-                        description="Create a custom test to focus on specific areas."
-                        onPress={() => navigation.navigate("CustomTesting")}
-                        backgroundColor={"#607D8B"}
-                    />
-                    <DashButton
-                        image={require("../assets/favicon.png")}
-                        title="Train All"
-                        description="Study all of your studies."
-                        onPress={() => navigation.navigate("ViewStudies")}
-                        backgroundColor={"#607D8B"}
-                    />
-                </View>
-                <LineSeparator text="" />
-                <DashButton
-                    image={require("../assets/favicon.png")}
-                    title="Upgrade to Pro"
-                    description="Unlock all features with a Pro account."
-                    onPress={() => navigation.navigate("ChangePlan")}
-                    backgroundColor={"#FF5722"}
-                />
+            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+                <DailyTestButton />
                 <LineSeparator text="" />
                 <View style={styles.lineContainer}>
-                    <DashButton
-                        image={require("../assets/favicon.png")}
-                        title="Add Study"
-                        description="Add a new study to your collection."
-                        onPress={() => navigation.navigate("AddStudy")}
-                        backgroundColor={"#1EA896"}
-                    />
-                    <DashButton
-                        image={require("../assets/favicon.png")}
-                        title="Settings"
-                        description="View and edit your settings."
-                        onPress={() => navigation.navigate("Settings")}
-                        backgroundColor={"#1EA896"}
-                    />
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("CustomTesting")}>
+                        <View style={styles.iconContainer}>
+                            <Icon name="cog" size={24} color="white" />
+                        </View>
+                        <Text style={styles.buttonText}>Custom Train</Text>
+                        <Text style={styles.buttonDescription}>Focus on specific areas.</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ViewStudies")}>
+                        <View style={styles.iconContainer}>
+                            <Icon name="book" size={24} color="white" />
+                        </View>
+                        <Text style={styles.buttonText}>Train All</Text>
+                        <Text style={styles.buttonDescription}>Study all of your studies.</Text>
+                    </TouchableOpacity>
                 </View>
                 <LineSeparator text="" />
-                <DashButton
-                    image={require("../assets/favicon.png")}
-                    title="Settings"
-                    description="View and edit your settings."
-                    onPress={handleLogout}
-                    backgroundColor={"#607D8B"}
-                />
-                <DashButton 
-                    image={require("../assets/favicon.png")}
-                    title="Logout"
-                    description="Logout of your account."
-                    onPress={handleLogout}
-                    backgroundColor={"#F44336"}
-                />
-    
+                <TouchableOpacity style={[styles.button, styles.upgradeButton]} onPress={() => navigation.navigate("ChangePlan")}>
+                    <View style={styles.iconContainer}>
+                        <Icon name="rocket" size={24} color="#333" />
+                    </View>
+                    <Text style={styles.upgradeButtonText}>Upgrade to Pro</Text>
+                    <Text style={styles.buttonDescription}>Unlock all features with a Pro account.</Text>
+                </TouchableOpacity>
+                <LineSeparator text="" />
+                <View style={styles.lineContainer}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("AddStudy")}>
+                        <View style={styles.iconContainer}>
+                            <Icon name="plus" size={24} color="white" />
+                        </View>
+                        <Text style={styles.buttonText}>Add Study</Text>
+                        <Text style={styles.buttonDescription}>Add a new study to your collection.</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ViewStudy")}>
+                        <View style={styles.iconContainer}>
+                            <Icon name="eye" size={24} color="white" />
+                        </View>
+                        <Text style={styles.buttonText}>View Study</Text>
+                        <Text style={styles.buttonDescription}>View a study from your collection.</Text>
+                    </TouchableOpacity>
+                </View>
+                <LineSeparator text="" />
+                <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate("Settings")}>
+                    <Icon name="cog" size={24} color="#333" />
+                    <Text style={styles.settingsButtonText}>Settings</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                    <Icon name="sign-out" size={24} color="#333" style={styles.logoutIcon} />
+                    <Text style={styles.logoutButtonText}>Logout</Text>
+                </TouchableOpacity>
             </ScrollView>
         </Container>
     );
@@ -105,11 +93,90 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
     },
+    contentContainer: {
+        paddingVertical: 20,
+    },
     lineContainer: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 20,
+        justifyContent: "space-between",
+    },
+    button: {
+        backgroundColor: "rgba(199, 184, 234, 0.5)",
+        padding: 20,
+        borderRadius: 10,
+        marginVertical: 10,
+        borderColor: "#C7B8EA",
+        borderWidth: 2,
+        height: 150,
+        width: "45%",
         justifyContent: "center",
+    },
+    upgradeButton: {
+        backgroundColor: "#F7D2C4",
+        borderColor: "#F7D2C4",
+        width: "100%",
+        height: 150,
+    },
+    space: {
+        width: 10,
+    },
+    settingsButton: {
+        backgroundColor: "#ccc",
+        padding: 15,
+        borderRadius: 10,
+        marginVertical: 10,
+        borderColor: "#ccc",
+        borderWidth: 2,
+        width: "100%",
+        justifyContent: "center",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    logoutButton: {
+        backgroundColor: "#FFC0CB",
+        padding: 15,
+        borderRadius: 10,
+        marginVertical: 10,
+        borderColor: "#FFC0CB",
+        borderWidth: 2,
+        width: "100%",
+        justifyContent: "center",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    buttonText: {
+        fontSize: 18,
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    upgradeButtonText: {
+        fontSize: 18,
+        color: "#333",
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    buttonDescription: {
+        fontSize: 16,
+        color: "white",
+        textAlign: "center",
+    },
+    settingsButtonText: {
+        fontSize: 20,
+        color: "#333",
+        fontWeight: "bold",
+        marginLeft: 10,
+    },
+    logoutButtonText: {
+        fontSize: 20,
+        color: "#333",
+        fontWeight: "bold",
+        marginLeft: 10,
+    },
+    iconContainer: {
+        alignItems: "center",
+        marginBottom: 10,
     },
 });
 

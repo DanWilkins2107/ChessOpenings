@@ -536,7 +536,6 @@ const styles = StyleSheet.create({
     validMoveCircle: {
         width: "20%",
         height: "20%",
-        borderRadius: "10%",
         backgroundColor: "#ADD8E6",
     },
     validMoveSquare: {
@@ -545,9 +544,8 @@ const styles = StyleSheet.create({
         left: 0,
         width: '100%',
         height: '100%',
-        borderWidth: "5%",
+        borderWidth: 6,
         borderColor: '#ADD8E6',
-        borderRadius: "10%",
     },
     blur: {
         position: 'absolute',
@@ -555,8 +553,8 @@ const styles = StyleSheet.create({
         left: '5%',
         width: '90%',
         height: '90%',
-        borderRadius: '50%',
         opacity: 0.5,
+        borderRadius: 10,
     },
     draggingOverCircle: {
         position: "absolute",
@@ -564,7 +562,7 @@ const styles = StyleSheet.create({
         left: "-40%",
         width: "180%",
         height: "180%",
-        borderRadius: "90%",
+        borderRadius: 1000,
         backgroundColor: "black",
         opacity: 0.2,
     },

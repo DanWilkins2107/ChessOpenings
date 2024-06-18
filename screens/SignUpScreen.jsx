@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
     },
     loginContainer: {
         flexDirection: "row",
-        gap: 2,
     },
     loginText: {
         fontSize: 16,

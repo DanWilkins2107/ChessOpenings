@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, View } from "react-native";
+import { Button, View, Text } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Header from "../components/Header.jsx";
@@ -9,23 +9,26 @@ import MoveNavigator from "../components/studies/MoveNavigator.jsx";
 import Navigation from "../components/studies/Navigation.jsx";
 import { navigateToParentNode, navigateToChildNode } from "../functions/treeFunctions";
 import treeToPgn from "../functions/treeToPgn.js";
-import { db } from '../firebase';
-import { ref, update } from 'firebase/database';
-import { randomUUID } from 'expo-crypto';
+import { db } from "../firebase";
+import { ref, update } from "firebase/database";
+import { randomUUID } from "expo-crypto";
+import PagerView from "react-native-pager-view";
+import MoveList from "../components/studies/MoveList.jsx";
 
 const uploadPgn = async (pgnData) => {
-  const uuid = randomUUID();
-  const pgnRef = ref(db, `pgns/${uuid}`);
+    const uuid = randomUUID();
+    const pgnRef = ref(db, `pgns/${uuid}`);
 
-  try {
-    await update(pgnRef, pgnData);
-    console.log(`PGN uploaded successfully with UUID: ${uuid}`);
-  } catch (error) {
-    console.error(`Error uploading PGN: ${error}`);
-  }
+    try {
+        await update(pgnRef, pgnData);
+        console.log(`PGN uploaded successfully with UUID: ${uuid}`);
+    } catch (error) {
+        console.error(`Error uploading PGN: ${error}`);
+    }
 };
 
 const ViewStudyScreen = () => {
+    const [currentPage, setCurrentPage] = useState(0);
     const [chess] = useState(new Chess());
     const [backgroundColor, setBackgroundColor] = useState("white");
     const [message, setMessage] = useState({
@@ -96,51 +99,126 @@ const ViewStudyScreen = () => {
             setCurrentNode(tempNode);
         }
     };
-    
+
     return (
         <Container>
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={styles.container}>
                 <Header showBackButton />
-                <View
-                    style={{
-                        width: "90%",
-                        height: "90%",
-                        display: "flex",
-                        gap: "5",
-                    }}
-                >
+                <View style={styles.chessboardContainer}>
                     <Chessboard
                         chess={chess}
                         moveFunction={moveFunction}
                         backgroundColor={backgroundColor}
                         pov={pov}
                     />
-                    <View style={{ flexDirection: "row", justifyContent: "center" }}>
-                        <Navigation
-                            onDoubleLeftPress={handleBackToStartPress}
-                            onLeftPress={handleParentPress}
-                            onFlipPress={() => {
-                                pov === "w" ? setPov("b") : setPov("w");
-                            }}
-                            onRightPress={handleRightPress}
-                            onDoubleRightPress={handleDoubleRightPress}
-                        />
-                    </View>
+                </View>
+                <View style={styles.navigatorContainer}>
+                    <Navigation
+                        onDoubleLeftPress={handleBackToStartPress}
+                        onLeftPress={handleParentPress}
+                        onFlipPress={() => {
+                            pov === "w" ? setPov("b") : setPov("w");
+                        }}
+                        onRightPress={handleRightPress}
+                        onDoubleRightPress={handleDoubleRightPress}
+                    />
                     <MessageBox
                         message={message.text}
                         textColor={message.color}
                         backgroundColor={message.backgroundColor}
                     />
-                    <MoveNavigator
-                        currentNode={currentNode}
-                        chess={chess}
-                        setCurrentNode={setCurrentNode}
-                    />
-                    <Button onPress={() => uploadPgn(treeToPgn(currentNode))} title="Save"/>
+                    <PagerView
+                        style={styles.pagerView}
+                        onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
+                    >
+                        <View style={styles.tab}>
+                            <MoveNavigator
+                                currentNode={currentNode}
+                                chess={chess}
+                                setCurrentNode={setCurrentNode}
+                            />
+                        </View>
+                        <View style={styles.tab}>
+                            <MoveList
+                                currentNode={currentNode}
+                                chess={chess}
+                                setCurrentNode={setCurrentNode}
+                            />
+                        </View>
+                        <View style={styles.tab}>
+                            <Text>Chapter Selector (TODO)</Text>
+                        </View>
+                        <View style={styles.tab}>
+                            <Text>Stockfish Analysis (TODO)</Text>
+                        </View>
+                    </PagerView>
+                    <View style={styles.circleContainer}>
+                        <View style={styles.arrow}>
+                            <Text>LEFT TODO</Text>
+                        </View>
+                        <View style={styles.buttonContainer}>
+                            {[0, 1, 2, 3].map((index) => {
+                                return (
+                                    <View style={[
+                                        styles.circle,
+                                        index === currentPage && { backgroundColor: "white" }
+                                      ]}/>
+                                );
+                            })}
+                        </View>
+                        <View style={styles.arrow}>
+                            <Text>RIGHT TODO</Text>
+                        </View>
+                    </View>
+                    <Button onPress={() => uploadPgn(treeToPgn(currentNode))} title="Save" />
                 </View>
             </View>
         </Container>
     );
+};
+
+const styles = {
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    chessboardContainer: {
+        width: "90%",
+        height: "50%",
+        display: "flex",
+    },
+    navigatorContainer: {
+        width: "90%",
+        height: "40%",
+        display: "flex",
+    },
+    pagerView: {
+        flex: 1,
+    },
+    tab: {
+        flex: 1,
+        backgroundColor: "white",
+    },
+    circle: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: "transparent",
+        borderWidth: 1,
+        borderColor: "white",
+    },
+    buttonContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 4,
+    },
+    circleContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+    }
 };
 
 export default ViewStudyScreen;

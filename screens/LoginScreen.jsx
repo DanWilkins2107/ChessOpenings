@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
     },
     signupContainer: {
         flexDirection: "row",
-        gap: '2%', // Changed to percentage
     },
     signupText: {
         fontSize: 16,
@@ -142,7 +141,6 @@ const styles = StyleSheet.create({
     rememberMe: {
         flexDirection: "row",
         flex: 1,
-        gap: '3%', // Changed to percentage
     },
 });
 
