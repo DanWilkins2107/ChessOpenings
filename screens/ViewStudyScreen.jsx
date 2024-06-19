@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, View, Text } from "react-native";
+import { Button, View, Text, TouchableOpacity } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Header from "../components/Header.jsx";
@@ -14,6 +14,7 @@ import { ref, update } from "firebase/database";
 import { randomUUID } from "expo-crypto";
 import PagerView from "react-native-pager-view";
 import MoveList from "../components/studies/MoveList.jsx";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const uploadPgn = async (pgnData) => {
     const uuid = randomUUID();
@@ -150,9 +151,14 @@ const ViewStudyScreen = () => {
                         </View>
                     </PagerView>
                     <View style={styles.circleContainer}>
-                        <View style={styles.arrow}>
-                            <Text>LEFT TODO</Text>
-                        </View>
+                        <TouchableOpacity
+                            onPress={() => setCurrentPage(currentPage - 1)}
+                            disabled={currentPage === 0}
+                        >
+                            <View style={{ padding: 10 }}>
+                                <Icon name="chevron-left" size={20} color="white" />
+                            </View>
+                        </TouchableOpacity>
                         <View style={styles.buttonContainer}>
                             {[0, 1, 2].map((index) => {
                                 return (
@@ -160,14 +166,20 @@ const ViewStudyScreen = () => {
                                         style={[
                                             styles.circle,
                                             index === currentPage && { backgroundColor: "white" },
+                                            { marginHorizontal: 10 },
                                         ]}
                                     />
                                 );
                             })}
                         </View>
-                        <View style={styles.arrow}>
-                            <Text>RIGHT TODO</Text>
-                        </View>
+                        <TouchableOpacity
+                            onPress={() => setCurrentPage(currentPage + 1)}
+                            disabled={currentPage === 2}
+                        >
+                            <View style={{ padding: 10 }}>
+                                <Icon name="chevron-right" size={20} color="white" />
+                            </View>
+                        </TouchableOpacity>
                     </View>
                     <Button onPress={() => uploadPgn(treeToPgn(currentNode))} title="Save" />
                 </View>

@@ -26,14 +26,20 @@ const DashboardScreen = () => {
                 <DailyTestButton />
                 <LineSeparator text="" />
                 <View style={styles.lineContainer}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("CustomTesting")}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigation.navigate("CustomTesting")}
+                    > 
                         <View style={styles.iconContainer}>
                             <Icon name="cog" size={24} color="white" />
                         </View>
                         <Text style={styles.buttonText}>Custom Train</Text>
                         <Text style={styles.buttonDescription}>Focus on specific areas.</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ViewStudies")}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigation.navigate("TrainAll")}
+                    >
                         <View style={styles.iconContainer}>
                             <Icon name="book" size={24} color="white" />
                         </View>
@@ -42,32 +48,50 @@ const DashboardScreen = () => {
                     </TouchableOpacity>
                 </View>
                 <LineSeparator text="" />
-                <TouchableOpacity style={[styles.button, styles.upgradeButton]} onPress={() => navigation.navigate("ChangePlan")}>
+                <TouchableOpacity
+                    style={[styles.button, styles.upgradeButton]}
+                    onPress={() => navigation.navigate("ChangePlan")}
+                >
                     <View style={styles.iconContainer}>
                         <Icon name="rocket" size={24} color="#333" />
                     </View>
                     <Text style={styles.upgradeButtonText}>Upgrade to Pro</Text>
-                    <Text style={styles.buttonDescription}>Unlock all features with a Pro account.</Text>
+                    <Text style={styles.upgradeButtonDescription}>
+                        Unlock all features with a Pro account.
+                    </Text>
                 </TouchableOpacity>
                 <LineSeparator text="" />
                 <View style={styles.lineContainer}>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("AddStudy")}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigation.navigate("AddStudy")}
+                    >
                         <View style={styles.iconContainer}>
                             <Icon name="plus" size={24} color="white" />
                         </View>
                         <Text style={styles.buttonText}>Add Study</Text>
-                        <Text style={styles.buttonDescription}>Add a new study to your collection.</Text>
+                        <Text style={styles.buttonDescription}>
+                            Add a new study to your collection.
+                        </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ViewStudy")}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigation.navigate("ViewStudies")}
+                    >
                         <View style={styles.iconContainer}>
                             <Icon name="eye" size={24} color="white" />
                         </View>
                         <Text style={styles.buttonText}>View Study</Text>
-                        <Text style={styles.buttonDescription}>View a study from your collection.</Text>
+                        <Text style={styles.buttonDescription}>
+                            View a study from your collection.
+                        </Text>
                     </TouchableOpacity>
                 </View>
                 <LineSeparator text="" />
-                <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate("Settings")}>
+                <TouchableOpacity
+                    style={styles.settingsButton}
+                    onPress={() => navigation.navigate("Settings")}
+                >
                     <Icon name="cog" size={24} color="#333" />
                     <Text style={styles.settingsButtonText}>Settings</Text>
                 </TouchableOpacity>
@@ -113,10 +137,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     upgradeButton: {
-        backgroundColor: "#F7D2C4",
-        borderColor: "#F7D2C4",
+        backgroundColor: "rgba(241, 177, 154, 0.8)",
+        borderColor: "#F1B19A",
         width: "100%",
         height: 150,
+    },
+    upgradeButtonDescription: {
+        color: "#333",
+        fontSize: 16,
+        textAlign: "center",
     },
     space: {
         width: 10,
