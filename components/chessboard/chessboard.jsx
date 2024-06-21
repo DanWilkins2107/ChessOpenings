@@ -536,6 +536,7 @@ const styles = StyleSheet.create({
     validMoveCircle: {
         width: "20%",
         height: "20%",
+        borderRadius: 1000,
         backgroundColor: "#ADD8E6",
     },
     validMoveSquare: {

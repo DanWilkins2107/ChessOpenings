@@ -1,81 +1,112 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Image, Modal, FlatList } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, TouchableOpacity, Text, Image, View, ScrollView } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Colors from "../../colors";
 
-const SelectIcon = ({ selectedIcon, onSelectIcon }) => {
-    const [isModalVisible, setIsModalVisible] = React.useState(false);
+const SelectIcon = ({ selectedIcon, setSelectedIcon }) => {
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
-    const icons = [
-        require("./icons/wb.png"),
-        require("./icons/wr.png"),
-        require("./icons/wn.png"),
-        require("./icons/wq.png"),
-        require("./icons/wk.png"),
-        require("./icons/wp.png"),
-        require("./icons/bb.png"),
-        require("./icons/br.png"),
-        require("./icons/bn.png"),
-        require("./icons/bq.png"),
-        require("./icons/bk.png"),
-        require("./icons/bp.png"),
-    ];
+    const iconObj = {
+        wb: require("./icons/wb.png"),
+        wr: require("./icons/wr.png"),
+        wn: require("./icons/wn.png"),
+        wq: require("./icons/wq.png"),
+        wk: require("./icons/wk.png"),
+        wp: require("./icons/wp.png"),
+        bb: require("./icons/bb.png"),
+        br: require("./icons/br.png"),
+        bn: require("./icons/bn.png"),
+        bq: require("./icons/bq.png"),
+        bk: require("./icons/bk.png"),
+        bp: require("./icons/bp.png"),
+    };
 
     const handlePress = () => {
-        setIsModalVisible(true);
+        setIsDropdownVisible(!isDropdownVisible);
     };
 
     const handleSelect = (icon) => {
-        onSelectIcon(icon);
-        setIsModalVisible(false);
+        setSelectedIcon(icon);
+        setIsDropdownVisible(false);
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.leftRectangle}>
-                {selectedIcon && <Image source={selectedIcon} style={styles.icon} />}
-                {!selectedIcon && <Text>Choose Icon</Text>}
-            </View>
-            <TouchableOpacity style={styles.rightRectangle} onPress={handlePress}>
-                <Icon name={isModalVisible ? "times" : "plus"} size={30} color="#000" />
+        <View style={styles.button}>
+            <TouchableOpacity style={styles.topbar} onPress={handlePress}>
+                {selectedIcon && (
+                    <View style={styles.chosen}>
+                        <Text style={styles.text}>Chosen Icon:</Text>
+                        <View style={{ width: 10 }} />
+                        <Image source={iconObj[selectedIcon]} style={styles.icon} />
+                    </View>
+                )}
+                {!selectedIcon && <Text style={styles.text}>Choose Icon</Text>}
+                <Icon name="caret-down" size={30} color="#fff" />
             </TouchableOpacity>
+            {isDropdownVisible && (
+                <ScrollView style={styles.dropdown}>
+                    <View style={styles.dropdownInner}>
+                        {Object.keys(iconObj).map((icon) => (
+                            <TouchableOpacity
+                                style={styles.iconContainer}
+                                key={icon}
+                                onPress={() => handleSelect(icon)}
+                            >
+                                <Image source={iconObj[icon]} style={styles.icon} />
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </ScrollView>
+            )}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    button: {
+        width: "100%",
+        borderRadius: 10,
+        backgroundColor: Colors.primary,
+        borderColor: Colors.primaryBorder,
+        borderWidth: 2,
+        flexDirection: "column",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    topbar: {
         flexDirection: "row",
-        justifyContent: "center",
-    },
-    leftRectangle: {
-        width: 80,
-        height: 80,
-        borderRadius: 10,
-        backgroundColor: "white",
-        justifyContent: "center",
         alignItems: "center",
+        justifyContent: "space-between",
+        width: "100%",
+        height: "100%",
+        paddingHorizontal: 20,
+        height: 60,
     },
-    rightRectangle: {
-        width: 50,
-        height: 80,
-        borderRadius: 10,
-        backgroundColor: "white",
-        justifyContent: "center",
+    chosen: {
+        flexDirection: "row",
         alignItems: "center",
-        marginLeft: 10,
     },
     icon: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
     },
-    modal: {
-        backgroundColor: "white",
-        padding: 20,
-        borderRadius: 10,
-        width: 300,
-        height: 300,
-        position: "absolute",
-        zIndex: 5,
+    text: {
+        fontSize: 20,
+        color: "#fff",
+    },
+    dropdown: {
+        width: "100%",
+        maxHeight: 200,
+    },
+    dropdownInner: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+    },
+    iconContainer: {
+        width: "16%",
+        justifyContent: "center",
+        paddingVertical: 10,
     },
 });
 

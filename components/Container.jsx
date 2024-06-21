@@ -1,14 +1,16 @@
 import React from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, View, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 const Container = ({ children }) => {
     return (
-        <View style={styles.fill}>
-            <LinearGradient colors={["#1a1625", "#1d1740", "#1a1625"]} style={styles.fill}>
-                <SafeAreaView style={styles.innerContainer}>{children}</SafeAreaView>
-            </LinearGradient>
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.fill}>
+                <LinearGradient colors={["#1a1625", "#1d1740", "#1a1625"]} style={styles.fill}>
+                    <SafeAreaView style={styles.innerContainer}>{children}</SafeAreaView>
+                </LinearGradient>
+            </View>
+        </TouchableWithoutFeedback>
     );
 };
 

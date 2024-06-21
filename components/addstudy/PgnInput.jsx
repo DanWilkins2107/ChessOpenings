@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 
 const PgnInput = ({ pgnText, setPgnText }) => {
   return (
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     marginBottom: 20,
-    height: 200,
+    height: "20%",
     textAlignVertical: "top",
   },
 });

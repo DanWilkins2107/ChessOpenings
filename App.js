@@ -10,9 +10,13 @@ import { AlertProvider } from "./components/alert/AlertContextProvider";
 import Alert from "./components/alert/Alert";
 import DashboardScreen from "./screens/DashboardScreen.jsx";
 import DailyTestDashScreen from "./screens/DailyTestDashScreen.jsx";
-import CustomTestingScreen from "./screens/CustomTestingScreen.jsx";
 import ViewStudyScreen from "./screens/ViewStudyScreen.jsx";
 import AddStudyScreen from "./screens/AddStudyScreen.jsx";
+import ChooseTrainStudyScreen from "./screens/ChooseTrainStudyScreen.jsx";
+import ChooseViewStudyScreen from "./screens/ChooseViewStudyScreen.jsx";
+import TrainScreen from "./screens/TrainScreen.jsx";
+import DailyTestScreen from "./screens/DailyTestScreen.jsx";
+import ChangePlanScreen from "./screens/ChangePlanScreen.jsx";
 
 const Stack = createStackNavigator();
 
@@ -25,9 +29,13 @@ const authScreens = [
 const userScreens = [
   { name: "Dashboard", component: DashboardScreen },
   { name: "DailyTestDash", component: DailyTestDashScreen },
-  { name: "CustomTesting", component: CustomTestingScreen },
-  { name: "ViewStudies", component: ViewStudyScreen },
+  { name: "ViewStudy", component: ViewStudyScreen },
   { name: "AddStudy", component: AddStudyScreen },
+  { name: "ChooseTrainStudy", component: ChooseTrainStudyScreen },
+  { name: "ChooseViewStudy", component: ChooseViewStudyScreen },
+  { name: "Train", component: TrainScreen },
+  { name: "DailyTest", component: DailyTestScreen },
+  { name: "ChangePlan", component: ChangePlanScreen },
 ];
 
 const App = () => {

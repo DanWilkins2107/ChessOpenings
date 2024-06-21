@@ -5,6 +5,7 @@ import { auth } from "../firebase";
 import LineSeparator from "../components/auth/LineSeparator";
 import DailyTestButton from "../components/dashboard/DailyTestButton";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Colors from "../colors";
 
 const DashboardScreen = () => {
     const navigation = useNavigation();
@@ -28,7 +29,7 @@ const DashboardScreen = () => {
                 <View style={styles.lineContainer}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate("CustomTesting")}
+                        onPress={() => navigation.navigate("ChooseTrainStudy")}
                     > 
                         <View style={styles.iconContainer}>
                             <Icon name="cog" size={24} color="white" />
@@ -38,7 +39,7 @@ const DashboardScreen = () => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate("TrainAll")}
+                        onPress={() => navigation.navigate("Train")}
                     >
                         <View style={styles.iconContainer}>
                             <Icon name="book" size={24} color="white" />
@@ -76,7 +77,7 @@ const DashboardScreen = () => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate("ViewStudies")}
+                        onPress={() => navigation.navigate("ChooseViewStudy")}
                     >
                         <View style={styles.iconContainer}>
                             <Icon name="eye" size={24} color="white" />
@@ -126,19 +127,18 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     button: {
-        backgroundColor: "rgba(199, 184, 234, 0.5)",
+        backgroundColor: Colors.primary,
         padding: 20,
         borderRadius: 10,
         marginVertical: 10,
-        borderColor: "#C7B8EA",
+        borderColor: Colors.primaryBorder,
         borderWidth: 2,
         height: 150,
         width: "45%",
         justifyContent: "center",
-    },
+      },
     upgradeButton: {
-        backgroundColor: "rgba(241, 177, 154, 0.8)",
-        borderColor: "#F1B19A",
+        backgroundColor: Colors.primaryBorder,
         width: "100%",
         height: 150,
     },

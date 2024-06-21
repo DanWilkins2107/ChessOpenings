@@ -1,32 +1,40 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 import Container from "../components/Container";
 import Header from "../components/Header";
 import AddStudyButton from "../components/addstudy/AddStudyButton";
 import LineSeparator from "../components/auth/LineSeparator";
 import PgnInput from "../components/addstudy/PgnInput";
-import UrlButton from "../components/addstudy/UrlButton";
 import FormField from "../components/FormField";
 import IconSelector from "../components/addstudy/IconSelector";
 import { db } from "../firebase";
 import { ref, set } from "firebase/database";
 import { randomUUID } from "expo-crypto";
+import Colors from "../colors";
+import { AlertContext } from "../components/alert/AlertContextProvider";
+import { auth } from "../firebase";
 
-const AddStudyScreen = () => {
+const AddStudyScreen = ({ navigation }) => {
     const [pgnText, setPgnText] = useState("");
-    const [lichessStudyUrl, setLichessStudyUrl] = useState("");
     const [studyTitle, setStudyTitle] = useState("");
     const [selectedIcon, setSelectedIcon] = useState(null);
+    const [lichessStudyUrl, setLichessStudyUrl] = useState("");
+    const { setAlert } = useContext(AlertContext);
 
     const createStudy = async () => {
         const studyUuid = randomUUID();
         const pgnUuid = randomUUID();
         const studyRef = ref(db, `studies/${studyUuid}`);
-        const pgnRef = ref(db, `pgns/${pgnUuid}`);
-
+        const userStudyRef = ref(db, `users/${auth.currentUser.uid}/studies/${studyUuid}`);
+        if (!studyTitle) {
+            setAlert("Please enter a study title.", "red");
+            return;
+        }
+        if (!selectedIcon) {
+            setAlert("Please select an icon.", "red");
+            return;
+        }
         try {
-            await set(pgnRef, null);
-
             await set(studyRef, {
                 title: studyTitle,
                 icon: selectedIcon,
@@ -34,18 +42,19 @@ const AddStudyScreen = () => {
                     {
                         name: "Chapter 1",
                         pgn: pgnUuid,
-                        fen: null,
                     },
                 ],
             });
-            console.log(`Study created successfully with UUID: ${studyUuid}`);
+            await set(userStudyRef, Date.now());
+            setAlert("Study created!", "green");
+            navigation.navigate("ViewStudy", { studyUuid });
         } catch (error) {
-            console.error(`Error creating study: ${error}`);
+            setAlert("Error creating study. Please try again.", "red");
         }
     };
     return (
         <Container>
-            <KeyboardAvoidingView style={styles.container}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
                 <Header showBackButton />
                 <ScrollView style={styles.scrollView}>
                     <FormField
@@ -53,11 +62,13 @@ const AddStudyScreen = () => {
                         onChangeText={setStudyTitle}
                         placeholder="Enter Study Title"
                     />
-                    <IconSelector selectedIcon={selectedIcon} onSelectIcon={setSelectedIcon} />
+                    <IconSelector selectedIcon={selectedIcon} setSelectedIcon={setSelectedIcon} />
+                    <LineSeparator />
                     <AddStudyButton
                         title="Create From Scratch"
                         onPress={createStudy}
-                        colors={["#2196F3", "#1976D2"]}
+                        backgroundColor={Colors.primary}
+                        borderColor={Colors.primaryBorder}
                         textColor="#fff"
                     />
                     <LineSeparator text="OR" />
@@ -65,17 +76,21 @@ const AddStudyScreen = () => {
                     <AddStudyButton
                         title="Import PGN"
                         onPress={() => console.log("Import PGN")}
-                        colors={["#2196F3", "#1976D2"]}
+                        backgroundColor={Colors.primary}
+                        borderColor={Colors.primaryBorder}
                         textColor="#fff"
                     />
                     <LineSeparator text="OR" />
-                    <UrlButton
-                        url={lichessStudyUrl}
-                        setUrl={setLichessStudyUrl}
+                    <FormField
+                        value={lichessStudyUrl}
+                        onChangeText={setLichessStudyUrl}
                         placeholder="Enter Lichess Study URL"
+                    />
+                    <AddStudyButton
                         title="Import Lichess Study"
                         onPress={() => console.log("Import Lichess Study")}
-                        colors={["#fff", "#ddd"]}
+                        backgroundColor="rgba(255, 255, 255, 0.9)"
+                        borderColor="#fff"
                         textColor="#000"
                     />
                 </ScrollView>
