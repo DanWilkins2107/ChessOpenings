@@ -1,19 +1,23 @@
-import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "../../colors";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-const StudyPicker = ({ title, chapterArray, onStudyPress, onChapterPress, children }) => {
-    const [chaptersShown, setChaptersShown] = useState(false);
+const StudyPicker = ({ UUID, title, onStudyPress, chapters, children }) => {
     return (
         <View style={styles.button}>
-            {/* <Text>{title}</Text>
-        <Text>{icon}</Text>
-        <Text>{JSON.stringify(chapterArray, null, 2)}</Text> */}
-            <TouchableOpacity
-                style={styles.topbar}
-                onPress={() => setChaptersShown(!setChaptersShown)}
-            >
-                {children}
+            <TouchableOpacity style={styles.topbar} onPress={() => onStudyPress(UUID)}>
+                <View style={styles.section}>
+                    <View style={styles.imageWrapper}>{children}</View>
+                    <View style={styles.column}>
+                      <Text style={styles.title}>{title}</Text>
+                      <Text style={styles.text}>
+                          {JSON.stringify(chapters.length)} chapter{chapters.length === 1 ? "" : "s"}
+                      </Text>
+                    </View>
+                </View>
+                <View style={styles.iconHolder}> 
+                  <Icon name="caret-right" size={30} color="#fff" />
+                </View>
             </TouchableOpacity>
         </View>
     );
@@ -22,7 +26,7 @@ const StudyPicker = ({ title, chapterArray, onStudyPress, onChapterPress, childr
 const styles = StyleSheet.create({
     button: {
         width: "100%",
-        height: 60,
+        height: 100,
         borderRadius: 10,
         backgroundColor: Colors.primary,
         borderColor: Colors.primaryBorder,
@@ -33,10 +37,47 @@ const styles = StyleSheet.create({
     },
     topbar: {
         flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
         width: "100%",
         height: "100%",
+        paddingLeft: 10,
+        paddingRight: 20,
+        justifyContent: "space-between",
+    },
+    imageWrapper: {
+        width: 80,
+        height: 80,
+        borderRadius: 10,
+        overflow: "hidden",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    title: {
+        fontSize: 30,
+        marginLeft: 10,
+        fontWeight: "semibold", 
+        color: "#fff",
+
+    },
+    text: {
+        fontSize: 20,
+        color: "#fff",
+        marginLeft: 10,
+    },
+    section: {
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+    },
+    column: {
+        flexDirection: "column",
+        alignItems: "start",
+        justifyContent: "space-between",
+        paddingVertical: 10,
+        height: "100%",
+    },
+    iconHolder: {
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 
