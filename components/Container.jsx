@@ -1,13 +1,17 @@
 import React from "react";
 import { SafeAreaView, View, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 const Container = ({ children }) => {
+    const headerHeight = useHeaderHeight();
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.fill}>
                 <LinearGradient colors={["#1a1625", "#1d1740", "#1a1625"]} style={styles.fill}>
-                    <SafeAreaView style={styles.innerContainer}>{children}</SafeAreaView>
+                    <View style={[{ paddingTop: headerHeight }, styles.innerContainer]}>
+                        <SafeAreaView style={styles.innerContainer}>{children}</SafeAreaView>
+                    </View>
                 </LinearGradient>
             </View>
         </TouchableWithoutFeedback>

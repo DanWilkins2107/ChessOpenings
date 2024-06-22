@@ -9,7 +9,7 @@ const StudyPicker = ({ UUID, title, onStudyPress, chapters, children }) => {
                 <View style={styles.section}>
                     <View style={styles.imageWrapper}>{children}</View>
                     <View style={styles.column}>
-                      <Text style={styles.title}>{title}</Text>
+                      <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
                       <Text style={styles.text}>
                           {JSON.stringify(chapters.length)} chapter{chapters.length === 1 ? "" : "s"}
                       </Text>
@@ -52,14 +52,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: {
-        fontSize: 30,
+        fontSize: 24,
         marginLeft: 10,
-        fontWeight: "semibold", 
+        fontWeight: "600", 
         color: "#fff",
-
     },
     text: {
-        fontSize: 20,
+        fontSize: 16,
         color: "#fff",
         marginLeft: 10,
     },
@@ -67,13 +66,15 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-start",
         alignItems: "center",
+        flex: 1,
     },
     column: {
         flexDirection: "column",
         alignItems: "start",
-        justifyContent: "space-between",
+        justifyContent: "center",
         paddingVertical: 10,
         height: "100%",
+        flex: 1,
     },
     iconHolder: {
         justifyContent: "center",

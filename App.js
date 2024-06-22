@@ -17,53 +17,66 @@ import ChooseViewStudyScreen from "./screens/ChooseViewStudyScreen.jsx";
 import TrainScreen from "./screens/TrainScreen.jsx";
 import DailyTestScreen from "./screens/DailyTestScreen.jsx";
 import ChangePlanScreen from "./screens/ChangePlanScreen.jsx";
+import { Image } from "react-native";
 
 const Stack = createStackNavigator();
 
 const authScreens = [
-  { name: "Login", component: LoginScreen },
-  { name: "SignUp", component: SignUpScreen },
-  { name: "ForgottenPassword", component: ForgottenPasswordScreen },
+    { name: "Login", component: LoginScreen, header: false },
+    { name: "SignUp", component: SignUpScreen, header: false },
+    { name: "ForgottenPassword", component: ForgottenPasswordScreen, header: false },
 ];
 
 const userScreens = [
-  { name: "Dashboard", component: DashboardScreen },
-  { name: "DailyTestDash", component: DailyTestDashScreen },
-  { name: "ViewStudy", component: ViewStudyScreen },
-  { name: "AddStudy", component: AddStudyScreen },
-  { name: "ChooseTrainStudy", component: ChooseTrainStudyScreen },
-  { name: "ChooseViewStudy", component: ChooseViewStudyScreen },
-  { name: "Train", component: TrainScreen },
-  { name: "DailyTest", component: DailyTestScreen },
-  { name: "ChangePlan", component: ChangePlanScreen },
+    { name: "Dashboard", component: DashboardScreen, header: true },
+    { name: "DailyTestDash", component: DailyTestDashScreen, header: true },
+    { name: "ViewStudy", component: ViewStudyScreen, header: true },
+    { name: "AddStudy", component: AddStudyScreen, header: true },
+    { name: "ChooseTrainStudy", component: ChooseTrainStudyScreen, header: true },
+    { name: "ChooseViewStudy", component: ChooseViewStudyScreen, header: true },
+    { name: "Train", component: TrainScreen, header: true },
+    { name: "DailyTest", component: DailyTestScreen, header: true },
+    { name: "ChangePlan", component: ChangePlanScreen, header: true },
 ];
 
 const App = () => {
-  const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-  }, []);
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            setUser(user);
+        });
+    }, []);
 
-  return (
-    <AlertProvider>
-      <NavigationContainer>
-        <Alert />
-        <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
-          {(user ? userScreens : authScreens).map((screen) => (
-            <Stack.Screen
-              key={screen.name}
-              name={screen.name}
-              component={screen.component}
-              options={{ headerShown: false }}
-            />
-          ))}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AlertProvider>
-  );
+    return (
+        <AlertProvider>
+            <NavigationContainer>
+                <Alert />
+                <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
+                    {(user ? userScreens : authScreens).map((screen) => (
+                        <Stack.Screen
+                            key={screen.name}
+                            name={screen.name}
+                            component={screen.component}
+                            options={
+                                screen.header
+                                    ? {
+                                          headerTitle: (props) => (
+                                              <Image
+                                                  source={require("./assets/favicon.png")}
+                                                  style={{ width: 40, height: 40 }}
+                                              />
+                                          ),
+                                          headerTransparent: true,
+                                      }
+                                    : { headerShown: false }
+                            }
+                        />
+                    ))}
+                </Stack.Navigator>
+            </NavigationContainer>
+        </AlertProvider>
+    );
 };
 
 export default App;

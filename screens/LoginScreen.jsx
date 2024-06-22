@@ -41,13 +41,14 @@ const LoginScreen = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredentials) => {
                 const user = userCredentials.user;
-                console.log("Logged in with:", user.email);
+                setAlert(`Logged in successfully as ${email}`, "green");
                 if (rememberMe) {
                     const credentials = JSON.stringify({ email, password });
                     AsyncStorage.setItem('credentials', credentials);
                 } else {
                     AsyncStorage.removeItem('credentials');
                 }
+                
             })
             .catch((error) => {
                 if (
@@ -84,6 +85,7 @@ const LoginScreen = () => {
                             value={rememberMe}
                             onValueChange={setRememberMe}
                             color="#C7B8EA"
+                            style={styles.checkbox}
                         />
                         <AuthTextButton
                             title="Remember Me"
@@ -141,6 +143,12 @@ const styles = StyleSheet.create({
     rememberMe: {
         flexDirection: "row",
         flex: 1,
+        alignItems: "center",
+    },
+    checkbox: {
+        marginRight: 5,
+        height: 20,
+        width: 20,
     },
 });
 

@@ -20,9 +20,6 @@ const DashboardScreen = () => {
 
     return (
         <Container>
-            <View style={styles.logoContainer}>
-                <Image source={require("../assets/favicon.png")} style={styles.logo} />
-            </View>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                 <DailyTestButton />
                 <LineSeparator text="" />

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button, View, Text, TouchableOpacity } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
-import Header from "../components/Header.jsx";
 import Container from "../components/Container.jsx";
 import MessageBox from "../components/chessboard/messagebox.jsx";
 import MoveNavigator from "../components/studies/MoveNavigator.jsx";
@@ -28,7 +27,7 @@ const uploadPgn = async (pgnData) => {
     }
 };
 
-const ViewStudyScreen = () => {
+const ViewStudyScreen = ({ navigation, route }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [chess] = useState(new Chess());
     const [backgroundColor, setBackgroundColor] = useState("white");
@@ -44,6 +43,13 @@ const ViewStudyScreen = () => {
     };
     const [currentNode, setCurrentNode] = useState(tree);
     const [pov, setPov] = useState("w");
+
+    // Download PGN from server
+    useEffect(() => {
+        const studyUUID = route.params.study;
+        const pgnRef = ref(db, `pgns/${studyUUID}`);
+        // run the get function on the reference
+    }, []);
 
     useEffect(() => {
         updateMoveMessage();
@@ -104,7 +110,6 @@ const ViewStudyScreen = () => {
     return (
         <Container>
             <View style={styles.container}>
-                <Header showBackButton />
                 <View style={styles.chessboardContainer}>
                     <Chessboard
                         chess={chess}

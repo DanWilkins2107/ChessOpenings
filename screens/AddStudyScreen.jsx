@@ -1,7 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 import Container from "../components/Container";
-import Header from "../components/Header";
 import AddStudyButton from "../components/addstudy/AddStudyButton";
 import LineSeparator from "../components/auth/LineSeparator";
 import PgnInput from "../components/addstudy/PgnInput";
@@ -13,6 +12,7 @@ import { randomUUID } from "expo-crypto";
 import Colors from "../colors";
 import { AlertContext } from "../components/alert/AlertContextProvider";
 import { auth } from "../firebase";
+import PageTitle from "../components/PageTitle";
 
 const AddStudyScreen = ({ navigation }) => {
     const [pgnText, setPgnText] = useState("");
@@ -55,7 +55,7 @@ const AddStudyScreen = ({ navigation }) => {
     return (
         <Container>
             <KeyboardAvoidingView style={styles.container} behavior="padding">
-                <Header showBackButton />
+                <PageTitle title="Add a Study" />
                 <ScrollView style={styles.scrollView}>
                     <FormField
                         value={studyTitle}
