@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Button, View, Text, TouchableOpacity } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
@@ -9,23 +9,12 @@ import Navigation from "../components/studies/Navigation.jsx";
 import { navigateToParentNode, navigateToChildNode } from "../functions/treeFunctions";
 import treeToPgn from "../functions/treeToPgn.js";
 import { db } from "../firebase";
-import { ref, update } from "firebase/database";
-import { randomUUID } from "expo-crypto";
+import { get, ref, set } from "firebase/database";
 import PagerView from "react-native-pager-view";
 import MoveList from "../components/studies/MoveList.jsx";
 import Icon from "react-native-vector-icons/FontAwesome";
-
-const uploadPgn = async (pgnData) => {
-    const uuid = randomUUID();
-    const pgnRef = ref(db, `pgns/${uuid}`);
-
-    try {
-        await update(pgnRef, pgnData);
-        console.log(`PGN uploaded successfully with UUID: ${uuid}`);
-    } catch (error) {
-        console.error(`Error uploading PGN: ${error}`);
-    }
-};
+import { AlertContext } from "../components/alert/AlertContextProvider";
+import pgnToTree from "../functions/pgnToTree.js";
 
 const ViewStudyScreen = ({ navigation, route }) => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -43,13 +32,33 @@ const ViewStudyScreen = ({ navigation, route }) => {
     };
     const [currentNode, setCurrentNode] = useState(tree);
     const [pov, setPov] = useState("w");
+    const { setAlert } = useContext(AlertContext);
 
     // Download PGN from server
     useEffect(() => {
         const studyUUID = route.params.study;
         const pgnRef = ref(db, `pgns/${studyUUID}`);
-        // run the get function on the reference
+        console.log("Downloading: ", studyUUID);
+        get(pgnRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const pgnData = snapshot.val();
+                console.log("PGN Data: ", JSON.stringify(pgnData, null, 2));
+                const tree = pgnToTree(pgnData);
+                setCurrentNode(tree);
+            
+            }
+        });
     }, []);
+
+    const uploadPgn = async () => {
+        const pgnData = treeToPgn(currentNode);
+        const pgnRef = ref(db, `pgns/${route.params.study}`);
+        try {
+            await set(pgnRef, pgnData);
+        } catch (error) {
+            setAlert("Error Uploading PGN", "red");
+        }
+    };
 
     useEffect(() => {
         updateMoveMessage();
@@ -186,7 +195,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <Button onPress={() => uploadPgn(treeToPgn(currentNode))} title="Save" />
+                    <Button onPress={uploadPgn} title="Save" />
                 </View>
             </View>
         </Container>

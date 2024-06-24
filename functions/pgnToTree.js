@@ -1,34 +1,36 @@
 function pgnToTree(pgn) {
-  let tree = null;
-  let current = null;
-  let prevMove = null;
+    let tree = {
+        move: "Start",
+        children: [],
+        parent: null,
+    };
 
-  for (const move of pgn) {
-    if (move.ravs) {
-      // Handle alternative moves
-      for (const rav of move.ravs) {
-        const child = { move: rav.moves[0].move, comments: rav.moves[0].comments, children: [] };
-        current.children.push(child);
-        let newCurrent = child;
-        for (const ravMove of rav.moves.slice(1)) {
-          const grandchild = { move: ravMove.move, comments: ravMove.comments, children: [] };
-          newCurrent.children.push(grandchild);
-          newCurrent = grandchild;
+    function addNode(newObject, parent) {
+        const firstMove = newObject[0];
+        const newNode = {
+            move: firstMove.move,
+            comments: firstMove.comments,
+            children: [],
+            parent: parent,
+        };
+
+        parent.children.push(newNode);
+        
+        if (firstMove.ravs) {
+            for (const rav of firstMove.ravs) {
+                addNode(rav, parent)
+            }
         }
-      }
+        const newObj = newObject.slice(1);
+        if (newObj.length === 0) {
+            return;
+        }
+        addNode(newObj, newNode);
     }
 
-    const newNode = { move: move.move, comments: move.comments, children: [] };
-    if (prevMove) {
-      current.children.push(newNode);
-    } else {
-      tree = newNode;
-    }
-    current = newNode;
-    prevMove = move;
-  }
+    addNode(pgn, tree);
 
-  return tree;
+    return tree;
 }
 
 export default pgnToTree;
