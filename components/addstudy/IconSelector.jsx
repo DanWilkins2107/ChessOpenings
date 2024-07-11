@@ -7,18 +7,18 @@ const SelectIcon = ({ selectedIcon, setSelectedIcon }) => {
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
     const iconObj = {
-        wb: require("./icons/wb.png"),
-        wr: require("./icons/wr.png"),
-        wn: require("./icons/wn.png"),
-        wq: require("./icons/wq.png"),
-        wk: require("./icons/wk.png"),
-        wp: require("./icons/wp.png"),
-        bb: require("./icons/bb.png"),
-        br: require("./icons/br.png"),
-        bn: require("./icons/bn.png"),
-        bq: require("./icons/bq.png"),
-        bk: require("./icons/bk.png"),
-        bp: require("./icons/bp.png"),
+        wb: require("../../assets/icons/wb.png"),
+        wr: require("../../assets/icons/wr.png"),
+        wn: require("../../assets/icons/wn.png"),
+        wq: require("../../assets/icons/wq.png"),
+        wk: require("../../assets/icons/wk.png"),
+        wp: require("../../assets/icons/wp.png"),
+        bb: require("../../assets/icons/bb.png"),
+        br: require("../../assets/icons/br.png"),
+        bn: require("../../assets/icons/bn.png"),
+        bq: require("../../assets/icons/bq.png"),
+        bk: require("../../assets/icons/bk.png"),
+        bp: require("../../assets/icons/bp.png"),
     };
 
     const handlePress = () => {

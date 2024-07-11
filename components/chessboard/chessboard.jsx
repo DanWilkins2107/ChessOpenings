@@ -95,20 +95,20 @@ const Chessboard = ({ chess, moveFunction, backgroundColor, pov }) => {
     const pieceImages = useMemo(
         () => ({
             b: {
-                b: require("./pieces/bb.png"),
-                k: require("./pieces/bk.png"),
-                n: require("./pieces/bn.png"),
-                p: require("./pieces/bp.png"),
-                q: require("./pieces/bq.png"),
-                r: require("./pieces/br.png"),
+                b: require("../../assets/pieces/bb.png"),
+                k: require("../../assets/pieces/bk.png"),
+                n: require("../../assets/pieces/bn.png"),
+                p: require("../../assets/pieces/bp.png"),
+                q: require("../../assets/pieces/bq.png"),
+                r: require("../../assets/pieces/br.png"),
             },
             w: {
-                b: require("./pieces/wb.png"),
-                k: require("./pieces/wk.png"),
-                n: require("./pieces/wn.png"),
-                p: require("./pieces/wp.png"),
-                q: require("./pieces/wq.png"),
-                r: require("./pieces/wr.png"),
+                b: require("../../assets/pieces/wb.png"),
+                k: require("../../assets/pieces/wk.png"),
+                n: require("../../assets/pieces/wn.png"),
+                p: require("../../assets/pieces/wp.png"),
+                q: require("../../assets/pieces/wq.png"),
+                r: require("../../assets/pieces/wr.png"),
             },
         }),
         []

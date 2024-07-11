@@ -65,18 +65,18 @@ const ChooseViewStudyScreen = ({ navigation }) => {
     );
 
     const iconObj = {
-        wb: require("./../components/addstudy/icons/wb.png"),
-        wr: require("./../components/addstudy/icons/wr.png"),
-        wn: require("./../components/addstudy/icons/wn.png"),
-        wq: require("./../components/addstudy/icons/wq.png"),
-        wk: require("./../components/addstudy/icons/wk.png"),
-        wp: require("./../components/addstudy/icons/wp.png"),
-        bb: require("./../components/addstudy/icons/bb.png"),
-        br: require("./../components/addstudy/icons/br.png"),
-        bn: require("./../components/addstudy/icons/bn.png"),
-        bq: require("./../components/addstudy/icons/bq.png"),
-        bk: require("./../components/addstudy/icons/bk.png"),
-        bp: require("./../components/addstudy/icons/bp.png"),
+        wb: require("../assets/icons/wb.png"),
+        wr: require("../assets/icons/wr.png"),
+        wn: require("../assets/icons/wn.png"),
+        wq: require("../assets/icons/wq.png"),
+        wk: require("../assets/icons/wk.png"),
+        wp: require("../assets/icons/wp.png"),
+        bb: require("../assets/icons/bb.png"),
+        br: require("../assets/icons/br.png"),
+        bn: require("../assets/icons/bn.png"),
+        bq: require("../assets/icons/bq.png"),
+        bk: require("../assets/icons/bk.png"),
+        bp: require("../assets/icons/bp.png"),
     };
 
     const handleStudyPress = async (UUID) => {
