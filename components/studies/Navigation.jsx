@@ -1,11 +1,12 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome";
+import Colors from "../../colors";
 
 const NavigationButton = ({ icon, onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Icon name={icon} size={40} color="#333" />
+      <Icon name={icon} size={40} color="white" />
     </TouchableOpacity>
   );
 };
@@ -13,7 +14,7 @@ const NavigationButton = ({ icon, onPress }) => {
 const Navigation = ({ onDoubleLeftPress, onLeftPress, onFlipPress, onRightPress, onDoubleRightPress }) => {
   return (
     <View style={styles.container}>
-      <NavigationButton icon="angle-double-left" onPress={onDoubleLeftPress} />
+      <NavigationButton icon="angle-double-left" onPress={onDoubleLeftPress}/>
       <NavigationButton icon="angle-left" onPress={onLeftPress} />
       <NavigationButton icon="retweet" onPress={onFlipPress} />
       <NavigationButton icon="angle-right" onPress={onRightPress} />
@@ -30,7 +31,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.primary,
+    border: "solid",
+    borderWidth: 2,
+    borderColor: Colors.primaryBorder,
     padding: 10,
     borderRadius: 5,
     flex: 1,

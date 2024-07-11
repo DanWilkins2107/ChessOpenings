@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import { AlertContext } from "../alert/AlertContextProvider";
 
 const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     const [rootNode, setRootNode] = useState(null);
+    const { setAlert } = useContext(AlertContext);
 
     useEffect(() => {
         let tempNode = currentNode;
@@ -99,7 +101,6 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     };
 
     const handleMoveClick = (node) => {
-        console.log("Clicked node:", node);
         let moves = [];
         let tempNode = node;
         while (tempNode.parent) {
@@ -107,13 +108,15 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
             moves.push(tempNode.move);
             tempNode = tempNode.parent;
         }
-        console.log("Moves:", moves);
         moves.reverse();
-        console.log("Reversed moves:", moves);
         chess.reset();
         moves.forEach((move) => {
-            console.log("Making move:", move);
-            chess.move(move);
+            try {
+                chess.move(move);
+            }
+            catch (error) {
+                setAlert("We ran into an error.", "red");
+            }
         });
         setCurrentNode(node);
     };

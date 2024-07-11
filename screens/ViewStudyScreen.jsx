@@ -34,7 +34,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
     const [pov, setPov] = useState("w");
     const { setAlert } = useContext(AlertContext);
 
-    // Download PGN from server
+    // Download PGN from db
     useEffect(() => {
         const studyUUID = route.params.study;
         const pgnRef = ref(db, `pgns/${studyUUID}`);
@@ -45,7 +45,6 @@ const ViewStudyScreen = ({ navigation, route }) => {
                 console.log("PGN Data: ", JSON.stringify(pgnData, null, 2));
                 const tree = pgnToTree(pgnData);
                 setCurrentNode(tree);
-            
             }
         });
     }, []);
@@ -209,12 +208,11 @@ const styles = {
         alignItems: "center",
     },
     chessboardContainer: {
-        width: "90%",
-        height: "50%",
+        width: "100%",
         display: "flex",
     },
     navigatorContainer: {
-        width: "90%",
+        width: "100%",
         height: "40%",
         display: "flex",
     },

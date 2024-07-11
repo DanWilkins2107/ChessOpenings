@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Container from "../components/Container";
 import { Image, View, StyleSheet, ScrollView, Text } from "react-native";
 import { auth } from "../firebase";
@@ -26,7 +26,12 @@ const ChooseViewStudyScreen = ({ navigation }) => {
                     const localStudies = JSON.parse(
                         (await AsyncStorage.getItem("studies")) || "{}"
                     );
-                    const combinedStudies = { ...snapshot.val(), ...localStudies };
+                    let combinedStudies = { ...data };
+                    Object.keys(data).forEach((studyUuid) => {
+                        if (localStudies[studyUuid]) {
+                            combinedStudies[studyUuid] = localStudies[studyUuid];
+                        }
+                    });
 
                     const studyList = Object.keys(combinedStudies);
                     const sortedStudies = studyList.sort((a, b) => {

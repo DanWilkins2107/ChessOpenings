@@ -1,11 +1,13 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const DailyTestButton = () => {
     const navigation = useNavigation();
 
     return (
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("DailyTestDash")}>
+            <Icon name="pencil" size={50} color="#333" />
             <Text style={styles.buttonText}>Daily Test</Text>
             <Text style={styles.buttonDescription}>Take a daily test to improve your skills.</Text>
         </TouchableOpacity>
@@ -22,6 +24,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         height: 150,
         justifyContent: "center",
+        alignItems: "center",
     },
     buttonText: {
         fontSize: 18,
