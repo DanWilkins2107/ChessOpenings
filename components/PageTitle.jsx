@@ -1,13 +1,12 @@
 import { Text, View, StyleSheet } from "react-native";
-import colors from "../colors";
 
-const PageTitle = ({title}) => {
+const PageTitle = ({ title }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>{title}</Text>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     title: {
@@ -19,10 +18,8 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: "center",
         alignItems: "center",
-        paddingHorizontal: '5%', 
-    }
-    
+        paddingHorizontal: "5%",
+    },
 });
-
 
 export default PageTitle;

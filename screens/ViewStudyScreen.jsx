@@ -127,6 +127,11 @@ const ViewStudyScreen = ({ navigation, route }) => {
                     />
                 </View>
                 <View style={styles.navigatorContainer}>
+                    <MessageBox
+                        message={message.text}
+                        textColor={message.color}
+                        backgroundColor={message.backgroundColor}
+                    />
                     <Navigation
                         onDoubleLeftPress={handleBackToStartPress}
                         onLeftPress={handleParentPress}
@@ -136,11 +141,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
                         onRightPress={handleRightPress}
                         onDoubleRightPress={handleDoubleRightPress}
                     />
-                    <MessageBox
-                        message={message.text}
-                        textColor={message.color}
-                        backgroundColor={message.backgroundColor}
-                    />
+
                     <PagerView
                         style={styles.pagerView}
                         onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
@@ -215,6 +216,8 @@ const styles = {
         width: "100%",
         height: "40%",
         display: "flex",
+        alignItems: "center",
+        paddingTop: 5,
     },
     pagerView: {
         flex: 1,
