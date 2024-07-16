@@ -15,6 +15,8 @@ import MoveList from "../components/studies/MoveList.jsx";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { AlertContext } from "../components/alert/AlertContextProvider";
 import pgnToTree from "../functions/pgnToTree.js";
+import TabSelector from "../components/studies/TabSelector.jsx";
+import Colors from "../colors.js";
 
 const ViewStudyScreen = ({ navigation, route }) => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -141,61 +143,31 @@ const ViewStudyScreen = ({ navigation, route }) => {
                         onRightPress={handleRightPress}
                         onDoubleRightPress={handleDoubleRightPress}
                     />
-
-                    <PagerView
-                        style={styles.pagerView}
-                        onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
-                    >
+                    <View style={styles.pagerView}>
                         <View style={styles.tab}>
-                            <MoveNavigator
-                                currentNode={currentNode}
-                                chess={chess}
-                                setCurrentNode={setCurrentNode}
-                            />
-                        </View>
-                        <View style={styles.tab}>
-                            <MoveList
-                                currentNode={currentNode}
-                                chess={chess}
-                                setCurrentNode={setCurrentNode}
-                            />
-                        </View>
-                        <View style={styles.tab}>
-                            <Text>Chapter Selector (TODO)</Text>
-                        </View>
-                    </PagerView>
-                    <View style={styles.circleContainer}>
-                        <TouchableOpacity
-                            onPress={() => setCurrentPage(currentPage - 1)}
-                            disabled={currentPage === 0}
-                        >
-                            <View style={{ padding: 10 }}>
-                                <Icon name="chevron-left" size={20} color="white" />
-                            </View>
-                        </TouchableOpacity>
-                        <View style={styles.buttonContainer}>
-                            {[0, 1, 2].map((index) => {
-                                return (
-                                    <View
-                                        style={[
-                                            styles.circle,
-                                            index === currentPage && { backgroundColor: "white" },
-                                            { marginHorizontal: 10 },
-                                        ]}
+                            {
+                                currentPage === 0 ? (
+                                    <MoveNavigator
+                                        currentNode={currentNode}
+                                        chess={chess}
+                                        setCurrentNode={setCurrentNode}
                                     />
-                                );
-                            })}
+                                ) : currentPage === 1 ? (
+                                    <MoveList
+                                        currentNode={currentNode}
+                                        chess={chess}
+                                        setCurrentNode={setCurrentNode}
+                                    />
+                                ) : (
+                                    <Text>Chapter Selector (TODO)</Text>
+                                )
+                            }
                         </View>
-                        <TouchableOpacity
-                            onPress={() => setCurrentPage(currentPage + 1)}
-                            disabled={currentPage === 2}
-                        >
-                            <View style={{ padding: 10 }}>
-                                <Icon name="chevron-right" size={20} color="white" />
-                            </View>
-                        </TouchableOpacity>
                     </View>
-                    <Button onPress={uploadPgn} title="Save" />
+                    <View style={styles.tabContainer}>
+                        <TabSelector selectedTab={currentPage} setSelectedTab={setCurrentPage} />
+                        {/* <Button onPress={uploadPgn} title="Save" /> */}
+                    </View>
                 </View>
             </View>
         </Container>
@@ -213,18 +185,21 @@ const styles = {
         display: "flex",
     },
     navigatorContainer: {
-        width: "100%",
-        height: "40%",
+        width: "90%",
+        flex: 1,
         display: "flex",
         alignItems: "center",
         paddingTop: 5,
     },
     pagerView: {
+        width: "100%",
         flex: 1,
+        borderWidth: 2,
+        borderBottomWidth: 0,
+        borderColor: Colors.primaryBorder,
     },
     tab: {
         flex: 1,
-        backgroundColor: "white",
     },
     circle: {
         width: 10,
@@ -243,6 +218,11 @@ const styles = {
     circleContainer: {
         flexDirection: "row",
         justifyContent: "center",
+        alignItems: "center",
+    },
+    tabContainer: {
+        width: "100%",
+        display: "flex",
         alignItems: "center",
     },
 };

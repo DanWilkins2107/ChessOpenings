@@ -2,13 +2,15 @@ import { StyleSheet, Text, Image, View } from "react-native";
 import Colors from "../../colors";
 import DropdownList from "./DropdownList";
 import Checkbox from "./Checkbox";
+import LineSeparator from "../auth/LineSeparator";
 
 const StudyAndChapterSelector = ({
     studyObj,
     studyUUIDs,
-    onStudyClick,
-    onChapterClick,
-    checkboxInfo,
+    chosenChapters,
+    chosenStudies,
+    setChosenChapters,
+    setChosenStudies,
 }) => {
     const iconObj = {
         wb: require("../../assets/icons/wb.png"),
@@ -28,8 +30,10 @@ const StudyAndChapterSelector = ({
         <>
             {studyUUIDs.map((studyUUID) => {
                 return (
-                    <View style={styles.innerContainer}>
-                        <DropdownList key={studyUUID}
+                    <View style={styles.innerContainer}
+                    key={studyUUID}>
+                        <DropdownList
+                            
                             topContent={
                                 <View style={styles.container}>
                                     <View style={styles.leftContainer}>
@@ -41,23 +45,41 @@ const StudyAndChapterSelector = ({
                                     </View>
                                     <Checkbox
                                         style={styles.checkbox}
-                                        checked={true}
-                                        onPress={() => {}}
-                                        color={Colors.primary}
+                                        checked={chosenStudies[studyUUID]}
+                                        onPress={() => {
+                                            setChosenChapters({
+                                                ...chosenChapters,
+                                                [studyUUID]: chosenChapters[studyUUID].map(() => !chosenStudies[studyUUID]),
+                                            })
+                                            setChosenStudies({
+                                                ...chosenStudies,
+                                                [studyUUID]: !chosenStudies[studyUUID],
+                                            });
+                                        }}
                                     />
                                 </View>
                             }
                             dropdownContent={
                                 <View>
-                                    {(studyObj[studyUUID] || {}).chapters.map((chapter) => {
+                                    {(studyObj[studyUUID] || {}).chapters.map((chapter, index) => {
                                         return (
-                                            <View key={chapter.uuid} style={styles.dropdownContainer}>
+                                            <View
+                                                key={chapter.pgn}
+                                                style={styles.dropdownContainer}
+                                            >
                                                 <Text style={styles.text}>{chapter.name}</Text>
                                                 <Checkbox
                                                     style={styles.checkbox}
-                                                    checked={true}
+                                                    checked={chosenChapters[studyUUID][index]}
                                                     color={Colors.primary}
-                                                    onPress={() => {}}
+                                                    onPress={() => {
+                                                        setChosenChapters({
+                                                            ...chosenChapters,
+                                                            [studyUUID]: chosenChapters[studyUUID].map((value, i) => {
+                                                                return i === index ? !value : value;
+                                                            }),
+                                                        });
+                                                    }}
                                                 />
                                             </View>
                                         );
@@ -65,6 +87,7 @@ const StudyAndChapterSelector = ({
                                 </View>
                             }
                         />
+                        <LineSeparator text="" />
                     </View>
                 );
             })}
@@ -110,7 +133,6 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: 10,
     },
 });
 

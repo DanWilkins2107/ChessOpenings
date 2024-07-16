@@ -1,5 +1,5 @@
 import Container from "../components/Container";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import { Text, View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { useEffect, useState, useContext } from "react";
 import { auth, db } from "../firebase";
 import { get, ref } from "firebase/database";
@@ -8,12 +8,16 @@ import { AlertContext } from "../components/alert/AlertContextProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PageTitle from "../components/PageTitle";
 import Colors from "../colors";
+import AddStudyButton from "../components/addstudy/AddStudyButton";
+import LineSeparator from "../components/auth/LineSeparator";
 
 const ChooseTrainStudyScreen = ({ navigation }) => {
     const [studies, setStudies] = useState([]);
     const [studyObj, setStudyObj] = useState({});
+    const [chosenStudies, setChosenStudies] = useState({});
     const [chosenChapters, setChosenChapters] = useState({});
     const { setAlert } = useContext(AlertContext);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getStudies = async () => {
@@ -48,12 +52,28 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
                     const sortedStudies = studyUuids.sort((a, b) => {
                         return combinedStudies[b] - combinedStudies[a];
                     });
+
                     setStudyObj(studyObj);
                     setStudies(sortedStudies);
+
+                    const chosenChapters = {};
+                    const chosenStudies = {};
+                    sortedStudies.forEach((studyUuid) => {
+                        chosenStudies[studyUuid] = false;
+                        chosenChapters[studyUuid] = Array(studyObj[studyUuid].chapters.length).fill(
+                            false
+                        );
+                    });
+
+                    setChosenChapters(chosenChapters);
+                    setChosenStudies(chosenStudies);
                 })
                 .catch((error) => {
                     setAlert("Could not fetch studies", "red");
                     console.error(error.message);
+                })
+                .then(() => {
+                    setLoading(false);
                 });
         };
         getStudies();
@@ -67,11 +87,39 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
                     Choose the studies and chapters you would like to train. You can select multiple
                     studies and chapters to train at once.
                 </Text>
+                <LineSeparator text="" />
             </View>
-            <ScrollView style={styles.scrollContainer}>
-                <StudyAndChapterSelector studyObj={studyObj} studyUUIDs={studies} />
-            </ScrollView>
-            <Text>BOTTOM</Text>
+            {loading ? (
+                <ActivityIndicator />
+            ) : (
+                <View style={styles.pageContainer}>
+                    <ScrollView style={styles.scrollContainer}>
+                        <StudyAndChapterSelector
+                            studyObj={studyObj}
+                            studyUUIDs={studies}
+                            chosenChapters={chosenChapters}
+                            chosenStudies={chosenStudies}
+                            setChosenChapters={setChosenChapters}
+                            setChosenStudies={setChosenStudies}
+                        />
+                    </ScrollView>
+                    {studies.length === 0 && (
+                        <Text style={styles.text}>Not made any studies yet?</Text>
+                    )}
+                    {studies.length != 0 && (
+                        <Text style={styles.text}>Want to make another study?</Text>
+                    )}
+                    <View style={styles.buttonContainer}>
+                        <AddStudyButton
+                            title="Add a Study"
+                            onPress={() => navigation.navigate("AddStudy")}
+                            backgroundColor={Colors.primary}
+                            borderColor={Colors.primaryBorder}
+                            textColor="#fff"
+                        />
+                    </View>
+                </View>
+            )}
         </Container>
     );
 };
@@ -81,18 +129,32 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 18,
         fontWeight: "semibold",
-        textAlign: "center"
+        textAlign: "center",
     },
     subtextContainer: {
         width: "100%",
         paddingHorizontal: 20,
-        marginBottom: 20,
-        justifyContent: "center"
+        justifyContent: "center",
+    },
+    pageContainer: {
+        flex: 1,
+        width: "100%",
+        alignItems: "center",
     },
     scrollContainer: {
         width: "100%",
-        flex: 1,
-        paddingHorizontal: 10,
+        paddingHorizontal: 20,
+        flexGrow: 0,
+    },
+    text: {
+        fontSize: 16,
+        color: Colors.primaryBorder,
+        textAlign: "center",
+        marginVertical: 10,
+    },
+    buttonContainer: {
+        width: "100%",
+        paddingHorizontal: 20,
     },
 });
 

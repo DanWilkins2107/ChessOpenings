@@ -67,6 +67,8 @@ const App = () => {
                                                   style={{ width: 40, height: 40 }}
                                               />
                                           ),
+                                          
+                                          
                                           headerTransparent: true,
                                       }
                                     : { headerShown: false }

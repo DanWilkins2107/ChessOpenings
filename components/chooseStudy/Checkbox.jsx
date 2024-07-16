@@ -6,6 +6,7 @@ const Checkbox = ({ checked, onPress }) => {
     return (
         <TouchableOpacity
             style={[styles.checkbox, { backgroundColor: (checked ? Colors.primaryBorder : "transparent") }]}
+            onPress={onPress}
         >
             {checked && <Icon name="check" size={25} color="#fff" />}
         </TouchableOpacity>
@@ -22,6 +23,7 @@ const styles = StyleSheet.create({
         height: 40,
         justifyContent: "center",
         alignItems: "center",
+        margin: 2,
     },
 });
 
