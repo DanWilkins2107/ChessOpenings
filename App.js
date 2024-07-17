@@ -17,7 +17,8 @@ import ChooseViewStudyScreen from "./screens/ChooseViewStudyScreen.jsx";
 import TrainScreen from "./screens/TrainScreen.jsx";
 import DailyTestScreen from "./screens/DailyTestScreen.jsx";
 import ChangePlanScreen from "./screens/ChangePlanScreen.jsx";
-import { Image } from "react-native";
+import HeaderCenter from "./components/header/HeaderCenter.jsx";
+import HeaderLeft from "./components/header/HeaderLeft.jsx";
 
 const Stack = createStackNavigator();
 
@@ -61,14 +62,8 @@ const App = () => {
                             options={
                                 screen.header
                                     ? {
-                                          headerTitle: (props) => (
-                                              <Image
-                                                  source={require("./assets/favicon.png")}
-                                                  style={{ width: 40, height: 40 }}
-                                              />
-                                          ),
-                                          
-                                          
+                                          headerTitle: (props) => HeaderCenter(props),
+                                          headerLeft: (props) => HeaderLeft(props),
                                           headerTransparent: true,
                                       }
                                     : { headerShown: false }

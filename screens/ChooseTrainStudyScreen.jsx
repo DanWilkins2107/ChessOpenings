@@ -79,9 +79,32 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
         getStudies();
     }, []);
 
+    const handleChooseStudies = () => {
+        console.log("Studied Object", JSON.stringify(studyObj));
+        console.log("Chosen Studies", chosenStudies);
+        console.log("Chosen Chapters", chosenChapters);
+        let chosenChapterArray = [];
+
+        for (const studyUuid in chosenChapters) {
+            chosenChapters[studyUuid].forEach((value, index) => {
+                if (value) {
+                    chosenChapterArray.push({
+                        studyUuid,
+                        chapterIndex: index,
+                    });
+                }
+            });
+        }
+
+        console.log("Chosen Chapter Array", chosenChapterArray);
+
+
+        
+    };
+
     return (
         <Container>
-            <PageTitle style={styles.title} title="Choose Study" />
+            <PageTitle style={styles.title} title="Choose Studies" />
             <View style={styles.subtextContainer}>
                 <Text style={styles.subtext}>
                     Choose the studies and chapters you would like to train. You can select multiple
@@ -103,6 +126,18 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
                             setChosenStudies={setChosenStudies}
                         />
                     </ScrollView>
+                    <View style={styles.buttonContainer}>
+
+                        <AddStudyButton
+                            title="Confirm Selection"
+                            onPress={handleChooseStudies}
+                            backgroundColor={Colors.primaryBorder}
+                            borderColor={Colors.primaryBorder}
+                            textColor="#333"
+                        />
+                        <LineSeparator text="" />
+                    </View>
+
                     {studies.length === 0 && (
                         <Text style={styles.text}>Not made any studies yet?</Text>
                     )}
