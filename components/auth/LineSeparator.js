@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet } from "react-native";
 
-const LineSeparator = ({text}) => {
+const LineSeparator = ({ text }) => {
     return (
-        <View style={styles.container}>
+        <View style={styles.container} pointerEvents="none">
             <View style={styles.line} />
             {text && <Text style={styles.text}>{text}</Text>}
             <View style={styles.line} />

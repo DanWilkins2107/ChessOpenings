@@ -83,23 +83,6 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
         console.log("Studied Object", JSON.stringify(studyObj));
         console.log("Chosen Studies", chosenStudies);
         console.log("Chosen Chapters", chosenChapters);
-        let chosenChapterArray = [];
-
-        for (const studyUuid in chosenChapters) {
-            chosenChapters[studyUuid].forEach((value, index) => {
-                if (value) {
-                    chosenChapterArray.push({
-                        studyUuid,
-                        chapterIndex: index,
-                    });
-                }
-            });
-        }
-
-        console.log("Chosen Chapter Array", chosenChapterArray);
-
-
-        
     };
 
     return (
@@ -127,7 +110,7 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
                         />
                     </ScrollView>
                     <View style={styles.buttonContainer}>
-
+                        <LineSeparator text="" />
                         <AddStudyButton
                             title="Confirm Selection"
                             onPress={handleChooseStudies}

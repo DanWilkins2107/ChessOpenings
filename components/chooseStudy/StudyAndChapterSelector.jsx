@@ -1,4 +1,4 @@
-import { StyleSheet, Text, Image, View } from "react-native";
+import { StyleSheet, Text, Image, View, TouchableOpacity } from "react-native";
 import Colors from "../../colors";
 import DropdownList from "./DropdownList";
 import Checkbox from "./Checkbox";
@@ -26,14 +26,18 @@ const StudyAndChapterSelector = ({
         bk: require("../../assets/icons/bk.png"),
         bp: require("../../assets/icons/bp.png"),
     };
+
+    const onChapterPress = (studyUUID, chapterIndex) => {
+        const newChosenChapters = { ...chosenChapters };
+        newChosenChapters[studyUUID][chapterIndex] = !newChosenChapters[studyUUID][chapterIndex];
+        setChosenChapters(newChosenChapters);
+    };
     return (
         <>
-            {studyUUIDs.map((studyUUID) => {
+            {studyUUIDs.map((studyUUID, index) => {
                 return (
-                    <View style={styles.innerContainer}
-                    key={studyUUID}>
+                    <View style={styles.innerContainer} key={studyUUID}>
                         <DropdownList
-                            
                             topContent={
                                 <View style={styles.container}>
                                     <View style={styles.leftContainer}>
@@ -49,8 +53,10 @@ const StudyAndChapterSelector = ({
                                         onPress={() => {
                                             setChosenChapters({
                                                 ...chosenChapters,
-                                                [studyUUID]: chosenChapters[studyUUID].map(() => !chosenStudies[studyUUID]),
-                                            })
+                                                [studyUUID]: chosenChapters[studyUUID].map(
+                                                    () => !chosenStudies[studyUUID]
+                                                ),
+                                            });
                                             setChosenStudies({
                                                 ...chosenStudies,
                                                 [studyUUID]: !chosenStudies[studyUUID],
@@ -63,31 +69,25 @@ const StudyAndChapterSelector = ({
                                 <View>
                                     {(studyObj[studyUUID] || {}).chapters.map((chapter, index) => {
                                         return (
-                                            <View
+                                            <TouchableOpacity
                                                 key={chapter.pgn}
                                                 style={styles.dropdownContainer}
+                                                onPress={() => onChapterPress(studyUUID, index)}
                                             >
                                                 <Text style={styles.text}>{chapter.name}</Text>
                                                 <Checkbox
                                                     style={styles.checkbox}
                                                     checked={chosenChapters[studyUUID][index]}
                                                     color={Colors.primary}
-                                                    onPress={() => {
-                                                        setChosenChapters({
-                                                            ...chosenChapters,
-                                                            [studyUUID]: chosenChapters[studyUUID].map((value, i) => {
-                                                                return i === index ? !value : value;
-                                                            }),
-                                                        });
-                                                    }}
+                                                    onPress={() => onChapterPress(studyUUID, index)}
                                                 />
-                                            </View>
+                                            </TouchableOpacity>
                                         );
                                     })}
                                 </View>
                             }
                         />
-                        <LineSeparator text="" />
+                        {index != studyUUIDs.length - 1 &&<LineSeparator text="" />}
                     </View>
                 );
             })}
