@@ -1,5 +1,5 @@
 import { View, ScrollView, StyleSheet, Button } from "react-native";
-import { navigateToParentNode, navigateToChildNode } from "../../functions/treeFunctions";
+import { navigateToParentNode, navigateToChildNode } from "../../functions/tree/treeFunctions";
 
 const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
     const handleParentPress = () => {

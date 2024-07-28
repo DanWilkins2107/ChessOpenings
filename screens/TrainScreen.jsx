@@ -33,10 +33,6 @@ const TrainScreen = ({ navigation, route }) => {
             setLoading(false);
         };
 
-        const createTree = async () => {
-            
-        };
-
         setStudies();
 
     }, []);

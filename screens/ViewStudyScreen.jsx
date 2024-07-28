@@ -6,13 +6,13 @@ import Container from "../components/Container.jsx";
 import MessageBox from "../components/chessboard/messagebox.jsx";
 import MoveNavigator from "../components/studies/MoveNavigator.jsx";
 import Navigation from "../components/studies/Navigation.jsx";
-import { navigateToParentNode, navigateToChildNode } from "../functions/treeFunctions";
-import treeToPgn from "../functions/treeToPgn.js";
+import { navigateToParentNode, navigateToChildNode } from "../functions/tree/treeFunctions";
+import treeToPgn from "../functions/tree/treeToPgn.js";
 import { db } from "../firebase";
 import { get, ref, set } from "firebase/database";
 import MoveList from "../components/studies/MoveList.jsx";
 import { AlertContext } from "../components/alert/AlertContextProvider";
-import pgnToTree from "../functions/pgnToTree.js";
+import pgnToTree from "../functions/tree/pgnToTree.js";
 import TabSelector from "../components/studies/TabSelector.jsx";
 import Colors from "../colors.js";
 import ChapterSelector from "../components/studies/ChapterSelector.jsx";
@@ -35,16 +35,26 @@ const ViewStudyScreen = ({ navigation, route }) => {
     const [currentNode, setCurrentNode] = useState(tree);
     const [pov, setPov] = useState("w");
     const { setAlert } = useContext(AlertContext);
+    const [currentChapter, setCurrentChapter] = useState(0);
+    const [loading, setLoading] = useState(true);
 
-    // Download PGN from db
+    const chapters = [
+        { name: "Chapter 1", moves: [] },
+        { name: "Chapter 2", moves: [] },
+        { name: "Chapter 3", moves: [] },
+        { name: "Chapter 1", moves: [] },
+        { name: "Chapter 2", moves: [] },
+        { name: "Chapter 3", moves: [] },
+        { name: "Chapter 1", moves: [] },
+        { name: "Chapter 2", moves: [] },
+    ];
+
     useEffect(() => {
         const studyUUID = route.params.study;
         const pgnRef = ref(db, `pgns/${studyUUID}`);
-        console.log("Downloading: ", studyUUID);
         get(pgnRef).then((snapshot) => {
             if (snapshot.exists()) {
                 const pgnData = snapshot.val();
-                console.log("PGN Data: ", JSON.stringify(pgnData, null, 2));
                 const tree = pgnToTree(pgnData);
                 setCurrentNode(tree);
             }
@@ -158,7 +168,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
                                     setCurrentNode={setCurrentNode}
                                 />
                             ) : currentPage === 2 ? (
-                                <ChapterSelector />
+                                <ChapterSelector chapters={chapters} />
                             ) : (
                                 <StudyOptions />
                             )}

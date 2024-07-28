@@ -22,7 +22,6 @@ const DashboardScreen = () => {
         <Container>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                 <DailyTestButton testNumber={6} navigation={navigation} inProgress={true}/>
-                <LineSeparator text="" />
                 <View style={styles.lineContainer}>
                     <TouchableOpacity
                         style={styles.button}

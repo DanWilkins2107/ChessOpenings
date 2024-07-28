@@ -24,6 +24,7 @@ const AddStudyScreen = ({ navigation }) => {
     const createStudy = async () => {
         const studyUuid = randomUUID();
         const pgnUuid = randomUUID();
+
         const studyRef = ref(db, `studies/${studyUuid}`);
         const userStudyRef = ref(db, `users/${auth.currentUser.uid}/studies/${studyUuid}`);
         if (!studyTitle) {
