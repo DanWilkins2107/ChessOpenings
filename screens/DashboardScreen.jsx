@@ -1,5 +1,5 @@
 import Container from "../components/Container";
-import { Image, View, StyleSheet, ScrollView, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { auth } from "../firebase";
 import LineSeparator from "../components/auth/LineSeparator";
@@ -36,7 +36,7 @@ const DashboardScreen = () => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate("Train")}
+                        onPress={() => navigation.navigate("Train", { chosenPGNs: null })}
                     >
                         <View style={styles.iconContainer}>
                             <Icon name="book" size={24} color="white" />
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: Colors.primary,
         padding: 20,
-        borderRadius: 10,
+        borderRadius: 2,
         marginVertical: 10,
         borderColor: Colors.primaryBorder,
         borderWidth: 2,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     settingsButton: {
         backgroundColor: "#ccc",
         padding: 15,
-        borderRadius: 10,
+        borderRadius: 2,
         marginVertical: 10,
         borderColor: "#ccc",
         borderWidth: 2,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     logoutButton: {
         backgroundColor: "#FFC0CB",
         padding: 15,
-        borderRadius: 10,
+        borderRadius: 2,
         marginVertical: 10,
         borderColor: "#FFC0CB",
         borderWidth: 2,

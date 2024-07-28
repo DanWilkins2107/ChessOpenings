@@ -1,8 +1,7 @@
 import { useCallback, useState } from "react";
 import Container from "../components/Container";
 import { Image, View, StyleSheet, ScrollView, Text } from "react-native";
-import { auth } from "../firebase";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 import { ref, get } from "firebase/database";
 import StudyPicker from "../components/studies/StudyPicker";
 import PageTitle from "../components/PageTitle";

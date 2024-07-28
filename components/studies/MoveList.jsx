@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, View, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import { AlertContext } from "../alert/AlertContextProvider";
+import Colors from "../../colors";
 
 const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     const [rootNode, setRootNode] = useState(null);
@@ -14,7 +15,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         setRootNode(tempNode);
     }, [currentNode]);
 
-    const renderTree = (node, moveNumber) => {
+    const renderTree = (node, moveNumber, isVariation = false) => {
         if (!node) return null;
         let moves = [];
         let tempNode = node;
@@ -22,44 +23,42 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         while (tempNode.children && tempNode.children.length > 0) {
             tempNode = tempNode.children[0];
             let move = (
-                <Text key={tempNode.move}>
+                <Text key={tempNode.move} style={styles.text}>
                     {renderMove(
                         tempNode,
                         moveNumber + Math.floor(moveIndex / 2),
-                        true,
-                        moveIndex % 2 === 0
+                        !isVariation,
+                        moveIndex % 2 === 0,
+                        moveIndex === 0
                     )}
                     {tempNode.parent.children.length > 1 && (
-                        <Text>
+                        <Text key={`${tempNode.move}-variations`} style={styles.text}>
                             <View>
-                                <Text> (</Text>
+                                <Text style={styles.text}> (</Text>
                             </View>
                             {tempNode.parent.children.slice(1).map((child, index) => (
-                                <Text key={child.move}>
-                                    {child.moveNumber ===
-                                        moveNumber + Math.floor(moveIndex / 2) && (
-                                        <Text>{moveNumber + Math.floor(moveIndex / 2)}...</Text>
-                                    )}
+                                <Text key={child.move} style={styles.text}>
                                     {renderMove(
                                         child,
                                         moveNumber + Math.floor(moveIndex / 2),
                                         false,
-                                        moveIndex % 2 === 0
+                                        moveIndex % 2 === 0,
+                                        index === 0
                                     )}
                                     {child.children && child.children.length > 0 && (
-                                        <Text>
+                                        <Text style={styles.text}>
                                             {" "}
                                             {renderTree(
                                                 child,
-                                                moveNumber + Math.floor(moveIndex / 2) + 1
+                                                moveNumber + Math.floor(moveIndex / 2) + 1,
+                                                true
                                             )}
                                         </Text>
                                     )}
-                                    {index < tempNode.parent.children.length - 2 ? ", " : ""}
                                 </Text>
                             ))}
                             <View>
-                                <Text>)</Text>
+                                <Text style={styles.text}>)</Text>
                             </View>
                         </Text>
                     )}
@@ -69,9 +68,9 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
             moveIndex++;
         }
         return (
-            <Text>
+            <Text style={styles.text}>
                 {moves.map((move, index) => (
-                    <Text key={index}>
+                    <Text key={index} style={styles.text}>
                         {move}
                         {index < moves.length - 1 ? " " : ""}
                     </Text>
@@ -80,9 +79,16 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         );
     };
 
-    const renderMove = (node, moveNumber, isMainLine, isWhiteMove) => {
+    const renderMove = (node, moveNumber, isMainLine, isWhiteMove, isFirstVariationMove) => {
         const move = node.move;
         const isActive = node === currentNode;
+        let prefix = "";
+
+        if (isMainLine) {
+            prefix = isWhiteMove ? `${moveNumber}.` : "";
+        } else if (isFirstVariationMove) {
+            prefix = isWhiteMove ? `${moveNumber}.` : `${moveNumber}...`;
+        }
 
         return (
             <TouchableOpacity
@@ -93,9 +99,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                     backgroundColor: isActive ? "black" : "transparent",
                 }}
             >
-                <Text style={{ color: isActive ? "white" : "black" }}>
-                    {(isWhiteMove ? moveNumber + "." : moveNumber + "...") + move}
-                </Text>
+                <Text style={[{ color: isActive ? "white" : "black" }, styles.text]}>{prefix + move}</Text>
             </TouchableOpacity>
         );
     };
@@ -104,7 +108,6 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         let moves = [];
         let tempNode = node;
         while (tempNode.parent) {
-            console.log("Move:", tempNode.move);
             moves.push(tempNode.move);
             tempNode = tempNode.parent;
         }
@@ -113,8 +116,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         moves.forEach((move) => {
             try {
                 chess.move(move);
-            }
-            catch (error) {
+            } catch (error) {
                 setAlert("We ran into an error.", "red");
             }
         });
@@ -122,9 +124,9 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     };
 
     return (
-        <View style={{ backgroundColor: "white" }}>
-            {rootNode && <Text>{renderTree(rootNode, 1, true)}</Text>}
-        </View>
+        <ScrollView style={styles.container}>
+            {rootNode && <Text>{renderTree(rootNode, 1)}</Text>}
+        </ScrollView>
     );
 };
 
@@ -135,6 +137,13 @@ const styles = StyleSheet.create({
     activeMove: {
         color: "white",
         backgroundColor: "black",
+    },
+    text: {
+        fontSize: 18,
+    },
+    container: {
+        backgroundColor: "white",
+        padding: 4,
     },
 });
 

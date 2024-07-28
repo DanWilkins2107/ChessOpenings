@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "../../colors";
 import Icon from "react-native-vector-icons/FontAwesome";
 
@@ -31,6 +31,15 @@ const TabSelector = ({ setSelectedTab, selectedTab }) => {
                 onPress={() => setSelectedTab(2)}
             >
                 <Icon name="th-list" size={20} color={selectedTab === 2 ? "black" : "white"} />
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={[
+                    styles.tabInner,
+                    selectedTab === 3 && { backgroundColor: Colors.primaryBorder },
+                ]}
+                onPress={() => setSelectedTab(3)}
+            >
+                <Icon name="gear" size={20} color={selectedTab === 3 ? "black" : "white"} />
             </TouchableOpacity>
         </View>
     );

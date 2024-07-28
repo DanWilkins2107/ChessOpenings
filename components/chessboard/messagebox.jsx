@@ -14,10 +14,8 @@ const styles = StyleSheet.create({
     messageBox: {
         padding: 10,
         alignItems: "center",
-        borderWidth: 2,
-        borderColor: Colors.primaryBorder,
-        width: "90%", 
-
+        width: "100%",
+        marginTop: 1,
     },
     messageText: {
         fontSize: 18,

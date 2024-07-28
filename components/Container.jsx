@@ -3,12 +3,13 @@ import { SafeAreaView, View, StyleSheet, TouchableWithoutFeedback, Keyboard } fr
 import { LinearGradient } from "expo-linear-gradient";
 import { useHeaderHeight } from "@react-navigation/elements";
 
-const Container = ({ children }) => {
+const Container = ({ theme = "dark", children }) => {
     const headerHeight = useHeaderHeight();
+    const colors = theme === "dark" ? ["#1a1625", "#1d1740", "#1a1625"] : ["#fff", "#fff"];
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.fill}>
-                <LinearGradient colors={["#1a1625", "#1d1740", "#1a1625"]} style={styles.fill}>
+                <LinearGradient colors={colors} style={styles.fill}>
                     <View style={[{ paddingTop: headerHeight }, styles.innerContainer]}>
                         <SafeAreaView style={styles.innerContainer}>{children}</SafeAreaView>
                     </View>

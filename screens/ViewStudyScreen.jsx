@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Button, View, Text, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Container from "../components/Container.jsx";
@@ -10,13 +10,13 @@ import { navigateToParentNode, navigateToChildNode } from "../functions/treeFunc
 import treeToPgn from "../functions/treeToPgn.js";
 import { db } from "../firebase";
 import { get, ref, set } from "firebase/database";
-import PagerView from "react-native-pager-view";
 import MoveList from "../components/studies/MoveList.jsx";
-import Icon from "react-native-vector-icons/FontAwesome";
 import { AlertContext } from "../components/alert/AlertContextProvider";
 import pgnToTree from "../functions/pgnToTree.js";
 import TabSelector from "../components/studies/TabSelector.jsx";
 import Colors from "../colors.js";
+import ChapterSelector from "../components/studies/ChapterSelector.jsx";
+import StudyOptions from "../components/studies/StudyOptions.jsx";
 
 const ViewStudyScreen = ({ navigation, route }) => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -127,13 +127,13 @@ const ViewStudyScreen = ({ navigation, route }) => {
                         backgroundColor={backgroundColor}
                         pov={pov}
                     />
-                </View>
-                <View style={styles.navigatorContainer}>
                     <MessageBox
                         message={message.text}
                         textColor={message.color}
                         backgroundColor={message.backgroundColor}
                     />
+                </View>
+                <View style={styles.navigatorContainer}>
                     <Navigation
                         onDoubleLeftPress={handleBackToStartPress}
                         onLeftPress={handleParentPress}
@@ -145,23 +145,23 @@ const ViewStudyScreen = ({ navigation, route }) => {
                     />
                     <View style={styles.pagerView}>
                         <View style={styles.tab}>
-                            {
-                                currentPage === 0 ? (
-                                    <MoveNavigator
-                                        currentNode={currentNode}
-                                        chess={chess}
-                                        setCurrentNode={setCurrentNode}
-                                    />
-                                ) : currentPage === 1 ? (
-                                    <MoveList
-                                        currentNode={currentNode}
-                                        chess={chess}
-                                        setCurrentNode={setCurrentNode}
-                                    />
-                                ) : (
-                                    <Text>Chapter Selector (TODO)</Text>
-                                )
-                            }
+                            {currentPage === 0 ? (
+                                <MoveNavigator
+                                    currentNode={currentNode}
+                                    chess={chess}
+                                    setCurrentNode={setCurrentNode}
+                                />
+                            ) : currentPage === 1 ? (
+                                <MoveList
+                                    currentNode={currentNode}
+                                    chess={chess}
+                                    setCurrentNode={setCurrentNode}
+                                />
+                            ) : currentPage === 2 ? (
+                                <ChapterSelector />
+                            ) : (
+                                <StudyOptions />
+                            )}
                         </View>
                     </View>
                     <View style={styles.tabContainer}>
@@ -189,7 +189,8 @@ const styles = {
         flex: 1,
         display: "flex",
         alignItems: "center",
-        paddingTop: 5,
+        marginTop: 5,
+        marginBottom: 10,
     },
     pagerView: {
         width: "100%",
