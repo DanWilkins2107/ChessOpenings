@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View } from "react-native";
+import { View, Text, Button } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Container from "../components/Container.jsx";
@@ -17,6 +17,7 @@ import TabSelector from "../components/studies/TabSelector.jsx";
 import Colors from "../colors.js";
 import ChapterSelector from "../components/studies/ChapterSelector.jsx";
 import StudyOptions from "../components/studies/StudyOptions.jsx";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ViewStudyScreen = ({ navigation, route }) => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -27,7 +28,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
         color: "black",
         backgroundColor: "white",
     });
-    let tree = {
+    const tree = {
         move: "Start",
         children: [],
         parent: null,
@@ -35,39 +36,94 @@ const ViewStudyScreen = ({ navigation, route }) => {
     const [currentNode, setCurrentNode] = useState(tree);
     const [pov, setPov] = useState("w");
     const { setAlert } = useContext(AlertContext);
-    const [currentChapter, setCurrentChapter] = useState(0);
+    const [currentChapter, setCurrentChapter] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [studyData, setStudyData] = useState({});
 
-    const chapters = [
-        { name: "Chapter 1", moves: [] },
-        { name: "Chapter 2", moves: [] },
-        { name: "Chapter 3", moves: [] },
-        { name: "Chapter 1", moves: [] },
-        { name: "Chapter 2", moves: [] },
-        { name: "Chapter 3", moves: [] },
-        { name: "Chapter 1", moves: [] },
-        { name: "Chapter 2", moves: [] },
-    ];
-
+    // Get study info
     useEffect(() => {
+        setLoading(true);
         const studyUUID = route.params.study;
-        const pgnRef = ref(db, `pgns/${studyUUID}`);
-        get(pgnRef).then((snapshot) => {
+        const studyRef = ref(db, `studies/${studyUUID}`);
+        get(studyRef).then((snapshot) => {
             if (snapshot.exists()) {
-                const pgnData = snapshot.val();
-                const tree = pgnToTree(pgnData);
-                setCurrentNode(tree);
+                const studyData = snapshot.val();
+                setStudyData(studyData);
+                setCurrentChapter(0);
             }
         });
     }, []);
 
+    // Get PGN data
+    useEffect(() => {
+        const getPGN = async () => {
+            setLoading(true);
+            const chapterPGN = studyData.chapters[currentChapter].pgn;
+            const pgnRef = ref(db, `pgns/${chapterPGN}`);
+            chess.reset();
+
+            const asyncStorageData = await AsyncStorage.getItem("pgnData/" + chapterPGN);
+            if (asyncStorageData) {
+                const tree = pgnToTree(JSON.parse(asyncStorageData));
+                setCurrentNode(tree);
+                setLoading(false);
+                return;
+            }
+            get(pgnRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const pgnData = snapshot.val();
+                    const tree = pgnToTree(pgnData);
+                    setCurrentNode(tree);
+                    setLoading(false);
+                } else {
+                    const tree = {
+                        move: "Start",
+                        children: [],
+                        parent: null,
+                    };
+                    setCurrentNode(tree);
+                    setLoading(false);
+                }
+            });
+        };
+        getPGN();
+    }, [currentChapter]);
+
     const uploadPgn = async () => {
+        const chapterPGN = studyData.chapters[currentChapter].pgn;
+        const pgnRef = ref(db, `pgns/${chapterPGN}`);
         const pgnData = treeToPgn(currentNode);
-        const pgnRef = ref(db, `pgns/${route.params.study}`);
         try {
             await set(pgnRef, pgnData);
         } catch (error) {
             setAlert("Error Uploading PGN", "red");
+        }
+
+        let writingToDb = true;
+        const lastUploadTime = (await AsyncStorage.getItem("lastUploadTime/" + chapterPGN)) || null;
+        if (lastUploadTime) {
+            const currentTime = Date.now();
+            if (currentTime - Number(lastUploadTime) < 3600000) {
+                writingToDb = false;
+            }
+        }
+
+        if (writingToDb) {
+            try {
+                await Promise.all([
+                    AsyncStorage.setItem("lastUploadTime/" + chapterPGN, Date.now().toString()),
+                    set(ref(db, `pgns/${chapterPGN}`), pgnData),
+                    AsyncStorage.removeItem("pgnData/" + chapterPGN),
+                ]);
+            } catch {
+                setAlert("Error Uploading PGN", "red");
+            }
+        } else {
+            try {
+                await AsyncStorage.setItem("pgnData/" + chapterPGN, JSON.stringify(pgnData));
+            } catch {
+                setAlert("Error Uploading PGN", "red");
+            }
         }
     };
 
@@ -87,6 +143,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
         try {
             const move = chess.move({ from: from, to: to });
             navigateToChildNode(move.san, currentNode, setCurrentNode, chess, false);
+            uploadPgn();
         } catch (error) {}
     };
 
@@ -129,6 +186,10 @@ const ViewStudyScreen = ({ navigation, route }) => {
 
     return (
         <Container>
+            <Text>{String(loading)}</Text>
+            <View style={styles.titleContainer}>
+                <Text style={styles.title}>{studyData.title || ""}</Text>
+            </View>
             <View style={styles.container}>
                 <View style={styles.chessboardContainer}>
                     <Chessboard
@@ -168,7 +229,11 @@ const ViewStudyScreen = ({ navigation, route }) => {
                                     setCurrentNode={setCurrentNode}
                                 />
                             ) : currentPage === 2 ? (
-                                <ChapterSelector chapters={chapters} />
+                                <ChapterSelector
+                                    chapters={studyData.chapters}
+                                    currentChapter={currentChapter}
+                                    setCurrentChapter={setCurrentChapter}
+                                />
                             ) : (
                                 <StudyOptions />
                             )}
@@ -176,7 +241,6 @@ const ViewStudyScreen = ({ navigation, route }) => {
                     </View>
                     <View style={styles.tabContainer}>
                         <TabSelector selectedTab={currentPage} setSelectedTab={setCurrentPage} />
-                        {/* <Button onPress={uploadPgn} title="Save" /> */}
                     </View>
                 </View>
             </View>
@@ -212,29 +276,26 @@ const styles = {
     tab: {
         flex: 1,
     },
-    circle: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        backgroundColor: "transparent",
-        borderWidth: 1,
-        borderColor: "white",
-    },
-    buttonContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 4,
-    },
-    circleContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-    },
     tabContainer: {
         width: "100%",
         display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    titleContainer: {
+        width: "100%",
+        display: "flex",
         alignItems: "center",
+        backgroundColor: Colors.primary,
+        padding: 4,
+        marginTop: 5,
+        borderWidth: 2,
+        borderColor: Colors.primaryBorder,
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "white",
     },
 };
 

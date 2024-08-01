@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Colors from "../../colors";
 
-const ChapterSelector = ({chapters, currentChapter}) => {
+const ChapterSelector = ({ chapters, currentChapter, setCurrentChapter }) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.addChapterBar}>
@@ -10,13 +11,19 @@ const ChapterSelector = ({chapters, currentChapter}) => {
             </TouchableOpacity>
             <ScrollView style={styles.scroll}>
                 {chapters.map((chapter, index) => {
+                    const backgroundColor =
+                        index === currentChapter
+                            ? Colors.primaryBorder
+                            : index % 2 === 0
+                            ? "#eeeeee"
+                            : "white";
                     return (
                         <TouchableOpacity
                             key={index}
-                            style={[
-                                styles.chapterBar,
-                                { backgroundColor: index % 2 === 0 ? "#eeeeee" : "white" },
-                            ]}
+                            style={[styles.chapterBar, { backgroundColor: backgroundColor }]}
+                            onPress={() => {
+                                setCurrentChapter(index);
+                            }}
                         >
                             <View style={styles.leftBarSection}>
                                 <View style={styles.numberSection}>

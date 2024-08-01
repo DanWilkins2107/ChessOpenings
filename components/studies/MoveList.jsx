@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Text, View, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import { AlertContext } from "../alert/AlertContextProvider";
-import Colors from "../../colors";
 
 const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     const [rootNode, setRootNode] = useState(null);
@@ -33,8 +32,8 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                     )}
                     {tempNode.parent.children.length > 1 && (
                         <Text key={`${tempNode.move}-variations`} style={styles.text}>
-                            <View>
-                                <Text style={styles.text}> (</Text>
+                            <View style={styles.bracketContainer}>
+                                <Text style={styles.text}>(</Text>
                             </View>
                             {tempNode.parent.children.slice(1).map((child, index) => (
                                 <Text key={child.move} style={styles.text}>
@@ -47,7 +46,6 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                                     )}
                                     {child.children && child.children.length > 0 && (
                                         <Text style={styles.text}>
-                                            {" "}
                                             {renderTree(
                                                 child,
                                                 moveNumber + Math.floor(moveIndex / 2) + 1,
@@ -57,7 +55,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                                     )}
                                 </Text>
                             ))}
-                            <View>
+                            <View style={styles.bracketContainer}>
                                 <Text style={styles.text}>)</Text>
                             </View>
                         </Text>
@@ -72,7 +70,6 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                 {moves.map((move, index) => (
                     <Text key={index} style={styles.text}>
                         {move}
-                        {index < moves.length - 1 ? " " : ""}
                     </Text>
                 ))}
             </Text>
@@ -83,7 +80,6 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         const move = node.move;
         const isActive = node === currentNode;
         let prefix = "";
-
         if (isMainLine) {
             prefix = isWhiteMove ? `${moveNumber}.` : "";
         } else if (isFirstVariationMove) {
@@ -97,9 +93,12 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                 style={{
                     borderRadius: 5,
                     backgroundColor: isActive ? "black" : "transparent",
+                    padding: 2,
                 }}
             >
-                <Text style={[{ color: isActive ? "white" : "black" }, styles.text]}>{prefix + move}</Text>
+                <Text style={[{ color: isActive ? "white" : "black" }, styles.text]}>
+                    {prefix + move}
+                </Text>
             </TouchableOpacity>
         );
     };
@@ -143,7 +142,12 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: "white",
-        padding: 4,
+        paddingVertical: 4,
+        paddingHorizontal: 2,
+    },
+    bracketContainer: {
+        backgroundColor: "white",
+        paddingVertical: 2,
     },
 });
 
