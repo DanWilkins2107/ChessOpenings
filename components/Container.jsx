@@ -5,7 +5,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 
 const Container = ({ theme = "dark", children }) => {
     const headerHeight = useHeaderHeight();
-    const colors = theme === "dark" ? ["#1a1625", "#1d1740", "#1a1625"] : ["#fff", "#fff"];
+    const colors = theme === "dark" ? ["#13111A", "#1F1025", "#13111A"] : ["#fff", "#fff"];
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.fill}>

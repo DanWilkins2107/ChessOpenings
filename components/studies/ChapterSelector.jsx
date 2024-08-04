@@ -1,11 +1,18 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Colors from "../../colors";
+import { useContext } from "react";
+import { ModalContext } from "../modal/ModalContextProvider.jsx";
+import AddChapterModal from "./AddChapterModal.jsx";
 
 const ChapterSelector = ({ chapters, currentChapter, setCurrentChapter }) => {
+    const { setModal } = useContext(ModalContext);
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.addChapterBar}>
+            <TouchableOpacity
+                style={styles.addChapterBar}
+                onPress={() => setModal(<AddChapterModal />)}
+            >
                 <Icon size={20} name="plus" />
                 <Text style={styles.addChapterText}>Add Chapter</Text>
             </TouchableOpacity>

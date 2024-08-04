@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     width: "100%",
-    zIndex: 1,
+    zIndex: 10,
     alignItems: "center",
   },
   alertContainer: {

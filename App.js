@@ -8,6 +8,8 @@ import SignUpScreen from "./screens/SignUpScreen";
 import ForgottenPasswordScreen from "./screens/ForgottenPasswordScreen";
 import { AlertProvider } from "./components/alert/AlertContextProvider";
 import Alert from "./components/alert/Alert";
+import { ModalProvider } from "./components/modal/ModalContextProvider.jsx";
+import Modal from "./components/modal/Modal.jsx";
 import DashboardScreen from "./screens/DashboardScreen.jsx";
 import DailyTestDashScreen from "./screens/DailyTestDashScreen.jsx";
 import ViewStudyScreen from "./screens/ViewStudyScreen.jsx";
@@ -51,27 +53,30 @@ const App = () => {
 
     return (
         <AlertProvider>
-            <NavigationContainer>
-                <Alert />
-                <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
-                    {(user ? userScreens : authScreens).map((screen) => (
-                        <Stack.Screen
-                            key={screen.name}
-                            name={screen.name}
-                            component={screen.component}
-                            options={
-                                screen.header
-                                    ? {
-                                          headerTitle: (props) => HeaderCenter(props),
-                                          headerLeft: (props) => HeaderLeft(props),
-                                          headerTransparent: true,
-                                      }
-                                    : { headerShown: false }
-                            }
-                        />
-                    ))}
-                </Stack.Navigator>
-            </NavigationContainer>
+            <ModalProvider>
+                <NavigationContainer>
+                    <Alert />
+                    <Modal />
+                    <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
+                        {(user ? userScreens : authScreens).map((screen) => (
+                            <Stack.Screen
+                                key={screen.name}
+                                name={screen.name}
+                                component={screen.component}
+                                options={
+                                    screen.header
+                                        ? {
+                                              headerTitle: (props) => HeaderCenter(props),
+                                              headerLeft: (props) => HeaderLeft(props),
+                                              headerTransparent: true,
+                                          }
+                                        : { headerShown: false }
+                                }
+                            />
+                        ))}
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </ModalProvider>
         </AlertProvider>
     );
 };

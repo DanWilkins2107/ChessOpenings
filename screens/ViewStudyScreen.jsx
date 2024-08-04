@@ -19,6 +19,7 @@ import ChapterSelector from "../components/studies/ChapterSelector.jsx";
 import StudyOptions from "../components/studies/StudyOptions.jsx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 const ViewStudyScreen = ({ navigation, route }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [chess] = useState(new Chess());
@@ -186,7 +187,6 @@ const ViewStudyScreen = ({ navigation, route }) => {
 
     return (
         <Container>
-            <Text>{String(loading)}</Text>
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>{studyData.title || ""}</Text>
             </View>

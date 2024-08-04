@@ -1,7 +1,7 @@
 const Colors =  {
-    primary: 'rgba(199, 184, 234, 0.5)',
+    primary: '#726895',
     primaryBorder: '#C7B8EA',
-    // Add more colors here...
+
   };
 
 export default Colors;
