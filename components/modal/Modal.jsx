@@ -9,7 +9,7 @@ import {
     Keyboard,
 } from "react-native";
 import IconFA5 from "react-native-vector-icons/FontAwesome5";
-import { ModalContext } from "./ModalContextProvider"
+import { ModalContext } from "./ModalContextProvider";
 import Colors from "../../colors";
 
 const Modal = () => {
@@ -44,12 +44,14 @@ const Modal = () => {
             <SafeAreaView style={styles.safeArea}>
                 <Pressable style={styles.overlay} onPress={handleDismiss}>
                     <Animated.View style={[styles.modalContainer]}>
-                        <View style={styles.header}>
+                        <Pressable style={styles.header} onPress={() => Keyboard.dismiss()}>
                             <TouchableOpacity onPress={handleDismiss} style={styles.closeButton}>
-                                <IconFA5 name="times" size={30} />
+                                <IconFA5 name="times" size={30} color="white" />
                             </TouchableOpacity>
-                        </View>
-                        <View style={styles.content}>{modal}</View>
+                        </Pressable>
+                        <Pressable style={styles.content} onPress={() => Keyboard.dismiss()}>
+                            {modal}
+                        </Pressable>
                     </Animated.View>
                 </Pressable>
             </SafeAreaView>
@@ -96,7 +98,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primary,
         padding: 10,
         alignItems: "flex-end",
-
     },
     closeButton: {
         width: 30,

@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Touchable } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import FormField from "../FormField";
 import AuthButton from "../auth/AuthButton";
+import { ModalContext } from "../modal/ModalContextProvider";
 
-const AddChapterModal = ({ onSubmitFunction }) => {
+const AddChapterModal = ({ addChapterFunction }) => {
     const [chapterName, setChapterName] = useState("");
     const [pieceColor, setPieceColor] = useState("white");
+    const { setModal } = useContext(ModalContext);
 
     return (
         <View style={styles.container}>
@@ -14,17 +16,22 @@ const AddChapterModal = ({ onSubmitFunction }) => {
             <FormField
                 value={chapterName}
                 placeholder={"Chapter Name"}
-                onChangeText={setChapterName} // Ensure this is handled for text input updates
+                onChangeText={setChapterName}
             />
-
             <Text style={styles.subtitle}>Piece color</Text>
             <View style={styles.colorToggleContainer}>
-                <TouchableOpacity style={[styles.colorToggle, pieceColor === "white" && styles.selected]}>
+                <TouchableOpacity
+                    onPress={() => setPieceColor("white")}
+                    style={[styles.colorToggle, pieceColor === "white" && styles.selected]}
+                >
                     <View style={styles.whiteInner}>
                         <Text>White</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.colorToggle, pieceColor === "black" && styles.selected]}>
+                <TouchableOpacity
+                    style={[styles.colorToggle, pieceColor === "black" && styles.selected]}
+                    onPress={() => setPieceColor("black")}
+                >
                     <View style={styles.blackInner}>
                         <Text style={styles.blackText}>Black</Text>
                     </View>
@@ -33,16 +40,19 @@ const AddChapterModal = ({ onSubmitFunction }) => {
 
             <AuthButton
                 title="Add Chapter"
-                onPress={() => onSubmitFunction(chapterName, pieceColor)}
+                onPress={() => {
+                    addChapterFunction(chapterName, pieceColor);
+                    setModal(null);
+                }}
             />
-        </View>
+        </View>   
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         alignItems: "center",
-        padding: 20, // Added padding for better layout
+        padding: 10,
     },
     title: {
         fontSize: 20,
@@ -64,9 +74,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "white",
         borderColor: "white",
+        borderWidth: 2,
     },
     whiteInner: {
-        backgroundColor: "white",
         borderWidth: 2,
         margin: 2,
         padding: 10,
@@ -82,7 +92,7 @@ const styles = StyleSheet.create({
     },
     selected: {
         borderColor: "black",
-    }
+    },
 });
 
 export default AddChapterModal;

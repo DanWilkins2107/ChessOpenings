@@ -4,9 +4,11 @@ const StudyOptions = ({study}) => {
     return (
         <View style={styles.container}>
             <Text>Study Name</Text>
+
             <Text>This chapter is for:</Text>
+
             <View style={styles.sideChooserContainer}></View>
-            <Text>Delete Chapter</Text>
+
             <Text>Delete Study</Text>
         </View>
     );

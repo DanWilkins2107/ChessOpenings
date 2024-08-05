@@ -1,5 +1,5 @@
-import { useState, useContext, useEffect } from "react";
-import { StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
+import { useState, useContext } from "react";
+import { StyleSheet, ScrollView, KeyboardAvoidingView, View } from "react-native";
 import Container from "../components/Container";
 import AddStudyButton from "../components/addstudy/AddStudyButton";
 import LineSeparator from "../components/auth/LineSeparator";
@@ -43,6 +43,7 @@ const AddStudyScreen = ({ navigation }) => {
                     {
                         name: "Chapter 1",
                         pgn: pgnUuid,
+                        color: "white",
                     },
                 ],
             });
@@ -94,6 +95,7 @@ const AddStudyScreen = ({ navigation }) => {
                         borderColor="#fff"
                         textColor="#000"
                     />
+                    <View style={styles.spacer} />
                 </ScrollView>
             </KeyboardAvoidingView>
         </Container>
@@ -108,6 +110,10 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
+    },
+    spacer: {
+        height: 100,
+        width: "100%",
     },
 });
 

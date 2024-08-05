@@ -4,14 +4,23 @@ import Colors from "../../colors";
 import { useContext } from "react";
 import { ModalContext } from "../modal/ModalContextProvider.jsx";
 import AddChapterModal from "./AddChapterModal.jsx";
+import DeleteChapterModal from "./DeleteChapterModal.jsx";
 
-const ChapterSelector = ({ chapters, currentChapter, setCurrentChapter }) => {
+const ChapterSelector = ({
+    chapters,
+    currentChapter,
+    setCurrentChapter,
+    addChapterFunction,
+    deleteChapterFunction,
+}) => {
     const { setModal } = useContext(ModalContext);
     return (
         <View style={styles.container}>
             <TouchableOpacity
                 style={styles.addChapterBar}
-                onPress={() => setModal(<AddChapterModal />)}
+                onPress={() =>
+                    setModal(<AddChapterModal addChapterFunction={addChapterFunction} />)
+                }
             >
                 <Icon size={20} name="plus" />
                 <Text style={styles.addChapterText}>Add Chapter</Text>
@@ -38,7 +47,27 @@ const ChapterSelector = ({ chapters, currentChapter, setCurrentChapter }) => {
                                 </View>
                                 <Text style={styles.nameText}>{chapter.name}</Text>
                             </View>
-                            <Icon name="eye" size={"30%"} />
+
+                            <View style={styles.iconContainer}>
+                                <TouchableOpacity onPress={() => {}} style={styles.iconButton}>
+                                    <Icon name="pencil" size={"30%"} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setModal(
+                                            <DeleteChapterModal
+                                                deleteChapterFunction={() =>
+                                                    deleteChapterFunction(index)
+                                                }
+                                                chapterName={chapter.name}
+                                            />
+                                        );
+                                    }}
+                                    style={styles.iconButton}
+                                >
+                                    <Icon name="trash" size={"30%"} />
+                                </TouchableOpacity>
+                            </View>
                         </TouchableOpacity>
                     );
                 })}
@@ -99,6 +128,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginLeft: 10,
+    },
+    iconContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    iconButton: {
+        marginHorizontal: 5,
     },
 });
 

@@ -18,7 +18,7 @@ import Colors from "../colors.js";
 import ChapterSelector from "../components/studies/ChapterSelector.jsx";
 import StudyOptions from "../components/studies/StudyOptions.jsx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { randomUUID } from "expo-crypto";
 
 const ViewStudyScreen = ({ navigation, route }) => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -89,6 +89,27 @@ const ViewStudyScreen = ({ navigation, route }) => {
         };
         getPGN();
     }, [currentChapter]);
+
+    const addChapterFunction = (name, pieceColor) => {
+        let finalName = name || `Chapter ${studyData.chapters.length + 1}`;
+        const newChapter = {
+            name: finalName,
+            pgn: randomUUID(),
+            color: pieceColor,
+        };
+        const newChapters = [...studyData.chapters, newChapter];
+
+        // Update the database
+        try {
+            const studyRef = ref(db, `studies/${route.params.study}`);
+            set(studyRef, { ...studyData, chapters: newChapters });
+            setStudyData({ ...studyData, chapters: newChapters });
+            setCurrentChapter(newChapters.length - 1);
+            setAlert("Chapter Added", "green");
+        } catch (error) {
+            setAlert("Could not add Chapter", "red");
+        }
+    };
 
     const uploadPgn = async () => {
         const chapterPGN = studyData.chapters[currentChapter].pgn;
@@ -185,6 +206,23 @@ const ViewStudyScreen = ({ navigation, route }) => {
         }
     };
 
+    const handleDeleteChapter = (index) => {
+        try {
+            const newChapters = studyData.chapters.filter((_chapter, i) => i !== index);
+            setStudyData({ ...studyData, chapters: newChapters });
+            setCurrentChapter(index - 1 >= 0 ? index - 1 : 0);
+
+            const chapterPGNref = ref(db, `pgns/${studyData.chapters[index].pgn}`);
+            const studyRef = ref(db, `studies/${route.params.study}`);
+
+            set(studyRef, { ...studyData, chapters: newChapters });
+            set(chapterPGNref, null);
+            setAlert("Chapter Deleted", "green");
+        } catch (error) {
+            setAlert("Could not delete chapter", "red");
+        }
+    };
+
     return (
         <Container>
             <View style={styles.titleContainer}>
@@ -233,6 +271,8 @@ const ViewStudyScreen = ({ navigation, route }) => {
                                     chapters={studyData.chapters}
                                     currentChapter={currentChapter}
                                     setCurrentChapter={setCurrentChapter}
+                                    addChapterFunction={addChapterFunction}
+                                    deleteChapterFunction={handleDeleteChapter}
                                 />
                             ) : (
                                 <StudyOptions />
