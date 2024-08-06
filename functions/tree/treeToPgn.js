@@ -14,7 +14,7 @@ function treeToPgn(currentNode) {
                 for (let i = 1; i < node.children.length; i++) {
                     ravsNode = node.children[i];
                     ravToAdd = [{ move: ravsNode.move }].concat(addPGNNode(ravsNode));
-                    pgn[pgn.length - 1].ravs.push(ravToAdd);
+                    pgn[pgn.length - 1].ravs.push({ moves: ravToAdd });
                 }
             }
             node = firstChildNode;

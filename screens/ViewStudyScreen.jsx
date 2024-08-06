@@ -38,12 +38,12 @@ const ViewStudyScreen = ({ navigation, route }) => {
     const [pov, setPov] = useState("w");
     const { setAlert } = useContext(AlertContext);
     const [currentChapter, setCurrentChapter] = useState(null);
+    const [studyLoading, setStudyLoading] = useState(true);
     const [loading, setLoading] = useState(true);
     const [studyData, setStudyData] = useState({});
 
     // Get study info
     useEffect(() => {
-        setLoading(true);
         const studyUUID = route.params.study;
         const studyRef = ref(db, `studies/${studyUUID}`);
         get(studyRef).then((snapshot) => {
@@ -51,14 +51,13 @@ const ViewStudyScreen = ({ navigation, route }) => {
                 const studyData = snapshot.val();
                 setStudyData(studyData);
                 setCurrentChapter(0);
-            }
+            } else {}
         });
     }, []);
 
     // Get PGN data
     useEffect(() => {
         const getPGN = async () => {
-            setLoading(true);
             const chapterPGN = studyData.chapters[currentChapter].pgn;
             const pgnRef = ref(db, `pgns/${chapterPGN}`);
             chess.reset();
@@ -70,6 +69,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
                 setLoading(false);
                 return;
             }
+
             get(pgnRef).then((snapshot) => {
                 if (snapshot.exists()) {
                     const pgnData = snapshot.val();
@@ -88,7 +88,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
             });
         };
         getPGN();
-    }, [currentChapter]);
+    }, [currentChapter, studyData]);
 
     const addChapterFunction = (name, pieceColor) => {
         let finalName = name || `Chapter ${studyData.chapters.length + 1}`;
@@ -268,7 +268,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
                                 />
                             ) : currentPage === 2 ? (
                                 <ChapterSelector
-                                    chapters={studyData.chapters}
+                                    chapters={studyData.chapters || []}
                                     currentChapter={currentChapter}
                                     setCurrentChapter={setCurrentChapter}
                                     addChapterFunction={addChapterFunction}

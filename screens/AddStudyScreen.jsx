@@ -13,6 +13,7 @@ import Colors from "../colors";
 import { AlertContext } from "../components/alert/AlertContextProvider";
 import { auth } from "../firebase";
 import PageTitle from "../components/PageTitle";
+import pgnParser from "pgn-parser";
 
 const AddStudyScreen = ({ navigation }) => {
     const [pgnText, setPgnText] = useState("");
@@ -49,11 +50,81 @@ const AddStudyScreen = ({ navigation }) => {
             });
             await set(userStudyRef, Date.now());
             setAlert("Study created!", "green");
-            navigation.navigate("ViewStudy", { studyUuid });
+            navigation.navigate("ViewStudy", { study: studyUuid });
         } catch (error) {
             setAlert("Error creating study. Please try again.", "red");
         }
     };
+
+    const createStudyFromPgn = async () => {};
+
+    const createStudyFromLichess = async () => {
+        if (!lichessStudyUrl) {
+            setAlert("Please enter a Lichess study URL.", "red");
+            return;
+        }
+
+        if (!studyTitle) {
+            setAlert("Please enter a study title.", "red");
+            return;
+        }
+
+        if (!selectedIcon) {
+            setAlert("Please select an icon.", "red");
+            return;
+        }
+
+        const studyId = lichessStudyUrl.split("/").pop();
+
+        try {
+            const response = await fetch(`https://lichess.org/api/study/${studyId}.pgn`);
+            if (response.ok && response.status === 200) {
+                const pgn = await response.text();
+                const parsed = pgnParser.parse(pgn);
+                const studyUUID = randomUUID();
+                const studyObj = {
+                    title: studyTitle,
+                    icon: selectedIcon,
+                    chapters: [],
+                };
+                const promises = [];
+
+                for (const chapter of parsed) {
+                    const pgnUUID = randomUUID();
+                    const name =
+                        chapter.headers[0].value.split(": ", 2)[1] ||
+                        "Chapter " + (studyObj.chapters.length + 1);
+                    studyObj.chapters.push({
+                        name: name,
+                        pgn: pgnUUID,
+                        color: "white", // TODO add color
+                    });
+                    const pgnPromise = set(ref(db, `pgns/${pgnUUID}`), chapter.moves);
+                    promises.push(pgnPromise);
+                }
+
+                const studyPromise = set(ref(db, `studies/${studyUUID}`), studyObj);
+                promises.push(studyPromise);
+                const userPromise = set(
+                    ref(db, `users/${auth.currentUser.uid}/studies/${studyUUID}`),
+                    Date.now()
+                );
+                promises.push(userPromise);
+
+                await Promise.all(promises);
+                
+                setTimeout(() => {
+                    setAlert("Study created!", "green");
+                    navigation.navigate("ViewStudy", { study: studyUUID });
+                }, 1000);
+            } else {
+                setAlert("Error importing study. Please try again.", "red");
+            }
+        } catch (error) {
+            setAlert("Error importing study. Please try again.", "red");
+        }
+    };
+
     return (
         <Container>
             <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -90,7 +161,7 @@ const AddStudyScreen = ({ navigation }) => {
                     />
                     <AddStudyButton
                         title="Import Lichess Study"
-                        onPress={() => console.log("Import Lichess Study")}
+                        onPress={() => createStudyFromLichess()}
                         backgroundColor="rgba(255, 255, 255, 0.9)"
                         borderColor="#fff"
                         textColor="#000"

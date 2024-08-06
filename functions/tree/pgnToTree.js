@@ -15,10 +15,10 @@ function pgnToTree(pgn) {
         };
 
         parent.children.push(newNode);
-        
+
         if (firstMove.ravs) {
             for (const rav of firstMove.ravs) {
-                addNode(rav, parent)
+                addNode(rav.moves, parent)
             }
         }
         const newObj = newObject.slice(1);
