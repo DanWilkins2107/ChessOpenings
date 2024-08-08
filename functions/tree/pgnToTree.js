@@ -18,7 +18,7 @@ function pgnToTree(pgn) {
 
         if (firstMove.ravs) {
             for (const rav of firstMove.ravs) {
-                addNode(rav.moves, parent)
+                addNode(rav.moves, parent);
             }
         }
         const newObj = newObject.slice(1);

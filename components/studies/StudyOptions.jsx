@@ -1,24 +1,27 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import ChooseSide from "../addstudy/ChooseSide";
 
 const StudyOptions = ({study}) => {
+    const handleSetSide = (side) => {
+        // IMPLEMENT
+    };
+    
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <Text>Study Name</Text>
 
             <Text>This chapter is for:</Text>
 
-            <View style={styles.sideChooserContainer}></View>
+            <ChooseSide side={study.color} setSide={handleSetSide} />
 
             <Text>Delete Study</Text>
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
         backgroundColor: "white",
     },
     sideChooserContainer: {

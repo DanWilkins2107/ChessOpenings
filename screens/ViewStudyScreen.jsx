@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text } from "react-native";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard.jsx";
 import Container from "../components/Container.jsx";
@@ -50,8 +50,11 @@ const ViewStudyScreen = ({ navigation, route }) => {
             if (snapshot.exists()) {
                 const studyData = snapshot.val();
                 setStudyData(studyData);
+                studyData.color === "white" ? setPov("w") : setPov("b");
                 setCurrentChapter(0);
-            } else {}
+            } else {
+                setAlert("Study not Found", "red");
+            }
         });
     }, []);
 
@@ -275,7 +278,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
                                     deleteChapterFunction={handleDeleteChapter}
                                 />
                             ) : (
-                                <StudyOptions />
+                                <StudyOptions study={studyData} />
                             )}
                         </View>
                     </View>

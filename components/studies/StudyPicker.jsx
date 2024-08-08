@@ -9,14 +9,17 @@ const StudyPicker = ({ UUID, title, onStudyPress, chapters, children }) => {
                 <View style={styles.section}>
                     <View style={styles.imageWrapper}>{children}</View>
                     <View style={styles.column}>
-                      <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
-                      <Text style={styles.text}>
-                          {JSON.stringify(chapters.length)} chapter{chapters.length === 1 ? "" : "s"}
-                      </Text>
+                        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+                            {title}
+                        </Text>
+                        <Text style={styles.text}>
+                            {JSON.stringify(chapters.length)} chapter
+                            {chapters.length === 1 ? "" : "s"}
+                        </Text>
                     </View>
                 </View>
-                <View style={styles.iconHolder}> 
-                  <Icon name="caret-right" size={30} color="#fff" />
+                <View style={styles.iconHolder}>
+                    <Icon name="caret-right" size={30} color="#fff" />
                 </View>
             </TouchableOpacity>
         </View>
@@ -54,7 +57,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         marginLeft: 10,
-        fontWeight: "600", 
+        fontWeight: "600",
         color: "#fff",
     },
     text: {

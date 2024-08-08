@@ -80,14 +80,14 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
     }, []);
 
     const handleChooseStudies = () => {
-        const chosenPGNs = []
+        const chosenPGNs = [];
         Object.keys(studyObj).forEach((study) => {
             chosenChapters[study].forEach((chapter, index) => {
                 if (chapter) {
-                    chosenPGNs.push(studyObj[study].chapters[index].pgn)
+                    chosenPGNs.push(studyObj[study].chapters[index].pgn);
                 }
-            })
-        })
+            });
+        });
         if (chosenPGNs.length === 0) {
             setAlert("Please select at least one chapter to train", "red");
             return;

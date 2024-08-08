@@ -14,6 +14,8 @@ import { AlertContext } from "../components/alert/AlertContextProvider";
 import { auth } from "../firebase";
 import PageTitle from "../components/PageTitle";
 import pgnParser from "pgn-parser";
+import ChooseSide from "../components/addstudy/ChooseSide";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const AddStudyScreen = ({ navigation }) => {
     const [pgnText, setPgnText] = useState("");
@@ -21,6 +23,7 @@ const AddStudyScreen = ({ navigation }) => {
     const [selectedIcon, setSelectedIcon] = useState(null);
     const [lichessStudyUrl, setLichessStudyUrl] = useState("");
     const { setAlert } = useContext(AlertContext);
+    const [side, setSide] = useState("white");
 
     const createStudy = async () => {
         const studyUuid = randomUUID();
@@ -40,11 +43,11 @@ const AddStudyScreen = ({ navigation }) => {
             await set(studyRef, {
                 title: studyTitle,
                 icon: selectedIcon,
+                color: side,
                 chapters: [
                     {
                         name: "Chapter 1",
                         pgn: pgnUuid,
-                        color: "white",
                     },
                 ],
             });
@@ -56,7 +59,24 @@ const AddStudyScreen = ({ navigation }) => {
         }
     };
 
-    const createStudyFromPgn = async () => {};
+    const createStudyFromPgn = async () => {
+        if (!pgnText) {
+            setAlert("Please enter a PGN.", "red");
+            return;
+        }
+
+        if (!studyTitle) {
+            setAlert("Please enter a study title.", "red");
+            return;
+        }
+
+        if (!selectedIcon) {
+            setAlert("Please select an icon.", "red");
+            return;
+        }
+
+        // FINISH THIS
+    };
 
     const createStudyFromLichess = async () => {
         if (!lichessStudyUrl) {
@@ -84,6 +104,7 @@ const AddStudyScreen = ({ navigation }) => {
                 const studyUUID = randomUUID();
                 const studyObj = {
                     title: studyTitle,
+                    color: side,
                     icon: selectedIcon,
                     chapters: [],
                 };
@@ -112,7 +133,7 @@ const AddStudyScreen = ({ navigation }) => {
                 promises.push(userPromise);
 
                 await Promise.all(promises);
-                
+
                 setTimeout(() => {
                     setAlert("Study created!", "green");
                     navigation.navigate("ViewStudy", { study: studyUUID });
@@ -127,15 +148,16 @@ const AddStudyScreen = ({ navigation }) => {
 
     return (
         <Container>
-            <KeyboardAvoidingView style={styles.container} behavior="padding">
+            <View style={styles.container} behavior="padding">
                 <PageTitle title="Add a Study" />
-                <ScrollView style={styles.scrollView}>
+                <KeyboardAwareScrollView style={styles.scrollView}>
                     <FormField
                         value={studyTitle}
                         onChangeText={setStudyTitle}
                         placeholder="Enter Study Title"
                     />
                     <IconSelector selectedIcon={selectedIcon} setSelectedIcon={setSelectedIcon} />
+                    <ChooseSide side={side} setSide={setSide} />
                     <LineSeparator />
                     <AddStudyButton
                         title="Create From Scratch"
@@ -167,8 +189,8 @@ const AddStudyScreen = ({ navigation }) => {
                         textColor="#000"
                     />
                     <View style={styles.spacer} />
-                </ScrollView>
-            </KeyboardAvoidingView>
+                </KeyboardAwareScrollView>
+            </View>
         </Container>
     );
 };

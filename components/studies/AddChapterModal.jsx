@@ -18,25 +18,7 @@ const AddChapterModal = ({ addChapterFunction }) => {
                 placeholder={"Chapter Name"}
                 onChangeText={setChapterName}
             />
-            <Text style={styles.subtitle}>Piece color</Text>
-            <View style={styles.colorToggleContainer}>
-                <TouchableOpacity
-                    onPress={() => setPieceColor("white")}
-                    style={[styles.colorToggle, pieceColor === "white" && styles.selected]}
-                >
-                    <View style={styles.whiteInner}>
-                        <Text>White</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.colorToggle, pieceColor === "black" && styles.selected]}
-                    onPress={() => setPieceColor("black")}
-                >
-                    <View style={styles.blackInner}>
-                        <Text style={styles.blackText}>Black</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
+            
 
             <AuthButton
                 title="Add Chapter"
@@ -45,7 +27,7 @@ const AddChapterModal = ({ addChapterFunction }) => {
                     setModal(null);
                 }}
             />
-        </View>   
+        </View>
     );
 };
 
@@ -64,35 +46,8 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginVertical: 10,
     },
-    colorToggleContainer: {
-        flexDirection: "row",
-        marginBottom: 20,
-    },
-    colorToggle: {
-        marginHorizontal: 5,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "white",
-        borderColor: "white",
-        borderWidth: 2,
-    },
-    whiteInner: {
-        borderWidth: 2,
-        margin: 2,
-        padding: 10,
-    },
-    blackInner: {
-        backgroundColor: "black",
-        borderWidth: 2,
-        margin: 2,
-        padding: 10,
-    },
-    blackText: {
-        color: "white",
-    },
-    selected: {
-        borderColor: "black",
-    },
+    
+    
 });
 
 export default AddChapterModal;

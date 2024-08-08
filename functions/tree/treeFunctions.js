@@ -31,3 +31,17 @@ export const navigateToChildNode = (move, currentNode, setCurrentNode, chess, ma
         }
     }
 };
+
+export const deleteNodes = (currentNode, setCurrentNode, chess) => {
+    if (currentNode.parent) {
+        const parent = currentNode.parent;
+        const index = parent.children.indexOf(currentNode);
+        parent.children.splice(index, 1);
+        chess.undo();
+        setCurrentNode(parent);
+    } else {
+        // In this case, the current node is the root node, and we want to delete all children
+        currentNode.children = [];
+        chess.reset();
+    }
+};
