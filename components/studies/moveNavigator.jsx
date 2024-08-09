@@ -1,8 +1,13 @@
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { navigateToParentNode, navigateToChildNode } from "../../functions/tree/treeFunctions";
 import OpacityPressable from "../OpacityPressable";
+import { useState } from "react";
+import Tooltip from "react-native-walkthrough-tooltip";
+import DeleteTooltip from "./DeleteTooltip";
 
-const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
+const MoveNavigator = ({ currentNode, chess, setCurrentNode, uploadPgn }) => {
+    const [tooltipNode, setTooltipNode] = useState(null);
+
     const handleParentPress = () => {
         navigateToParentNode(currentNode, setCurrentNode, chess);
     };
@@ -27,7 +32,42 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
     const handleChildPress = (child) => {
         navigateToChildNode(child.move, currentNode, setCurrentNode, chess, true);
     };
-    
+
+    const handleParentSiblingDelete = (parentSibling) => {
+        parentSibling.parent.children = parentSibling.parent.children.filter(
+            (sibling) => sibling !== parentSibling
+        );
+
+        if (parentSibling === currentNode.parent) {
+            setCurrentNode(parentSibling.parent);
+            chess.undo();
+            chess.undo();
+        }
+
+        uploadPgn();
+        setTooltipNode(null);
+    };
+
+    const handleSiblingDelete = (sibling) => {
+        currentNode.parent.children = currentNode.parent.children.filter(
+            (siblingNode) => siblingNode !== sibling
+        );
+
+        if (sibling === currentNode) {
+            setCurrentNode(currentNode.parent);
+            chess.undo();
+        }
+
+        uploadPgn();
+        setTooltipNode(null);
+    };
+
+    const handleChildDelete = (child) => {
+        currentNode.children = currentNode.children.filter((childNode) => childNode !== child);
+
+        uploadPgn();
+        setTooltipNode(null);
+    };
 
     return (
         <View style={styles.container}>
@@ -35,27 +75,43 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
                 {currentNode.parent &&
                     currentNode.parent.parent &&
                     currentNode.parent.parent.children.map((parentSibling, index) => (
-                        <OpacityPressable
-                            key={index}
-                            title={parentSibling.move}
-                            onPress={() => handleParentSiblingPress(parentSibling)}
-                            color={parentSibling === currentNode.parent ? "#000" : "#666"}
+                        <DeleteTooltip
+                            isVisible={parentSibling === tooltipNode}
+                            onClose={() => {
+                                setTooltipNode(null);
+                            }}
+                            onDelete={() => handleParentSiblingDelete(parentSibling)}
                         >
-                            <Text
-                                style={
-                                    parentSibling === currentNode.parent
-                                        ? styles.relatedMove
-                                        : styles.siblingMove
-                                }
+                            <OpacityPressable
+                                key={index}
+                                title={parentSibling.move}
+                                onPress={() => handleParentSiblingPress(parentSibling)}
+                                onLongPress={() => {
+                                    setTooltipNode(parentSibling);
+                                }}
+                                color={parentSibling === currentNode.parent ? "#000" : "#666"}
                             >
-                                {parentSibling.move}
-                            </Text>
-                        </OpacityPressable>
+                                <Text
+                                    style={
+                                        parentSibling === currentNode.parent
+                                            ? styles.relatedMove
+                                            : styles.siblingMove
+                                    }
+                                >
+                                    {parentSibling.move}
+                                </Text>
+                            </OpacityPressable>
+                        </DeleteTooltip>
                     ))}
                 {currentNode.parent &&
                     (!currentNode.parent.parent ||
                         !currentNode.parent.parent.children.includes(currentNode.parent)) && (
-                        <OpacityPressable onPress={handleParentPress}>
+                        <OpacityPressable
+                            onPress={handleParentPress}
+                            onLongPress={() => {
+                                setTooltipNode(currentNode.parent);
+                            }}
+                        >
                             <Text style={styles.relatedMove}>{currentNode.parent.move}</Text>
                         </OpacityPressable>
                     )}
@@ -63,17 +119,32 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
             <ScrollView style={styles.mainColumn} contentContainerStyle={styles.contentContainer}>
                 {currentNode.parent &&
                     currentNode.parent.children.map((sibling, index) => (
-                        <OpacityPressable key={index} onPress={() => handleSiblingPress(sibling)}>
-                            <Text
-                                style={
-                                    currentNode === sibling
-                                        ? styles.currentMove
-                                        : styles.siblingMove
-                                }
+                        <DeleteTooltip
+                            isVisible={sibling === tooltipNode}
+                            content={<Text>HI</Text>}
+                            onClose={() => {
+                                setTooltipNode(null);
+                            }}
+                            onDelete={() => handleSiblingDelete(sibling)}
+                        >
+                            <OpacityPressable
+                                key={index}
+                                onPress={() => handleSiblingPress(sibling)}
+                                onLongPress={() => {
+                                    setTooltipNode(sibling);
+                                }}
                             >
-                                {sibling.move}
-                            </Text>
-                        </OpacityPressable>
+                                <Text
+                                    style={
+                                        currentNode === sibling
+                                            ? styles.currentMove
+                                            : styles.siblingMove
+                                    }
+                                >
+                                    {sibling.move}
+                                </Text>
+                            </OpacityPressable>
+                        </DeleteTooltip>
                     ))}
                 {!currentNode.parent && (
                     <OpacityPressable>
@@ -86,9 +157,23 @@ const MoveNavigator = ({ currentNode, chess, setCurrentNode }) => {
                 contentContainerStyle={styles.contentContainer}
             >
                 {currentNode.children.map((child, index) => (
-                    <OpacityPressable key={index} onPress={() => handleChildPress(child)}>
-                        <Text style={styles.relatedMove}>{child.move}</Text>
-                    </OpacityPressable>
+                    <DeleteTooltip
+                        isVisible={child === tooltipNode}
+                        onClose={() => {
+                            setTooltipNode(null);
+                        }}
+                        onDelete={() => handleChildDelete(child)}
+                    >
+                        <OpacityPressable
+                            key={index}
+                            onPress={() => handleChildPress(child)}
+                            onLongPress={() => {
+                                setTooltipNode(child);
+                            }}
+                        >
+                            <Text style={styles.relatedMove}>{child.move}</Text>
+                        </OpacityPressable>
+                    </DeleteTooltip>
                 ))}
             </ScrollView>
         </View>

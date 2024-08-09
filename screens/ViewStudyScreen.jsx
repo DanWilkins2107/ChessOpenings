@@ -262,6 +262,7 @@ const ViewStudyScreen = ({ navigation, route }) => {
                                     currentNode={currentNode}
                                     chess={chess}
                                     setCurrentNode={setCurrentNode}
+                                    uploadPgn={uploadPgn}
                                 />
                             ) : currentPage === 1 ? (
                                 <MoveList
