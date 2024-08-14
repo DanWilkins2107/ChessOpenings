@@ -84,7 +84,8 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
         Object.keys(studyObj).forEach((study) => {
             chosenChapters[study].forEach((chapter, index) => {
                 if (chapter) {
-                    chosenPGNs.push(studyObj[study].chapters[index].pgn);
+                    const chapterString = studyObj[study].chapters[index].pgn + studyObj[study].color;
+                    chosenPGNs.push(chapterString);
                 }
             });
         });

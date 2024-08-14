@@ -2,7 +2,6 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import { navigateToParentNode, navigateToChildNode } from "../../functions/tree/treeFunctions";
 import OpacityPressable from "../OpacityPressable";
 import { useState } from "react";
-import Tooltip from "react-native-walkthrough-tooltip";
 import DeleteTooltip from "./DeleteTooltip";
 
 const MoveNavigator = ({ currentNode, chess, setCurrentNode, uploadPgn }) => {

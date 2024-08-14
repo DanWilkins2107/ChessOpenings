@@ -239,11 +239,11 @@ const ViewStudyScreen = ({ navigation, route }) => {
                         backgroundColor={backgroundColor}
                         pov={pov}
                     />
-                    <MessageBox
+                    {/* <MessageBox
                         message={message.text}
                         textColor={message.color}
                         backgroundColor={message.backgroundColor}
-                    />
+                    /> */}
                 </View>
                 <View style={styles.navigatorContainer}>
                     <Navigation

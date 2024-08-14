@@ -118,12 +118,11 @@ const AddStudyScreen = ({ navigation }) => {
                     studyObj.chapters.push({
                         name: name,
                         pgn: pgnUUID,
-                        color: "white", // TODO add color
                     });
                     const pgnPromise = set(ref(db, `pgns/${pgnUUID}`), chapter.moves);
                     promises.push(pgnPromise);
                 }
-
+ 
                 const studyPromise = set(ref(db, `studies/${studyUUID}`), studyObj);
                 promises.push(studyPromise);
                 const userPromise = set(
@@ -167,15 +166,6 @@ const AddStudyScreen = ({ navigation }) => {
                         textColor="#fff"
                     />
                     <LineSeparator text="OR" />
-                    <PgnInput pgnText={pgnText} setPgnText={setPgnText} />
-                    <AddStudyButton
-                        title="Import PGN"
-                        onPress={() => console.log("Import PGN")}
-                        backgroundColor={Colors.primary}
-                        borderColor={Colors.primaryBorder}
-                        textColor="#fff"
-                    />
-                    <LineSeparator text="OR" />
                     <FormField
                         value={lichessStudyUrl}
                         onChangeText={setLichessStudyUrl}
@@ -187,6 +177,15 @@ const AddStudyScreen = ({ navigation }) => {
                         backgroundColor="rgba(255, 255, 255, 0.9)"
                         borderColor="#fff"
                         textColor="#000"
+                    />
+                    <LineSeparator text="OR" />
+                    <PgnInput pgnText={pgnText} setPgnText={setPgnText} />
+                    <AddStudyButton
+                        title="Import PGN"
+                        onPress={() => console.log("Import PGN")}
+                        backgroundColor={Colors.primary}
+                        borderColor={Colors.primaryBorder}
+                        textColor="#fff"
                     />
                     <View style={styles.spacer} />
                 </KeyboardAwareScrollView>
@@ -205,7 +204,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     spacer: {
-        height: 100,
+        height: 200,
+        backgroundColor: "transparent",
         width: "100%",
     },
 });
