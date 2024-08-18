@@ -1,19 +1,34 @@
-const getMoveListFromNode = (node) => {
+const getMoveListFromNode = (node, color) => {
     const moveList = [];
+    const reversedMoveList = [];
+    const movesToRemoveConfidence = color === "white" ? 1 : 0;
 
     const getMoveListFromNodeHelper = (node) => {
         if (!node) {
             return;
         }
         if (node.parent) {
-            console.log(node.parent)
-            moveList.push(node.move);
+            moveList.push({ move: node.move, confidence: node.confidence || 0 });
             getMoveListFromNodeHelper(node.parent);
         }
     };
 
     getMoveListFromNodeHelper(node);
-    return moveList.reverse();
-}
+    const moveListTemp = moveList.reverse();
+
+    for (let i = 0; i < moveListTemp.length; i++) {
+        if (i % 2 === movesToRemoveConfidence) {
+            // Note indexing starts at 0
+            reversedMoveList.push({ move: moveListTemp[i].move });
+        } else {
+            reversedMoveList.push({
+                move: moveListTemp[i].move,
+                confidence: moveListTemp[i].confidence,
+            });
+        }
+    }
+
+    return reversedMoveList;
+};
 
 export default getMoveListFromNode;

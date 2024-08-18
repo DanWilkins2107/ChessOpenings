@@ -1,181 +1,205 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import Container from "../components/Container";
-import { Text, View, StyleSheet } from "react-native";
-import { auth, db } from "../firebase";
-import { ref, get } from "firebase/database";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, StyleSheet, Text } from "react-native";
+import getUserStudies from "../functions/fetch/getUserStudies";
+import getStudyDataFromStudyUUID from "../functions/fetch/getStudyDataFromStudyUUID";
+import getPGNfromPGNUUID from "../functions/fetch/getPGNfromPGNUUID";
 import pgnToTree from "../functions/tree/pgnToTree";
+import getBranchEnds from "../functions/test/getBranchEnds";
+import scanBranchForMistakes from "../functions/test/scanBranchForMistakes";
+import getBranchSplits from "../functions/test/getBranchSplits";
+import getMoveListFromNode from "../functions/test/getMoveListFromNode";
+import checkForFullConfidence from "../functions/test/checkForFullConfidence";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard";
-import { AlertContext } from "../components/alert/AlertContextProvider";
-
-import getBranchEnds from "../functions/test/getBranchEnds";
-import getMoveListFromNode from "../functions/test/getMoveListFromNode";
 
 const TrainScreen = ({ navigation, route }) => {
-    const chosenPGNs = route.params.chosenPGNs || null;
-    const [chapters, setChapters] = useState(chosenPGNs);
-    const [loading, setLoading] = useState(true);
-    const [trees, setTrees] = useState([]);
-    const [chess, setChess] = useState(new Chess());
-    const [backgroundColor, setBackgroundColor] = useState("white");
-    const [pov, setPov] = useState("w");
-    const [chessboardLoading, setChessboardLoading] = useState(true);
 
-    const [currentMoveList, setCurrentMoveList] = useState([]);
-    const [currentMoveIndex, setCurrentMoveIndex] = useState(null);
-    const [currentColorToTest, setCurrentColorToTest] = useState("white");
+    const [initialLoad, setInitialLoad] = useState(true);
+    const [selectedBranches, setSelectedBranches] = useState([]);
+    const [unselectedBranches, setUnselectedBranches] = useState([]);
+    const [testStyle, setTestStyle] = useState("branch");
+    const [splits, setSplits] = useState([]);
+    const [mistakes, setMistakes] = useState([]);
+    const [moveList, setMoveList] = useState([]);
+    const [moveIndex, setMoveIndex] = useState(0);
+    const [boardPOV, setBoardPOV] = useState("white");
+    const [chess, _setChess] = useState(new Chess());
 
-    const [typeOfTest, setTypeOfTest] = useState(null)
 
-    const [branchEnds, setBranchEnds] = useState([]);
-
-    const { setAlert } = useContext(AlertContext);
-
-    const handleChooseBranchEnd = (line) => {
-        // TODO: Improve algorithm
-        const randomBranch = branchEnds[Math.floor(Math.random() * branchEnds.length)];
-        const moveList = getMoveListFromNode(randomBranch);
-        setCurrentMoveList(moveList);
-        setCurrentMoveIndex(0);
-        chess.reset();
-    };
 
     useEffect(() => {
-        const setStudies = async () => {
-            let pgnData = [];
+        const initialize = async () => {
+            const chosenPGNs = route.params.chosenPGNs || null;
+            const pgnList = chosenPGNs || [];
+
+            // If train all is selected
             if (!chosenPGNs) {
-                try {
-                    const userStudiesRef = ref(db, `users/${auth.currentUser.uid}/studies`);
-                    const snapshot = await get(userStudiesRef);
-                    const studyUUIDs = Object.keys(snapshot.val());
-                    await Promise.all(
-                        studyUUIDs.map(async (studyUUID) => {
-                            const studyRef = ref(db, `studies/${studyUUID}`);
-                            const studySnapshot = await get(studyRef);
-                            const chapters = studySnapshot.val().chapters;
-                            const color = studySnapshot.val().color;
+                const userStudies = await getUserStudies();
+                const studyUUIDs = Object.keys(userStudies);
 
-                            chapters.forEach((chapter) => {
-                                const chapterString = chapter.pgn + color;
-                                pgnData.push(chapterString);
-                            });
-                        })
-                    );
-                } catch (error) {
-                    console.error(error);
-                }
-            } else {
-                pgnData = chosenPGNs;
+                await Promise.all(
+                    studyUUIDs.map(async (studyUUID) => {
+                        const studyData = await getStudyDataFromStudyUUID(studyUUID);
+                        const chapters = studyData.chapters;
+
+                        chapters.forEach((chapter) => {
+                            const chapterString =
+                                chapter.pgn +
+                                "___" +
+                                (studyData.color || "white") +
+                                "___" +
+                                studyData.title +
+                                "___" +
+                                chapter.name;
+                            pgnList.push(chapterString);
+                        });
+                    })
+                );
             }
 
-            const chapterInfo = [];
+            // Deal with pgnList
+            const selectedBranchArray = [];
+            const unselectedBranchArray = [];
+            const splitArray = [];
+            const mistakeNodeArray = [];
 
-            for (const pgnString of pgnData) {
-                const color = pgnString.slice(-5);
-                const pgnUUID = pgnString.slice(0, -5);
-
-                const chapterObj = {
-                    pgnUUID: pgnUUID,
-                    color: color,
-                };
-                chapterInfo.push(chapterObj);
-            }
-
-            setChapters(chapterInfo);
-
-            const treeArray = [];
-
-            const treePromises = chapterInfo.map(async (chapter) => {
-                // Check AsyncStorage for pgn
-                const pgnAsync = await AsyncStorage.getItem("pgnData/" + chapter.pgnUUID);
-                if (pgnAsync) {
-                    const tree = pgnToTree(JSON.parse(pgnAsync));
-                    treeArray.push(tree);
-                } else {
-                    const pgnRef = ref(db, `pgns/${chapter.pgnUUID}`);
-                    const pgnSnapshot = await get(pgnRef);
-                    if (!pgnSnapshot.exists()) {
+            await Promise.all(
+                pgnList.map(async (pgnString) => {
+                    const [pgnUUID, color, title, chapterName] = pgnString.split("___");
+                    const pgnData = await getPGNfromPGNUUID(pgnUUID);
+                    if (!pgnData) {
                         return;
                     }
-                    const pgn = pgnSnapshot.val();
-                    const tree = pgnToTree(pgn);
-                    treeArray.push(tree);
-                }
-            });
+                    const tree = pgnToTree(pgnData);
+                    const ends = getBranchEnds(tree, color);
 
-            await Promise.all(treePromises);
-            setTrees(treeArray);
+                    ends.forEach((end) => {
+                        if (end.confidence === 0) {
+                            unselectedBranchArray.push({
+                                endNode: end.endNode,
+                                color: color,
+                                title: title,
+                                chapterName: chapterName,
+                            });
+                        } else {
+                            selectedBranchArray.push({
+                                endNode: end.endNode,
+                                color: color,
+                                title: title,
+                                chapterName: chapterName,
+                            });
+                            const mistakeArray = scanBranchForMistakes(
+                                end.endNode,
+                                color,
+                                end.confidence,
+                                end.lastMoveNumber
+                            );
 
-            const branchArray = [];
+                            mistakeArray.forEach((mistakeNode) => {
+                                mistakeNodeArray.push({
+                                    node: mistakeNode,
+                                    color: color,
+                                    title: title,
+                                    chapterName: chapterName,
+                                });
+                            });
+                        }
+                    });
 
-            if (treeArray.length === 0) {
-                setAlert("No moves were found", "red");
-                navigation.navigate("Dashboard");
-            }
+                    const splits = getBranchSplits(tree, color);
+                    splits.forEach((split) => {
+                        splitArray.push({
+                            splitNode: split.node,
+                            color: color,
+                            title: title,
+                            chapterName: chapterName,
+                        });
+                    });
+                })
+            );
 
-            for (const tree of treeArray) {
-                const ends = getBranchEnds(tree);
-                branchArray.push(...ends);
-            }
+            setSelectedBranches(selectedBranchArray);
+            setUnselectedBranches(unselectedBranchArray);
+            setSplits(splitArray);
+            setMistakes(mistakeNodeArray);
 
-            setBranchEnds(branchArray);
-            setLoading(false);
+            selectMovesToTest(selectedBranchArray, unselectedBranchArray, splitArray, mistakeNodeArray);
         };
-
-        setStudies();
+        initialize();
     }, []);
 
-    useEffect(() => {
-        if (branchEnds.length > 0) {
-            handleChooseBranchEnd();
-        }
-    }, [branchEnds]);
+    const selectMovesToTest = (selectedBranches, unselectedBranches, splits, mistakes) => {
+        //  For now, just select the first branch from unselectedBranches. This will be changed later.
+        const branchToTest = unselectedBranches[0];
+        setTestStyle("branch");
+        setUpBranchTest(branchToTest);
+    }
 
-    useEffect(() => {
-        if (currentMoveList.length > 0) {
-            chess.reset();
-        }
-    }, [currentMoveList]);
-
-    useEffect(() => {
-        const isUserMove =
-            currentColorToTest === "white"
-                ? currentMoveIndex % 2 === 0
-                : currentMoveIndex % 2 === 1;
-
-        const moveToMake = currentMoveList[currentMoveIndex];
-
-        if (!isUserMove) {
-            try {
-                if (!moveToMake) {
-                    console.log("END OF LINE");
-                    handleChooseBranchEnd();
-                    return;
-                }
-                chess.move(moveToMake);
-                setCurrentMoveIndex((currentMoveIndex) => currentMoveIndex + 1);
-            } catch (error) {
-                console.log(error);
-            }
+    const setUpBranchTest = (branch) => {
+        const moveList = getMoveListFromNode(branch.endNode, branch.color);
+        const move = checkForFullConfidence(moveList);
+        if (move === -1) {
+            //  TODO: DEAL WITH FULLY CONFIDENT BRANCH
         } else {
-            if (!moveToMake) {
-                console.log("END OF LINE");
-                handleChooseBranchEnd();
-                return;
-            }
+            setMoveIndex(moveIndex, branch.color);
+            setBoardPOV(branch.color);
+            setMoveList(moveList);
+            setMoveIndex(move);
         }
-    }, [currentMoveIndex]);
+    }
 
+    // useEffect(() => {
+    //     if (!branchEnds) {
+    //         return;
+    //     }
+    //     const isUserMove =
+    //         currentColorToTest === "white"
+    //             ? currentMoveIndex % 2 === 0
+    //             : currentMoveIndex % 2 === 1;
+
+    //     const moveToMake = currentMoveList[currentMoveIndex];
+
+    //     if (!isUserMove) {
+    //         try {
+    //             if (!moveToMake) {
+    //                 handleChooseBranchEnd();
+    //                 return;
+    //             }
+    //             chess.move(moveToMake);
+    //             setCurrentMoveIndex((currentMoveIndex) => currentMoveIndex + 1);
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     } else {
+    //         if (!moveToMake) {
+    //             handleChooseBranchEnd(branchEnds);
+    //             return;
+    //         }
+    //     }
+    // }, [currentMoveIndex]);
+
+    // const moveFunction = (from, to) => {
+    //     try {
+    //         const move = chess.move({ from: from, to: to, promotion: "q" });
+    //         const moveSAN = move.san;
+
+    //         if (moveSAN === moveList[curren]) {
+    //             setCurrentMoveIndex((currentMoveIndex) => currentMoveIndex + 1);
+    //         } else {
+    //             chess.undo();
+    //         }
+    //     } catch (error) {}
+    // };
     const moveFunction = (from, to) => {
         try {
-            const move = chess.move({ from: from, to: to, promotion: "q" });
-            const moveSAN = move.san;
+            const move = chess.move({ from: from, to: to })
+            if (move.san === moveList[moveIndex].move) {
+                setMoveIndex((moveIndex) => moveIndex + 1);
+                
+                // Deal with the confidences for every single move.
 
-            if (moveSAN === currentMoveList[currentMoveIndex]) {
-                setCurrentMoveIndex((currentMoveIndex) => currentMoveIndex + 1);
             } else {
-                console.log("Wrong move");
                 chess.undo();
             }
         } catch (error) {}
@@ -187,10 +211,10 @@ const TrainScreen = ({ navigation, route }) => {
                 <Chessboard
                     chess={chess}
                     moveFunction={moveFunction}
-                    backgroundColor={backgroundColor}
-                    pov={pov}
+                    backgroundColor={"white"}
+                    pov={boardPOV === "white" ? "w" : "b"}
                 />
-                <Text style={styles.text}>{JSON.stringify(currentMoveList)}</Text>
+                <Text style={styles.text}>{JSON.stringify(moveList)}</Text>
             </View>
         </Container>
     );
