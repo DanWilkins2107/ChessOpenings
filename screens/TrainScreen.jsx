@@ -9,15 +9,17 @@ import getBranchEnds from "../functions/test/getBranchEnds";
 import scanBranchForMistakes from "../functions/test/scanBranchForMistakes";
 import getBranchSplits from "../functions/test/getBranchSplits";
 import getMoveListFromNode from "../functions/test/getMoveListFromNode";
-import checkForFullConfidence from "../functions/test/checkForFullConfidence";
+import checkForFullConfidenceMoveList from "../functions/test/checkForFullConfidenceMoveList";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard";
+import updateConfidenceScores from "../functions/test/updateConfidenceScores";
+import findBranchCategory from "../functions/test/findInitialCategory";
 
 const TrainScreen = ({ navigation, route }) => {
-
     const [initialLoad, setInitialLoad] = useState(true);
     const [selectedBranches, setSelectedBranches] = useState([]);
     const [unselectedBranches, setUnselectedBranches] = useState([]);
+    const [finishedBranches, setFinishedBranches] = useState([]);
     const [testStyle, setTestStyle] = useState("branch");
     const [splits, setSplits] = useState([]);
     const [mistakes, setMistakes] = useState([]);
@@ -26,7 +28,11 @@ const TrainScreen = ({ navigation, route }) => {
     const [boardPOV, setBoardPOV] = useState("white");
     const [chess, _setChess] = useState(new Chess());
 
-
+    // Used for setting the confidence levels
+    const [isCorrect, setIsCorrect] = useState(true);
+    const [trackedBranchesSelected, setTrackedBranchesSelected] = useState([]);
+    const [trackedBranchesUnselected, setTrackedBranchesUnselected] = useState([]);
+    const [trackedBranchesFinished, setTrackedBranchesFinished] = useState([]);
 
     useEffect(() => {
         const initialize = async () => {
@@ -60,6 +66,7 @@ const TrainScreen = ({ navigation, route }) => {
 
             // Deal with pgnList
             const selectedBranchArray = [];
+            const finishedBranchArray = [];
             const unselectedBranchArray = [];
             const splitArray = [];
             const mistakeNodeArray = [];
@@ -75,27 +82,23 @@ const TrainScreen = ({ navigation, route }) => {
                     const ends = getBranchEnds(tree, color);
 
                     ends.forEach((end) => {
-                        if (end.confidence === 0) {
-                            unselectedBranchArray.push({
-                                endNode: end.endNode,
-                                color: color,
-                                title: title,
-                                chapterName: chapterName,
-                            });
-                        } else {
-                            selectedBranchArray.push({
-                                endNode: end.endNode,
-                                color: color,
-                                title: title,
-                                chapterName: chapterName,
-                            });
+                        const category = findBranchCategory(end, color, "unselected");
+                        const endObj = {
+                            endNode: end.endNode,
+                            color: color,
+                            title: title,
+                            chapterName: chapterName,
+                            moveNumber: end.lastMoveNumber,
+                        };
+
+                        if (category === "selected") {
+                            selectedBranchArray.push(endObj);
                             const mistakeArray = scanBranchForMistakes(
                                 end.endNode,
                                 color,
                                 end.confidence,
                                 end.lastMoveNumber
                             );
-
                             mistakeArray.forEach((mistakeNode) => {
                                 mistakeNodeArray.push({
                                     node: mistakeNode,
@@ -104,6 +107,10 @@ const TrainScreen = ({ navigation, route }) => {
                                     chapterName: chapterName,
                                 });
                             });
+                        } else if (category === "unselected") {
+                            unselectedBranchArray.push(endObj);
+                        } else {
+                            finishedBranchArray.push(endObj);
                         }
                     });
 
@@ -121,10 +128,20 @@ const TrainScreen = ({ navigation, route }) => {
 
             setSelectedBranches(selectedBranchArray);
             setUnselectedBranches(unselectedBranchArray);
+            setFinishedBranches(finishedBranchArray);
             setSplits(splitArray);
             setMistakes(mistakeNodeArray);
 
-            selectMovesToTest(selectedBranchArray, unselectedBranchArray, splitArray, mistakeNodeArray);
+            setTrackedBranchesFinished(finishedBranchArray);
+            setTrackedBranchesSelected(selectedBranchArray);
+            setTrackedBranchesUnselected(unselectedBranchArray);
+
+            selectMovesToTest(
+                selectedBranchArray,
+                unselectedBranchArray,
+                splitArray,
+                mistakeNodeArray
+            );
         };
         initialize();
     }, []);
@@ -134,75 +151,71 @@ const TrainScreen = ({ navigation, route }) => {
         const branchToTest = unselectedBranches[0];
         setTestStyle("branch");
         setUpBranchTest(branchToTest);
-    }
+    };
 
     const setUpBranchTest = (branch) => {
         const moveList = getMoveListFromNode(branch.endNode, branch.color);
-        const move = checkForFullConfidence(moveList);
-        if (move === -1) {
-            //  TODO: DEAL WITH FULLY CONFIDENT BRANCH
-        } else {
-            setMoveIndex(moveIndex, branch.color);
-            setBoardPOV(branch.color);
-            setMoveList(moveList);
-            setMoveIndex(move);
+        const move = checkForFullConfidenceMoveList(moveList, branch.color);
+
+        setMoveIndex(moveIndex, branch.color);
+        setBoardPOV(branch.color);
+        setMoveList(moveList);
+        setMoveIndex(move);
+        chess.reset();
+
+        // Make the moves up to the move we are testing
+        for (let i = 0; i < move; i++) {
+            chess.move(moveList[i].move);
         }
-    }
+        const colorNo = branch.color === "white" ? 1 : 0;
+        if (move % 2 === colorNo) {
+            chess.move(moveList[move].move);
+            setMoveIndex(move + 1);
+        }
+    };
 
-    // useEffect(() => {
-    //     if (!branchEnds) {
-    //         return;
-    //     }
-    //     const isUserMove =
-    //         currentColorToTest === "white"
-    //             ? currentMoveIndex % 2 === 0
-    //             : currentMoveIndex % 2 === 1;
-
-    //     const moveToMake = currentMoveList[currentMoveIndex];
-
-    //     if (!isUserMove) {
-    //         try {
-    //             if (!moveToMake) {
-    //                 handleChooseBranchEnd();
-    //                 return;
-    //             }
-    //             chess.move(moveToMake);
-    //             setCurrentMoveIndex((currentMoveIndex) => currentMoveIndex + 1);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     } else {
-    //         if (!moveToMake) {
-    //             handleChooseBranchEnd(branchEnds);
-    //             return;
-    //         }
-    //     }
-    // }, [currentMoveIndex]);
-
-    // const moveFunction = (from, to) => {
-    //     try {
-    //         const move = chess.move({ from: from, to: to, promotion: "q" });
-    //         const moveSAN = move.san;
-
-    //         if (moveSAN === moveList[curren]) {
-    //             setCurrentMoveIndex((currentMoveIndex) => currentMoveIndex + 1);
-    //         } else {
-    //             chess.undo();
-    //         }
-    //     } catch (error) {}
-    // };
     const moveFunction = (from, to) => {
+        let move = null;
         try {
-            const move = chess.move({ from: from, to: to })
-            if (move.san === moveList[moveIndex].move) {
-                setMoveIndex((moveIndex) => moveIndex + 1);
-                
-                // Deal with the confidences for every single move.
+            move = chess.move({ from: from, to: to });
+        } catch (error) {
+            return;
+        }
 
+        if (move.san === moveList[moveIndex].move) {
+            // Deal with confidence scores
+            const updatedBranches = updateConfidenceScores(
+                trackedBranchesUnselected,
+                trackedBranchesSelected,
+                trackedBranchesFinished,
+                setTrackedBranchesUnselected,
+                setTrackedBranchesSelected,
+                setTrackedBranchesFinished,
+                unselectedBranches,
+                selectedBranches,
+                finishedBranches,
+                setUnselectedBranches,
+                setSelectedBranches,
+                setFinishedBranches,
+                isCorrect,
+                moveList,
+                moveIndex
+            );
+
+            setIsCorrect(true);
+            if (moveIndex >= moveList.length - 2) {
+                // -2 as we make another move after this if the colour is not tested
+                selectMovesToTest(selectedBranches, unselectedBranches, splits, mistakes);
             } else {
-                chess.undo();
+                // Deal with
+                const nextMove = moveList[moveIndex + 1];
+                chess.move(nextMove.move);
+                setMoveIndex((moveIndex) => moveIndex + 2);
             }
-        } catch (error) {}
+        } else {
+            setIsCorrect(false);
+            chess.undo();
+        }
     };
 
     return (
@@ -215,6 +228,7 @@ const TrainScreen = ({ navigation, route }) => {
                     pov={boardPOV === "white" ? "w" : "b"}
                 />
                 <Text style={styles.text}>{JSON.stringify(moveList)}</Text>
+                <Text style={styles.text}>{JSON.stringify(moveIndex)}</Text>
             </View>
         </Container>
     );
