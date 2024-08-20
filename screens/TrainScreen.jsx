@@ -15,6 +15,7 @@ import Chessboard from "../components/chessboard/chessboard";
 import updateConfidenceScores from "../functions/test/updateConfidenceScores";
 import findBranchCategory from "../functions/test/findInitialCategory";
 import ChapterAndStudyToString from "../functions/test/chapterAndStudyToString";
+import minimumConfidenceScore from "../functions/test/minimumConfidenceScore";
 
 const TrainScreen = ({ navigation, route }) => {
     const [initialLoad, setInitialLoad] = useState(true);
@@ -35,6 +36,7 @@ const TrainScreen = ({ navigation, route }) => {
     const [trackedBranchesUnselected, setTrackedBranchesUnselected] = useState([]);
     const [trackedBranchesFinished, setTrackedBranchesFinished] = useState([]);
     const [trees, setTrees] = useState([]);
+    const [minConfidences, setMinConfidences] = useState({});
 
     useEffect(() => {
         const initialize = async () => {
@@ -145,23 +147,82 @@ const TrainScreen = ({ navigation, route }) => {
     }, []);
 
     const selectMovesToTest = (selectedBranches, unselectedBranches, splits, mistakes) => {
-        //  For now, just select the first branch from unselectedBranches. This will be changed later.
-        if (
-            (Math.random() < 0.3 || selectedBranches.length <= 2) &&
-            selectedBranches.length <= 10
-        ) {
-            const randomIndex = Math.floor(Math.random() * unselectedBranches.length);
-            selectedBranches.push(unselectedBranches[randomIndex]);
-            unselectedBranches.splice(randomIndex, 1);
+        if (selectedBranches.length === 0) {
+            if (unselectedBranches.length === 0) {
+                console.log("Finished");
+            } else {
+                const randomIndex = Math.floor(Math.random() * unselectedBranches.length);
+                selectedBranches.push(unselectedBranches[randomIndex]);
+                unselectedBranches.splice(randomIndex, 1);
+            }
         }
 
-        console.log("");
+        const minConfidenceObj = {
+            0: [],
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+        };
+
+        selectedBranches.forEach((branch) => {
+            const minConfidence = minimumConfidenceScore(branch);
+            minConfidenceObj[minConfidence].push(branch);
+        });
+
+        console.log("NEW MOVE");
+        for (let i = 0; i < 5; i++) {
+            console.log("MinConf ", i, ": ", minConfidenceObj[i].length);
+        }
+
+        // WEIGHTINGS
+        const confidenceWeightings = {
+            0: 2,
+            1: 1.5,
+            2: 1,
+            3: 0.7,
+            4: 0.5,
+        };
+
+        let randomValueCap = 0;
+        for (let i = 0; i < 5; i++) {
+            randomValueCap += confidenceWeightings[i] * minConfidenceObj[i].length;
+        }
+
+        console.log("Random Value Cap: ", randomValueCap);
+
+        const randomNumber = Math.random() * randomValueCap;
+
+        let currentSum = 0;
+        let selectedBranch = null;
+        for (let i = 0; i < 5; i++) {
+            currentSum += confidenceWeightings[i] * minConfidenceObj[i].length;
+
+            if (randomNumber < currentSum) {
+                console.log("Section ", i);
+                const randomIndex = Math.floor(Math.random() * minConfidenceObj[i].length);
+                selectedBranch = minConfidenceObj[i][randomIndex];
+                break;
+            }
+        }
+
+        // Now split selected branches into their minimum confidence numbers
+
         console.log("No of unselected branches: ", unselectedBranches.length);
         console.log("No of selected branches: ", selectedBranches.length);
         console.log("No of finished branches: ", finishedBranches.length);
 
         const randomIndex = Math.floor(Math.random() * selectedBranches.length);
         const branchToTest = selectedBranches[randomIndex];
+
+        if (randomValueCap < 15) {
+            if (unselectedBranches.length > 0) {
+                const randomIndex = Math.floor(Math.random() * unselectedBranches.length);
+                selectedBranches.push(unselectedBranches[randomIndex]);
+                unselectedBranches.splice(randomIndex, 1);
+            }
+        }
 
         setTestStyle("branch");
         setUpBranchTest(branchToTest);
