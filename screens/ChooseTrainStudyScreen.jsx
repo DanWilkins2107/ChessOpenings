@@ -10,6 +10,7 @@ import PageTitle from "../components/PageTitle";
 import Colors from "../colors";
 import AddStudyButton from "../components/addstudy/AddStudyButton";
 import LineSeparator from "../components/auth/LineSeparator";
+import ChapterAndStudyToString from "../functions/test/chapterAndStudyToString";
 
 const ChooseTrainStudyScreen = ({ navigation }) => {
     const [studies, setStudies] = useState([]);
@@ -84,7 +85,10 @@ const ChooseTrainStudyScreen = ({ navigation }) => {
         Object.keys(studyObj).forEach((study) => {
             chosenChapters[study].forEach((chapter, index) => {
                 if (chapter) {
-                    const chapterString = studyObj[study].chapters[index].pgn + studyObj[study].color;
+                    const chapterString = ChapterAndStudyToString(
+                        studyObj[study].chapters[index],
+                        studyObj[study]
+                    );
                     chosenPGNs.push(chapterString);
                 }
             });

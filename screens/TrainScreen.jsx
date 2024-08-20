@@ -14,6 +14,7 @@ import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/chessboard";
 import updateConfidenceScores from "../functions/test/updateConfidenceScores";
 import findBranchCategory from "../functions/test/findInitialCategory";
+import ChapterAndStudyToString from "../functions/test/chapterAndStudyToString";
 
 const TrainScreen = ({ navigation, route }) => {
     const [initialLoad, setInitialLoad] = useState(true);
@@ -33,6 +34,7 @@ const TrainScreen = ({ navigation, route }) => {
     const [trackedBranchesSelected, setTrackedBranchesSelected] = useState([]);
     const [trackedBranchesUnselected, setTrackedBranchesUnselected] = useState([]);
     const [trackedBranchesFinished, setTrackedBranchesFinished] = useState([]);
+    const [trees, setTrees] = useState([]);
 
     useEffect(() => {
         const initialize = async () => {
@@ -50,14 +52,7 @@ const TrainScreen = ({ navigation, route }) => {
                         const chapters = studyData.chapters;
 
                         chapters.forEach((chapter) => {
-                            const chapterString =
-                                chapter.pgn +
-                                "___" +
-                                (studyData.color || "white") +
-                                "___" +
-                                studyData.title +
-                                "___" +
-                                chapter.name;
+                            const chapterString = ChapterAndStudyToString(chapter, studyData);
                             pgnList.push(chapterString);
                         });
                     })
@@ -70,6 +65,7 @@ const TrainScreen = ({ navigation, route }) => {
             const unselectedBranchArray = [];
             const splitArray = [];
             const mistakeNodeArray = [];
+            const treeArray = [];
 
             await Promise.all(
                 pgnList.map(async (pgnString) => {
@@ -78,8 +74,9 @@ const TrainScreen = ({ navigation, route }) => {
                     if (!pgnData) {
                         return;
                     }
-                    const tree = pgnToTree(pgnData);
-                    const ends = getBranchEnds(tree, color);
+                    const tree = { pgnUUID: pgnUUID, tree: pgnToTree(pgnData) };
+                    treeArray.push(tree);
+                    const ends = getBranchEnds(tree.tree, color);
 
                     ends.forEach((end) => {
                         const category = findBranchCategory(end, color, "unselected");
@@ -131,6 +128,7 @@ const TrainScreen = ({ navigation, route }) => {
             setFinishedBranches(finishedBranchArray);
             setSplits(splitArray);
             setMistakes(mistakeNodeArray);
+            setTrees(treeArray);
 
             setTrackedBranchesFinished(finishedBranchArray);
             setTrackedBranchesSelected(selectedBranchArray);
@@ -148,9 +146,27 @@ const TrainScreen = ({ navigation, route }) => {
 
     const selectMovesToTest = (selectedBranches, unselectedBranches, splits, mistakes) => {
         //  For now, just select the first branch from unselectedBranches. This will be changed later.
-        const branchToTest = unselectedBranches[0];
+        if (
+            (Math.random() < 0.3 || selectedBranches.length <= 2) &&
+            selectedBranches.length <= 10
+        ) {
+            const randomIndex = Math.floor(Math.random() * unselectedBranches.length);
+            selectedBranches.push(unselectedBranches[randomIndex]);
+            unselectedBranches.splice(randomIndex, 1);
+        }
+
+        console.log("");
+        console.log("No of unselected branches: ", unselectedBranches.length);
+        console.log("No of selected branches: ", selectedBranches.length);
+        console.log("No of finished branches: ", finishedBranches.length);
+
+        const randomIndex = Math.floor(Math.random() * selectedBranches.length);
+        const branchToTest = selectedBranches[randomIndex];
+
         setTestStyle("branch");
         setUpBranchTest(branchToTest);
+        setSelectedBranches(selectedBranches);
+        setUnselectedBranches(unselectedBranches);
     };
 
     const setUpBranchTest = (branch) => {
@@ -184,28 +200,40 @@ const TrainScreen = ({ navigation, route }) => {
 
         if (move.san === moveList[moveIndex].move) {
             // Deal with confidence scores
-            const updatedBranches = updateConfidenceScores(
+            const {
+                newTrackedBranchesUnselected,
+                newTrackedBranchesSelected,
+                newTrackedBranchesFinished,
+                newUnselectedBranches,
+                newSelectedBranches,
+                newFinishedBranches,
+            } = updateConfidenceScores(
                 trackedBranchesUnselected,
                 trackedBranchesSelected,
                 trackedBranchesFinished,
-                setTrackedBranchesUnselected,
-                setTrackedBranchesSelected,
-                setTrackedBranchesFinished,
+
                 unselectedBranches,
                 selectedBranches,
                 finishedBranches,
-                setUnselectedBranches,
-                setSelectedBranches,
-                setFinishedBranches,
+
                 isCorrect,
                 moveList,
-                moveIndex
+                moveIndex,
+
+                trees
             );
+
+            setSelectedBranches(newSelectedBranches);
+            setUnselectedBranches(newUnselectedBranches);
+            setFinishedBranches(newFinishedBranches);
+            setTrackedBranchesSelected(newTrackedBranchesSelected);
+            setTrackedBranchesUnselected(newTrackedBranchesUnselected);
+            setTrackedBranchesFinished(newTrackedBranchesFinished);
 
             setIsCorrect(true);
             if (moveIndex >= moveList.length - 2) {
                 // -2 as we make another move after this if the colour is not tested
-                selectMovesToTest(selectedBranches, unselectedBranches, splits, mistakes);
+                selectMovesToTest(newSelectedBranches, newUnselectedBranches, splits, mistakes);
             } else {
                 // Deal with
                 const nextMove = moveList[moveIndex + 1];

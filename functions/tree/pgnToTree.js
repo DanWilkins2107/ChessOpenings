@@ -14,6 +14,10 @@ function pgnToTree(pgn) {
             parent: parent,
         };
 
+        if (firstMove.confidence) {
+            newNode.confidence = firstMove.confidence;
+        }
+
         parent.children.push(newNode);
 
         if (firstMove.ravs) {
