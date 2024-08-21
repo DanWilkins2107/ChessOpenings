@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Container from "../components/Container";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, ScrollView, Button } from "react-native";
 import getUserStudies from "../functions/fetch/getUserStudies";
 import getStudyDataFromStudyUUID from "../functions/fetch/getStudyDataFromStudyUUID";
 import getPGNfromPGNUUID from "../functions/fetch/getPGNfromPGNUUID";
@@ -16,6 +16,9 @@ import updateConfidenceScores from "../functions/test/updateConfidenceScores";
 import findBranchCategory from "../functions/test/findInitialCategory";
 import ChapterAndStudyToString from "../functions/test/chapterAndStudyToString";
 import minimumConfidenceScore from "../functions/test/minimumConfidenceScore";
+import calculateOverallConfidence from "../functions/test/calculateOverallConfidence";
+import resetConfidence from "../functions/test/resetConfidence";
+import saveTreesToDb from "../functions/test/saveTreesToDb";
 
 const TrainScreen = ({ navigation, route }) => {
     const [initialLoad, setInitialLoad] = useState(true);
@@ -29,14 +32,14 @@ const TrainScreen = ({ navigation, route }) => {
     const [moveIndex, setMoveIndex] = useState(0);
     const [boardPOV, setBoardPOV] = useState("white");
     const [chess, _setChess] = useState(new Chess());
-
     // Used for setting the confidence levels
     const [isCorrect, setIsCorrect] = useState(true);
     const [trackedBranchesSelected, setTrackedBranchesSelected] = useState([]);
     const [trackedBranchesUnselected, setTrackedBranchesUnselected] = useState([]);
     const [trackedBranchesFinished, setTrackedBranchesFinished] = useState([]);
     const [trees, setTrees] = useState([]);
-    const [minConfidences, setMinConfidences] = useState({});
+
+    const [overallConfidences, setOverallConfidences] = useState({});
 
     useEffect(() => {
         const initialize = async () => {
@@ -76,7 +79,12 @@ const TrainScreen = ({ navigation, route }) => {
                     if (!pgnData) {
                         return;
                     }
-                    const tree = { pgnUUID: pgnUUID, tree: pgnToTree(pgnData) };
+                    const tree = {
+                        chapterName: chapterName,
+                        pgnUUID: pgnUUID,
+                        tree: pgnToTree(pgnData),
+                        color: color,
+                    };
                     treeArray.push(tree);
                     const ends = getBranchEnds(tree.tree, color);
 
@@ -193,6 +201,7 @@ const TrainScreen = ({ navigation, route }) => {
         console.log("Random Value Cap: ", randomValueCap);
 
         const randomNumber = Math.random() * randomValueCap;
+        console.log("Random Number: ", randomNumber);
 
         let currentSum = 0;
         let selectedBranch = null;
@@ -200,7 +209,7 @@ const TrainScreen = ({ navigation, route }) => {
             currentSum += confidenceWeightings[i] * minConfidenceObj[i].length;
 
             if (randomNumber < currentSum) {
-                console.log("Section ", i);
+                console.log("Selecting from Confidence Level ", i);
                 const randomIndex = Math.floor(Math.random() * minConfidenceObj[i].length);
                 selectedBranch = minConfidenceObj[i][randomIndex];
                 break;
@@ -213,9 +222,6 @@ const TrainScreen = ({ navigation, route }) => {
         console.log("No of selected branches: ", selectedBranches.length);
         console.log("No of finished branches: ", finishedBranches.length);
 
-        const randomIndex = Math.floor(Math.random() * selectedBranches.length);
-        const branchToTest = selectedBranches[randomIndex];
-
         if (randomValueCap < 15) {
             if (unselectedBranches.length > 0) {
                 const randomIndex = Math.floor(Math.random() * unselectedBranches.length);
@@ -225,7 +231,7 @@ const TrainScreen = ({ navigation, route }) => {
         }
 
         setTestStyle("branch");
-        setUpBranchTest(branchToTest);
+        setUpBranchTest(selectedBranch);
         setSelectedBranches(selectedBranches);
         setUnselectedBranches(unselectedBranches);
     };
@@ -319,6 +325,24 @@ const TrainScreen = ({ navigation, route }) => {
                 <Text style={styles.text}>{JSON.stringify(moveList)}</Text>
                 <Text style={styles.text}>{JSON.stringify(moveIndex)}</Text>
             </View>
+            <Button
+                title="Reset Confidence"
+                onPress={() => {
+                    resetConfidence(trees[1].tree, trees[1].color);
+                    saveTreesToDb(trees[1].tree, trees[1].pgnUUID);
+                }}
+            />
+            <ScrollView style={styles.scroll} contentContainerStyle={{ flexGrow: 1, height: 400 }}>
+                {trees.map((tree) => {
+                    // This needs to be done as state I think
+                    const confidenceScore = calculateOverallConfidence(tree.tree, tree.color);
+                    return (
+                        <Text style={styles.text} key={tree.pgnUUID}>
+                            {confidenceScore} {tree.chapterName}
+                        </Text>
+                    );
+                })}
+            </ScrollView>
         </Container>
     );
 };
@@ -326,6 +350,11 @@ const TrainScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     text: {
         color: "white",
+    },
+    scroll: {
+        flex: 1,
+        backgroundColor: "green",
+        width: "100%",
     },
 });
 

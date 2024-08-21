@@ -1,6 +1,6 @@
 import { Pressable } from "react-native";
 
-const OpacityPressable = ({ children, ...props }) => {
+const OpacityPressable = ({ children, style, ...props }) => {
     return (
         <Pressable
             {...props}
@@ -8,6 +8,7 @@ const OpacityPressable = ({ children, ...props }) => {
                 {
                     opacity: pressed ? 0.5 : 1,
                 },
+                style,
             ]}
         >
             {children}

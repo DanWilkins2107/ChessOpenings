@@ -2,7 +2,7 @@
 import checkForFullConfidenceMoveList from "./checkForFullConfidenceMoveList";
 import getMoveListFromNode from "./getMoveListFromNode";
 import minimumConfidenceScore from "./minimumConfidenceScore";
-import saveTreesToDb from "./saveConfidenceScoresToDb";
+import saveTreesToDb from "./saveTreesToDb";
 
 export default function updateConfidenceScores(
     trackedBranchesUnselected,

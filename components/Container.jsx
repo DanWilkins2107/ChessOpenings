@@ -2,26 +2,30 @@ import React from "react";
 import { SafeAreaView, View, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { Colors } from "../styling";
 
-const Container = ({ theme = "dark", children }) => {
+const Container = ({ theme = "dark", style, children }) => {
     const headerHeight = useHeaderHeight();
-    const colors = theme === "dark" ? ["#13111A", "#1F1025", "#13111A"] : ["#fff", "#fff"];
+    const colors =
+        theme === "dark"
+            ? ["#13111A", "#1F1025", "#13111A"]
+            : [Colors.background, Colors.background];
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
             <View style={styles.fill}>
                 <LinearGradient colors={colors} style={styles.fill}>
                     <View style={[{ paddingTop: headerHeight }, styles.innerContainer]}>
-                        <SafeAreaView style={styles.innerContainer}>{children}</SafeAreaView>
+                        <SafeAreaView style={[styles.innerContainer, style]}>
+                            {children}
+                        </SafeAreaView>
                     </View>
                 </LinearGradient>
             </View>
-        </TouchableWithoutFeedback>
-    );
+ );
 };
 
 const styles = StyleSheet.create({
     fill: {
-        flex: 1,
         width: "100%",
         height: "100%",
     },
