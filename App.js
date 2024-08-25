@@ -25,6 +25,9 @@ import HeaderLeft from "./components/header/HeaderLeft.jsx";
 import { useFonts } from "expo-font";
 import Dashboard from "./screens/Dashboard.jsx";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Colors } from "./styling.js";
+import Icon from "react-native-vector-icons/FontAwesome";
+import Training from "./screens/Training.jsx";
 
 const Stack = createStackNavigator();
 
@@ -77,36 +80,108 @@ const App = () => {
         );
     }
 
+    function HomeScreens() {
+        return (
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="Dashboard"
+                    component={Dashboard}
+                    options={{
+                        headerTitle: (props) => HeaderCenter(props),
+                        headerTransparent: true,
+                    }}
+                />
+            </Stack.Navigator>
+        );
+    }
+
+    function TrainScreens() {
+        return (
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="Training"
+                    component={Training}
+                    options={{
+                        headerTitle: (props) => HeaderCenter(props),
+                        headerLeft: (props) => HeaderLeft(props),
+                        headerTransparent: true,
+                    }}
+                />
+            </Stack.Navigator>
+        );
+    }
+
     return (
         <AlertProvider>
             <ModalProvider>
                 <NavigationContainer>
                     <Alert />
                     <Modal />
-                    {!actual && <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
-
-
-                        
-                        {(user ? userScreens : authScreens).map((screen) => (
-                            <Stack.Screen
-                                key={screen.name}
-                                name={screen.name}
-                                component={screen.component}
-                                options={
-                                    screen.header
-                                        ? {
-                                              headerTitle: (props) => HeaderCenter(props),
-                                              headerLeft: (props) => HeaderLeft(props),
-                                              headerTransparent: true,
-                                          }
-                                        : { headerShown: false }
-                                }
+                    {!actual && (
+                        <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
+                            {(user ? userScreens : authScreens).map((screen) => (
+                                <Stack.Screen
+                                    key={screen.name}
+                                    name={screen.name}
+                                    component={screen.component}
+                                    options={
+                                        screen.header
+                                            ? {
+                                                  headerTitle: (props) => HeaderCenter(props),
+                                                  headerLeft: (props) => HeaderLeft(props),
+                                                  headerTransparent: true,
+                                              }
+                                            : { headerShown: false }
+                                    }
+                                />
+                            ))}
+                        </Stack.Navigator>
+                    )}
+                    {actual && (
+                        <Tab.Navigator
+                            initialRouteName="Home"
+                            screenOptions={{
+                                headerShown: false,
+                                tabBarStyle: {
+                                    backgroundColor: Colors.background,
+                                    borderTopWidth: 0,
+                                },
+                            }}
+                        >
+                            <Tab.Screen
+                                name="Home"
+                                component={HomeScreens}
+                                options={{
+                                    tabBarIcon: ({ color, size }) => {
+                                        return <Icon name="home" color={color} size={size} />;
+                                    },
+                                }}
                             />
-                        ))}
-                    </Stack.Navigator>}
-                    {actual && <Tab.Navigator>
-                        <Tab.Screen name="Dashboard" component={Dashboard} />
-                    </Tab.Navigator>}
+                            <Tab.Screen
+                                name="Study"
+                                component={Dashboard}
+                                options={{
+                                    tabBarIcon: ({ color, size }) => {
+                                        return <Icon name="book" color={color} size={size} />;
+                                    },
+                                }}
+                            />
+                            <Tab.Screen
+                                name="Train"
+                                component={TrainScreens}
+                                options={{
+                                    tabBarIcon: ({ color, size }) => {
+                                        return <Icon name="refresh" color={color} size={size} />;
+                                    },
+                                }}
+                            />
+                            <Tab.Screen name="Settings" component={Dashboard} options={{
+                                    tabBarIcon: ({ color, size }) => {
+                                        return <Icon name="cog" color={color} size={size} />;
+                                    },
+                                }}/>
+                        </Tab.Navigator>
+                    )}
                 </NavigationContainer>
             </ModalProvider>
         </AlertProvider>

@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import Container from "../components/Container";
 import Card from "../components/containers/Card";
 import Title from "../components/text/Title";

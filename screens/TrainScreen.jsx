@@ -19,6 +19,8 @@ import minimumConfidenceScore from "../functions/test/minimumConfidenceScore";
 import calculateOverallConfidence from "../functions/test/calculateOverallConfidence";
 import resetConfidence from "../functions/test/resetConfidence";
 import saveTreesToDb from "../functions/test/saveTreesToDb";
+import getDataForTraining from "../functions/fetch/getDataForTraining";
+import combineTrees from "../functions/tree/combineTrees";
 
 const TrainScreen = ({ navigation, route }) => {
     const [initialLoad, setInitialLoad] = useState(true);
@@ -38,100 +40,21 @@ const TrainScreen = ({ navigation, route }) => {
     const [trackedBranchesUnselected, setTrackedBranchesUnselected] = useState([]);
     const [trackedBranchesFinished, setTrackedBranchesFinished] = useState([]);
     const [trees, setTrees] = useState([]);
+    const [overallTree, setOverallTree] = useState({});
 
     const [overallConfidences, setOverallConfidences] = useState({});
 
     useEffect(() => {
         const initialize = async () => {
             const chosenPGNs = route.params.chosenPGNs || null;
-            const pgnList = chosenPGNs || [];
-
-            // If train all is selected
-            if (!chosenPGNs) {
-                const userStudies = await getUserStudies();
-                const studyUUIDs = Object.keys(userStudies);
-
-                await Promise.all(
-                    studyUUIDs.map(async (studyUUID) => {
-                        const studyData = await getStudyDataFromStudyUUID(studyUUID);
-                        const chapters = studyData.chapters;
-
-                        chapters.forEach((chapter) => {
-                            const chapterString = ChapterAndStudyToString(chapter, studyData);
-                            pgnList.push(chapterString);
-                        });
-                    })
-                );
-            }
-
-            // Deal with pgnList
-            const selectedBranchArray = [];
-            const finishedBranchArray = [];
-            const unselectedBranchArray = [];
-            const splitArray = [];
-            const mistakeNodeArray = [];
-            const treeArray = [];
-
-            await Promise.all(
-                pgnList.map(async (pgnString) => {
-                    const [pgnUUID, color, title, chapterName] = pgnString.split("___");
-                    const pgnData = await getPGNfromPGNUUID(pgnUUID);
-                    if (!pgnData) {
-                        return;
-                    }
-                    const tree = {
-                        chapterName: chapterName,
-                        pgnUUID: pgnUUID,
-                        tree: pgnToTree(pgnData),
-                        color: color,
-                    };
-                    treeArray.push(tree);
-                    const ends = getBranchEnds(tree.tree, color);
-
-                    ends.forEach((end) => {
-                        const category = findBranchCategory(end, color, "unselected");
-                        const endObj = {
-                            endNode: end.endNode,
-                            color: color,
-                            title: title,
-                            chapterName: chapterName,
-                            moveNumber: end.lastMoveNumber,
-                        };
-
-                        if (category === "selected") {
-                            selectedBranchArray.push(endObj);
-                            const mistakeArray = scanBranchForMistakes(
-                                end.endNode,
-                                color,
-                                end.confidence,
-                                end.lastMoveNumber
-                            );
-                            mistakeArray.forEach((mistakeNode) => {
-                                mistakeNodeArray.push({
-                                    node: mistakeNode,
-                                    color: color,
-                                    title: title,
-                                    chapterName: chapterName,
-                                });
-                            });
-                        } else if (category === "unselected") {
-                            unselectedBranchArray.push(endObj);
-                        } else {
-                            finishedBranchArray.push(endObj);
-                        }
-                    });
-
-                    const splits = getBranchSplits(tree, color);
-                    splits.forEach((split) => {
-                        splitArray.push({
-                            splitNode: split.node,
-                            color: color,
-                            title: title,
-                            chapterName: chapterName,
-                        });
-                    });
-                })
-            );
+            const {
+                selectedBranchArray,
+                finishedBranchArray,
+                unselectedBranchArray,
+                splitArray,
+                mistakeNodeArray,
+                treeArray,
+            } = await getDataForTraining(chosenPGNs);
 
             setSelectedBranches(selectedBranchArray);
             setUnselectedBranches(unselectedBranchArray);
@@ -325,13 +248,13 @@ const TrainScreen = ({ navigation, route }) => {
                 <Text style={styles.text}>{JSON.stringify(moveList)}</Text>
                 <Text style={styles.text}>{JSON.stringify(moveIndex)}</Text>
             </View>
-            <Button
+            {/* <Button
                 title="Reset Confidence"
                 onPress={() => {
                     resetConfidence(trees[1].tree, trees[1].color);
                     saveTreesToDb(trees[1].tree, trees[1].pgnUUID);
                 }}
-            />
+            /> */}
             <ScrollView style={styles.scroll} contentContainerStyle={{ flexGrow: 1, height: 400 }}>
                 {trees.map((tree) => {
                     // This needs to be done as state I think
