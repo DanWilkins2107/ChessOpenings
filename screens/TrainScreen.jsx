@@ -11,7 +11,7 @@ import getBranchSplits from "../functions/test/getBranchSplits";
 import getMoveListFromNode from "../functions/test/getMoveListFromNode";
 import checkForFullConfidenceMoveList from "../functions/test/checkForFullConfidenceMoveList";
 import { Chess } from "chess.js";
-import Chessboard from "../components/chessboard/chessboard";
+import Chessboard from "../components/chessboard/Chessboard";
 import updateConfidenceScores from "../functions/test/updateConfidenceScores";
 import findBranchCategory from "../functions/test/findInitialCategory";
 import ChapterAndStudyToString from "../functions/test/chapterAndStudyToString";

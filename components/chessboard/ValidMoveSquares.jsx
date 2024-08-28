@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     squareOuterStyle: {
         width: "100%",
         height: "100%",
-        backgroundColor: "green",
+        backgroundColor: Colors.activePiece,
         alignItems: "center",
         justifyContent: "center",
     },

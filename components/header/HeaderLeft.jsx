@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { Colors } from "../../styling";
 
 const HeaderLeft = () => {
     const navigation = useNavigation();
@@ -9,7 +10,7 @@ const HeaderLeft = () => {
         <>
             {navigation.canGoBack() ? (
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.container}>
-                    <Icon name="chevron-left" size={20} color="white" />
+                    <Icon name="chevron-left" size={20} color={Colors.text} />
                 </TouchableOpacity>
             ) : (
                 <></>

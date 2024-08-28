@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text } from "react-native";
 import { Chess } from "chess.js";
-import Chessboard from "../components/chessboard/chessboard.jsx";
+import Chessboard from "../components/chessboard/Chessboard.jsx";
 import Container from "../components/Container.jsx";
-import MessageBox from "../components/chessboard/messagebox.jsx";
+import MessageBox from "../components/chessboard/MessageBox.jsx";
 import MoveNavigator from "../components/studies/MoveNavigator.jsx";
 import Navigation from "../components/studies/Navigation.jsx";
 import { navigateToParentNode, navigateToChildNode } from "../functions/tree/treeFunctions";

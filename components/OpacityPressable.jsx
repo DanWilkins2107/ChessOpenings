@@ -1,4 +1,4 @@
-import { Pressable } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 
 const OpacityPressable = ({ children, style, ...props }) => {
     return (
@@ -9,11 +9,24 @@ const OpacityPressable = ({ children, style, ...props }) => {
                     opacity: pressed ? 0.5 : 1,
                 },
                 style,
+                styles.pressableShadow,
             ]}
         >
             {children}
         </Pressable>
     );
 };
+
+const styles = StyleSheet.create({
+    pressableShadow: {
+        shadowColor: "#000000",
+        shadowRadius: 2,
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.25,
+    },
+});
 
 export default OpacityPressable;
