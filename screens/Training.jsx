@@ -2,7 +2,6 @@ import Chessboard from "../components/chessboard2/chessboard";
 import Container from "../components/Container";
 import { Chess } from "chess.js";
 import { StyleSheet } from "react-native";
-import Title from "../components/text/Title";
 
 export default function Training() {
     const chess = new Chess();
@@ -13,8 +12,9 @@ export default function Training() {
             <Chessboard
                 chess={chess}
                 chessboardLoading={chessboardLoading}
-                pov="black"
+                pov="white"
                 style={styles.chessBoard}
+                moveFunction={() => {console.log("Move function")}}
             />
         </Container>
     );

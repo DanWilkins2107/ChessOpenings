@@ -9,7 +9,7 @@ const HeaderLeft = () => {
         <>
             {navigation.canGoBack() ? (
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.container}>
-                    <Icon name="chevron-left" size={20} color="#fff" />
+                    <Icon name="chevron-left" size={20} color="white" />
                 </TouchableOpacity>
             ) : (
                 <></>

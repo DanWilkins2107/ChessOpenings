@@ -1,7 +1,7 @@
 import { View, StyleSheet, Image } from "react-native";
 import { useMemo } from "react";
 
-export default function ChessPieces({ chessboard, activeRow, activeCol, squareWidth, pov }) {
+export default function ChessPieces({ chessboard, activePiece, squareWidth, rows, cols }) {
     const pieceImages = useMemo(
         () => ({
             b: {
@@ -24,19 +24,16 @@ export default function ChessPieces({ chessboard, activeRow, activeCol, squareWi
         []
     );
 
-    if (pov === "black") {
-        chessboard = chessboard.slice().reverse();
-        chessboard = chessboard.map((row) => row.slice().reverse());
-    }
+    const activeSquareRow = activePiece ? activePiece.square[1] : null;
+    const activeSquareCol = activePiece ? activePiece.square[0] : null;
 
     return (
         <View style={styles.container}>
             {chessboard.map((row, i) => {
-                console.log(row);
                 return (
                     <View key={i} style={styles.row}>
                         {row.map((piece, j) => {
-                            if (piece === null || (activeRow === i && activeCol === j)) {
+                            if (piece === null || (activeSquareRow === rows[i] && activeSquareCol === cols[j])) {
                                 return (
                                     <View
                                         key={j}

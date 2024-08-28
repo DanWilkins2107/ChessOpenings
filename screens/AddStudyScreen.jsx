@@ -75,7 +75,18 @@ const AddStudyScreen = ({ navigation }) => {
             return;
         }
 
-        // FINISH THIS
+        // Figure out splitting into chapters
+        let parsed;
+        try {
+            parsed = convertPGNToFormat(pgnText);
+        } catch (error) {
+            setAlert(
+                "An error occurred. Please make sure the pgn is in the correct format.",
+                "red"
+            );
+        }
+
+        // Continue
     };
 
     const createStudyFromLichess = async () => {
@@ -122,7 +133,7 @@ const AddStudyScreen = ({ navigation }) => {
                     const pgnPromise = set(ref(db, `pgns/${pgnUUID}`), chapter.moves);
                     promises.push(pgnPromise);
                 }
- 
+
                 const studyPromise = set(ref(db, `studies/${studyUUID}`), studyObj);
                 promises.push(studyPromise);
                 const userPromise = set(

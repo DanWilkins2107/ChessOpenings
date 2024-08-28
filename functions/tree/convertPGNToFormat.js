@@ -6,70 +6,53 @@ function convertPGNToFormat(pgn) {
     const tags = pgnArray[0];
     const moves = pgnArray[1];
 
-    const pgnObject = {
-        event: tags.match(/Event "(.*?)"/)[1],
-    };
+    
 
     const movesArray = moves.split(" ");
 
-    // We need this in the form:
-    // [{ move: "e4", comments: "!", ravs:[[moves: [{move: c6}]],[]] }, ]
-
     const output = [];
     let currentArray = output;
-    const parentStack = [[output]];
+    const parentStack = [output];
 
     for (let i = 1; i < movesArray.length; i++) {
         const currentSection = movesArray[i];
-        console.log("currentArray", JSON.stringify(currentArray));
-
-        // If first character is a number, it's a move number
-        if (currentSection[0].match(/[0-9]/)) {
-            //  I don't think there's a case where we have a move number and a )
-            console.log("move number:", currentSection);
-        }
 
         if (currentSection[0].match(/[A-Z,a-z]/)) {
-        
-            console.log("move:", currentSection);
-            
+            let moveToAdd = currentSection;
+            while (!moveToAdd[moveToAdd.length - 1].match(/[0-9\+#]/)) {
+                moveToAdd = moveToAdd.slice(0, -1);
+            }
 
-            // Need to apply filtering to this move
-            currentArray.push({ move: currentSection });
+            currentArray.push({ move: moveToAdd });
         }
 
         if (currentSection[0] === "(") {
-            console.log("variation start", currentSection);
-
             // Need to create a new array for the variation
             const newVariation = [];
 
             const lastMove = currentArray[currentArray.length - 1];
 
-            if (lastMove.ravs) {
-                lastMove.ravs.moves.push(newVariation);
-            } else {
-                lastMove.ravs = [{ moves: newVariation }];
+            if (!lastMove.ravs) {
+                lastMove.ravs = [];
             }
+
+            lastMove.ravs.push({ moves: newVariation });
 
             parentStack.push(currentArray);
             currentArray = newVariation;
         }
 
-        if (currentSection[0] === "$") {
-            console.log("annotation", currentSection);
-        }
-
         if (currentSection[currentSection.length - 1] === ")") {
-            console.log("variation end", currentSection);
-            
-
-            parentStack.pop();
-            currentArray = parentStack[parentStack.length - 1];
+            currentArray = parentStack.pop();
         }
     }
 
-    return output;
+    const pgnObject = {
+        event: tags.match(/Event "(.*?)"/)[1],
+        moves: output,
+    };
+
+    return pgnObject;
 }
 
 console.log(JSON.stringify(convertPGNToFormat(test), null, 2));

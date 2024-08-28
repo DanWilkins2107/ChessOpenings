@@ -35,9 +35,9 @@ export default function Dashboard() {
                 </Card>
                 <Card style={styles.card}>
                     <Subheading style={styles.subheading}>Join the Community</Subheading>
-                    <SocialsButton style={styles.socialButton} text="Instagram" icon="instagram"/>
-                    <SocialsButton style={styles.socialButton} text="Tiktok" icon="instagram"/>
-                    <SocialsButton style={styles.button} text="Discord" icon="instagram"/>
+                    <SocialsButton style={styles.socialButton} text="Instagram" icon="instagram" />
+                    <SocialsButton style={styles.socialButton} text="Tiktok" icon="tiktok" />
+                    <SocialsButton style={styles.button} text="Discord" icon="discord" />
                 </Card>
                 <Card style={styles.card}>
                     <Subheading>Rate Us</Subheading>

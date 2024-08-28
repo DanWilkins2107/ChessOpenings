@@ -37,7 +37,7 @@ const authScreens = [
     { name: "ForgottenPassword", component: ForgottenPasswordScreen, header: false },
 ];
 
-actual = false;
+actual = true;
 
 let userScreens = [];
 
@@ -175,11 +175,15 @@ const App = () => {
                                     },
                                 }}
                             />
-                            <Tab.Screen name="Settings" component={Dashboard} options={{
+                            <Tab.Screen
+                                name="Settings"
+                                component={Dashboard}
+                                options={{
                                     tabBarIcon: ({ color, size }) => {
                                         return <Icon name="cog" color={color} size={size} />;
                                     },
-                                }}/>
+                                }}
+                            />
                         </Tab.Navigator>
                     )}
                 </NavigationContainer>

@@ -84,6 +84,6 @@ const styles = StyleSheet.create({
     bottomRightText: {
         position: "absolute",
         bottom: 0,
-        right: 3,
+        right: 2,
     },
 });
