@@ -28,6 +28,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Colors } from "./styling.js";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Training from "./screens/Training.jsx";
+import ChooseTrain from "./screens/ChooseTrain.jsx";
+import TrainDashboard from "./screens/TrainDashboard.jsx";
+import StudyDashboard from "./screens/StudyDashboard.jsx";
+import ViewStudy from "./screens/ViewStudy.jsx";
 
 const Stack = createStackNavigator();
 
@@ -95,9 +99,50 @@ const App = () => {
         );
     }
 
+    function StudyScreens() {
+        return (
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="StudyDashboard"
+                    component={StudyDashboard}
+                    options={{
+                        headerTitle: (props) => HeaderCenter(props),
+                        headerTransparent: true,
+                    }}
+                />
+                <Stack.Screen
+                    name="ViewStudy"
+                    component={ViewStudy}
+                    options={{
+                        headerTitle: (props) => HeaderCenter(props),
+                        headerTransparent: true,
+                        headerLeft: (props) => HeaderLeft(props),
+                    }}
+                />
+            </Stack.Navigator>
+        );
+    }
+
     function TrainScreens() {
         return (
             <Stack.Navigator>
+                <Stack.Screen
+                    name="TrainDashboard"
+                    component={TrainDashboard}
+                    options={{
+                        headerTitle: (props) => HeaderCenter(props),
+                        headerTransparent: true,
+                    }}
+                />
+                <Stack.Screen
+                    name="ChooseTrain"
+                    component={ChooseTrain}
+                    options={{
+                        headerTitle: (props) => HeaderCenter(props),
+                        headerLeft: (props) => HeaderLeft(props),
+                        headerTransparent: true,
+                    }}
+                />
                 <Stack.Screen
                     name="Training"
                     component={Training}
@@ -159,7 +204,7 @@ const App = () => {
                             />
                             <Tab.Screen
                                 name="Study"
-                                component={Dashboard}
+                                component={StudyScreens}
                                 options={{
                                     tabBarIcon: ({ color, size }) => {
                                         return <Icon name="book" color={color} size={size} />;

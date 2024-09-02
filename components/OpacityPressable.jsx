@@ -8,8 +8,8 @@ const OpacityPressable = ({ children, style, ...props }) => {
                 {
                     opacity: pressed ? 0.5 : 1,
                 },
-                style,
                 styles.pressableShadow,
+                style,
             ]}
         >
             {children}

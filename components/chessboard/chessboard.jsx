@@ -9,7 +9,7 @@ import ActivePiece from "./ActivePiece";
 import ValidMoveSquares from "./ValidMoveSquares";
 import DraggingOverSquare from "./DraggingOverSquare";
 
-const Chessboard = ({ chess, moveFunction, chessboardLoading, pov, style }) => {
+const Chessboard = ({ chess, moveFunction, chessboardLoading, pov, onTopHeight = 10, style }) => {
     const screenDetails = useWindowDimensions();
     const screenHeight = screenDetails.height;
     const screenWidth = screenDetails.width;
@@ -28,7 +28,7 @@ const Chessboard = ({ chess, moveFunction, chessboardLoading, pov, style }) => {
     const turnToMove = chess.turn();
 
     const xBoardValue = (screenWidth - dimensions) / 2;
-    const yBoardValue = headerHeight + 10;
+    const yBoardValue = headerHeight + onTopHeight;
 
     const [activePiece, setActivePiece] = useState(null);
     const [activeMoveSquares, setActiveMoveSquares] = useState([]);

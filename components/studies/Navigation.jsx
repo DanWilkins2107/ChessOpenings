@@ -1,13 +1,15 @@
 import React from "react";
-import { TouchableOpacity, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import Colors from "../../colors";
+import { StyleSheet } from "react-native";
+import IconFA5 from "react-native-vector-icons/FontAwesome5";
+import Card from "../containers/Card";
+import OpacityPressable from "../OpacityPressable";
+import { Colors } from "../../styling";
 
 const NavigationButton = ({ icon, onPress }) => {
     return (
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-            <Icon name={icon} size={20} color="white" />
-        </TouchableOpacity>
+        <OpacityPressable style={styles.button} onPress={onPress}>
+            <IconFA5 name={icon} size={25} color={Colors.text} />
+        </OpacityPressable>
     );
 };
 
@@ -19,13 +21,13 @@ const Navigation = ({
     onDoubleRightPress,
 }) => {
     return (
-        <View style={styles.container}>
+        <Card style={styles.container} padding={false}>
             <NavigationButton icon="angle-double-left" onPress={onDoubleLeftPress} />
             <NavigationButton icon="angle-left" onPress={onLeftPress} />
             <NavigationButton icon="retweet" onPress={onFlipPress} />
             <NavigationButton icon="angle-right" onPress={onRightPress} />
             <NavigationButton icon="angle-double-right" onPress={onDoubleRightPress} />
-        </View>
+        </Card>
     );
 };
 
@@ -34,20 +36,17 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: "100%",
+        paddingHorizontal: 5,
+        height: 50,
     },
     button: {
-        backgroundColor: Colors.primary,
-        border: "solid",
-        borderWidth: 2,
-        borderColor: Colors.primaryBorder,
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: Colors.card2,
         flex: 1,
         marginHorizontal: 5,
-        marginBottom: 10,
+        height: 40,
         justifyContent: "center",
         alignItems: "center",
+        borderRadius: 5,
     },
 });
 

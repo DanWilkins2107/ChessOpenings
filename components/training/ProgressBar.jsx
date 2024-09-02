@@ -2,11 +2,13 @@ import { View, StyleSheet, Text } from "react-native";
 import { Colors, Fonts } from "../../styling";
 import Card from "../containers/Card";
 import OpacityPressable from "../OpacityPressable.jsx";
+import Body from "../text/Body.jsx";
+import Subheading2 from "../text/Subheading2.jsx";
 
 export default function ProgressBar({ progress, style }) {
     return (
         <Card style={[styles.container, style]} padding={false}>
-            <Text style={styles.text}>Progress:</Text>
+            <Subheading2 style={styles.text}>Progress:</Subheading2>
             <View style={styles.barWrapper}>
                 <View style={[{ width: `${progress}%` }, styles.barInner]} />
             </View>
@@ -25,16 +27,14 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
     },
     text: {
-        fontFamily: Fonts.main,
-        fontSize: 22,
-        color: Colors.text,
+        marginBottom: 3,
+        marginRight: -5,
     },
     barWrapper: {
-        flex: 0.8,
+        flex: 0.85,
         height: 10,
         backgroundColor: Colors.card2,
         borderRadius: 5,
-        marginTop: 5,
     },
     barInner: {
         height: "100%",

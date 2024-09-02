@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, Text, TouchableOpacity } from "react-nati
 import { useNavigation } from "@react-navigation/native";
 import { auth } from "../firebase";
 import LineSeparator from "../components/auth/LineSeparator";
-import DailyTestButton from "../components/dashboard/DailyTestButton";
+import DailyTestCard from "../components/dashboard/DailyTestCard";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Colors from "../colors";
 
@@ -21,7 +21,7 @@ const DashboardScreen = () => {
     return (
         <Container>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                <DailyTestButton testNumber={6} navigation={navigation} inProgress={true}/>
+                <DailyTestCard testNumber={6} navigation={navigation} inProgress={true}/>
                 <View style={styles.lineContainer}>
                     <TouchableOpacity
                         style={styles.button}

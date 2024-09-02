@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View, Text } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import Colors from "../../colors";
+import { Colors } from "../../styling";
+import Card from "../containers/Card";
+import OpacityPressable from "../OpacityPressable";
 
 const DropdownList = ({ topContent, dropdownContent }) => {
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -11,42 +13,34 @@ const DropdownList = ({ topContent, dropdownContent }) => {
     };
 
     return (
-        <View style={styles.button}>
-            <TouchableOpacity style={styles.topbar} onPress={handlePress}>
+        <View>
+            <OpacityPressable style={styles.container} onPress={handlePress}>
                 {topContent}
-                <Icon name="caret-down" size={30} color="#fff" />
-            </TouchableOpacity>
-            {isDropdownVisible && <ScrollView style={styles.dropdown}>{dropdownContent}</ScrollView>}
+                <Icon name="caret-down" size={30} color={Colors.background} />
+            </OpacityPressable>
+            {isDropdownVisible && (
+                <ScrollView style={styles.dropdown}>{dropdownContent}</ScrollView>
+            )}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    button: {
+    container: {
         width: "100%",
-        borderRadius: 10,
-        backgroundColor: Colors.primary,
-        borderColor: Colors.primaryBorder,
-        borderWidth: 2,
-        flexDirection: "column",
+        backgroundColor: Colors.card2,
         justifyContent: "space-between",
         alignItems: "center",
-    },
-    topbar: {
+        height: 50,
         flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        width: "100%",
-        height: "100%",
-        paddingHorizontal: 20,
-        height: 60,
+        paddingHorizontal: 10,
     },
     dropdown: {
         width: "100%",
-        maxHeight: 200,
+        maxHeight: 500,
+        backgroundColor: Colors.card2,
+        marginBottom: 5,
     },
 });
 
 export default DropdownList;
-
-

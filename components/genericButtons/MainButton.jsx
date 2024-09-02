@@ -3,13 +3,14 @@ import { StyleSheet } from "react-native";
 import Subheading2 from "../text/Subheading2";
 import OpacityPressable from "../OpacityPressable";
 
-export default function ObjectiveButton({ text, style }) {
+export default function MainButton({ text, style, onPress }) {
     return (
         <OpacityPressable
             style={[
                 styles.button,
                 style
             ]}
+            onPress={onPress}
         >
             <Subheading2 style={styles.text}>{text}</Subheading2>
         </OpacityPressable>

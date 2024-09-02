@@ -1,17 +1,21 @@
-import { StyleSheet, Text, Image, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Image, View } from "react-native";
 import Colors from "../../colors";
 import DropdownList from "./DropdownList";
 import Checkbox from "./Checkbox";
-import LineSeparator from "../auth/LineSeparator";
+import OpacityPressable from "../OpacityPressable";
+import Subheading from "../text/Subheading";
+import Subheading2 from "../text/Subheading2";
 
-const StudyAndChapterSelector = ({
+
+// TODO: FIX SHADOWS
+export default function StudyAndChapterSelector({
     studyObj,
     studyUUIDs,
     chosenChapters,
     chosenStudies,
     setChosenChapters,
     setChosenStudies,
-}) => {
+}) {
     const iconObj = {
         wb: require("../../assets/icons/wb.png"),
         wr: require("../../assets/icons/wr.png"),
@@ -32,108 +36,128 @@ const StudyAndChapterSelector = ({
         newChosenChapters[studyUUID][chapterIndex] = !newChosenChapters[studyUUID][chapterIndex];
         setChosenChapters(newChosenChapters);
     };
+
     return (
         <>
-            {studyUUIDs.map((studyUUID, index) => {
+            {studyUUIDs.map((studyUUID) => {
                 return (
-                    <View style={styles.innerContainer} key={studyUUID}>
+                    <View key={studyUUID} style={styles.section}>
                         <DropdownList
                             topContent={
-                                <View style={styles.container}>
+                                <View style={styles.topContainer}>
                                     <View style={styles.leftContainer}>
                                         <Image
                                             source={iconObj[studyObj[studyUUID].icon]}
                                             style={styles.icon}
                                         />
-                                        <Text style={styles.text}>{studyObj[studyUUID].title}</Text>
+                                        <Subheading
+                                            numberOfLines={1}
+                                            ellipsizeMode={"tail"}
+                                            style={styles.subheadings}
+                                        >
+                                            {studyObj[studyUUID].title}
+                                        </Subheading>
                                     </View>
-                                    <Checkbox
-                                        style={styles.checkbox}
-                                        checked={chosenStudies[studyUUID]}
-                                        onPress={() => {
-                                            setChosenChapters({
-                                                ...chosenChapters,
-                                                [studyUUID]: chosenChapters[studyUUID].map(
-                                                    () => !chosenStudies[studyUUID]
-                                                ),
-                                            });
-                                            setChosenStudies({
-                                                ...chosenStudies,
-                                                [studyUUID]: !chosenStudies[studyUUID],
-                                            });
-                                        }}
-                                    />
+                                    <View style={styles.rightContainer}>
+                                        <Checkbox
+                                            style={styles.checkbox}
+                                            checked={chosenStudies[studyUUID]}
+                                            onPress={() => {
+                                                setChosenChapters({
+                                                    ...chosenChapters,
+                                                    [studyUUID]: chosenChapters[studyUUID].map(
+                                                        () => !chosenStudies[studyUUID]
+                                                    ),
+                                                });
+                                                setChosenStudies({
+                                                    ...chosenStudies,
+                                                    [studyUUID]: !chosenStudies[studyUUID],
+                                                });
+                                            }}
+                                        />
+                                    </View>
                                 </View>
                             }
                             dropdownContent={
                                 <View>
-                                    {(studyObj[studyUUID] || {}).chapters.map((chapter, index) => {
+                                    {studyObj[studyUUID].chapters.map((chapter, index) => {
                                         return (
-                                            <TouchableOpacity
-                                                key={chapter.pgn}
+                                            <OpacityPressable
+                                                key={chapter.pgn || ""}
                                                 style={styles.dropdownContainer}
                                                 onPress={() => onChapterPress(studyUUID, index)}
                                             >
-                                                <Text style={styles.text}>{chapter.name}</Text>
+                                                <View style={styles.text}>
+                                                    <Subheading2
+                                                        numberOfLines={1}
+                                                        ellipsizeMode={"tail"}
+                                                    >
+                                                        {chapter.name}
+                                                    </Subheading2>
+                                                </View>
                                                 <Checkbox
                                                     style={styles.checkbox}
                                                     checked={chosenChapters[studyUUID][index]}
                                                     color={Colors.primary}
                                                     onPress={() => onChapterPress(studyUUID, index)}
                                                 />
-                                            </TouchableOpacity>
+                                            </OpacityPressable>
                                         );
                                     })}
                                 </View>
                             }
                         />
-                        {index != studyUUIDs.length - 1 &&<LineSeparator text="" />}
                     </View>
                 );
             })}
         </>
     );
-};
+}
 
 const styles = StyleSheet.create({
-    container: {
+    section: {
+        marginBottom: 10,
+        paddingHorizontal: 10,  
+    },
+    topContainer: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
-        width: "90%",
+        flex: 1,
+        height: 50,
     },
     leftContainer: {
         flexDirection: "row",
         alignItems: "center",
+        flex: 1,
     },
-    text: {
-        fontSize: 20,
-        color: "#fff",
+    rightContainer: {
+        marginHorizontal: 10,
     },
     icon: {
         width: 40,
         height: 40,
         marginRight: 10,
     },
-    checkbox: {
-        width: 10,
-        height: 30,
-        borderRadius: 5,
-        padding: 5,
+    subheadings: {
+        flexShrink: 1,
     },
     dropdownContainer: {
         padding: 10,
-        width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 20,
+        shadowOpacity: 0,
     },
-    innerContainer: {
-        width: "100%",
+    text: {
+        flexShrink: 1,
+    },
+    textWrapper: {
+        flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
-        justifyContent: "center",
+    },
+    checkbox: {
+        marginHorizontal: 30,
     },
 });
-
-export default StudyAndChapterSelector;

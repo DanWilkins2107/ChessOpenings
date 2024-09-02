@@ -1,0 +1,90 @@
+import { StyleSheet, ActivityIndicator, View, ScrollView } from "react-native";
+import Container from "../components/Container";
+import Title from "../components/text/Title";
+import Card from "../components/containers/Card";
+import Subheading from "../components/text/Subheading";
+import MainButton from "../components/genericButtons/MainButton";
+import { useState, useEffect } from "react";
+import getUserStudies from "../functions/fetch/getUserStudies";
+import getStudyDataFromStudyUUID from "../functions/fetch/getStudyDataFromStudyUUID";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import StudyButton from "../components/chooseStudy/StudyButton";
+import Subheading2 from "../components/text/Subheading2";
+import getUserStudyData from "../functions/fetch/getUserStudyData";
+
+export default function StudyDashboard({ navigation }) {
+    const [studyObj, setStudyObj] = useState({});
+    const [studyList, setStudyList] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStudies = async () => {
+            const { studyObjToAdd, sortedStudies } = await getUserStudyData();
+            setStudyList(sortedStudies);
+            setStudyObj(studyObjToAdd);
+            setLoading(false);
+        };
+        fetchStudies();
+    }, []);
+
+    const handleStudyPress = (studyUUID) => {
+        navigation.navigate("ViewStudy", { studyUUID: studyUUID });
+    };
+
+    return (
+        <Container theme="light" style={styles.container}>
+            <Title style={styles.title}>Study Dashboard</Title>
+            <Card style={styles.card}>
+                <Subheading style={styles.subtitle}>Your Studies</Subheading>
+                {loading ? (
+                    <ActivityIndicator />
+                ) : studyList.length === 0 ? (
+                    <Subheading2 style={styles.subheading}>
+                        Looks like you don't have any studies yet! Click the button below to create
+                        your first one.
+                    </Subheading2>
+                ) : (
+                    <ScrollView>
+                        {studyList.map((studyUUID) => {
+                            return (
+                                <View key={studyUUID} style={styles.section}>
+                                    <StudyButton
+                                        study={studyObj[studyUUID]}
+                                        onPress={() => handleStudyPress(studyUUID)}
+                                    />
+                                </View>
+                            );
+                        })}
+                    </ScrollView>
+                )}
+            </Card>
+            <MainButton text="Create a New Study" style={styles.button} />
+        </Container>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 20,
+        marginTop: 10,
+    },
+    title: {
+        marginBottom: 20,
+    },
+    subheading: {
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    section: {
+        marginBottom: 10,
+    },
+    button: {
+        marginTop: 20,
+    },
+    card: {
+        paddingBottom: 0,
+    },
+    subtitle: {
+        marginBottom: 10,
+    },
+});

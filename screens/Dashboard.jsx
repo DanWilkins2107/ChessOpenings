@@ -4,9 +4,9 @@ import Card from "../components/containers/Card";
 import Title from "../components/text/Title";
 import Subheading from "../components/text/Subheading";
 import ObjectiveButton from "../components/dashboard/ObjectiveButton";
-import MainButton from "../components/dashboard/MainButton";
+import MainButton from "../components/genericButtons/MainButton";
 import Body from "../components/text/Body";
-import SocialsButton from "../components/dashboard/SocialsButton";
+import SecondaryButton from "../components/genericButtons/SecondaryButton";
 
 export default function Dashboard() {
     return (
@@ -35,9 +35,13 @@ export default function Dashboard() {
                 </Card>
                 <Card style={styles.card}>
                     <Subheading style={styles.subheading}>Join the Community</Subheading>
-                    <SocialsButton style={styles.socialButton} text="Instagram" icon="instagram" />
-                    <SocialsButton style={styles.socialButton} text="Tiktok" icon="tiktok" />
-                    <SocialsButton style={styles.button} text="Discord" icon="discord" />
+                    <SecondaryButton
+                        style={styles.socialButton}
+                        text="Instagram"
+                        icon="instagram"
+                    />
+                    <SecondaryButton style={styles.socialButton} text="Tiktok" icon="tiktok" />
+                    <SecondaryButton style={styles.button} text="Discord" icon="discord" />
                 </Card>
                 <Card style={styles.card}>
                     <Subheading>Rate Us</Subheading>
