@@ -2,7 +2,7 @@ import ChapterAndStudyToString from "../test/chapterAndStudyToString";
 import findBranchCategory from "../test/findInitialCategory";
 import getBranchEnds from "../test/getBranchEnds";
 import getBranchSplits from "../test/getBranchSplits";
-import scanBranchForMistakes from "../test/scanBranchForMistakes";
+import makeCombinedTree from "../test/makeCombinedTree";
 import pgnToTree from "../tree/pgnToTree";
 import getPGNfromPGNUUID from "./getPGNfromPGNUUID";
 import getStudyDataFromStudyUUID from "./getStudyDataFromStudyUUID";
@@ -29,12 +29,16 @@ export default async function getDataForTraining(chosenPGNs) {
     }
 
     // Deal with pgnList
+
+    const treeArray = [];
+
+    const branchEnds = [];
     const selectedBranchArray = [];
     const finishedBranchArray = [];
     const unselectedBranchArray = [];
-    const splitArray = [];
-    const mistakeNodeArray = [];
-    const treeArray = [];
+
+    const whiteBranchEnds = [];
+    const blackBranchEnds = [];
 
     await Promise.all(
         pgnList.map(async (pgnString) => {
@@ -51,9 +55,15 @@ export default async function getDataForTraining(chosenPGNs) {
             };
             treeArray.push(tree);
             const ends = getBranchEnds(tree.tree, color);
+            if (color === "white") {
+                whiteBranchEnds.push(...ends);
+            } else {
+                blackBranchEnds.push(...ends);
+            }
+            branchEnds.push(...ends);
 
             ends.forEach((end) => {
-                const category = findBranchCategory(end, color, "unselected");
+                const category = findBranchCategory(end, color, "unselected", 5);
                 const endObj = {
                     endNode: end.endNode,
                     color: color,
@@ -64,45 +74,36 @@ export default async function getDataForTraining(chosenPGNs) {
 
                 if (category === "selected") {
                     selectedBranchArray.push(endObj);
-                    const mistakeArray = scanBranchForMistakes(
-                        end.endNode,
-                        color,
-                        end.confidence,
-                        end.lastMoveNumber
-                    );
-                    mistakeArray.forEach((mistakeNode) => {
-                        mistakeNodeArray.push({
-                            node: mistakeNode,
-                            color: color,
-                            title: title,
-                            chapterName: chapterName,
-                        });
-                    });
                 } else if (category === "unselected") {
                     unselectedBranchArray.push(endObj);
                 } else {
                     finishedBranchArray.push(endObj);
                 }
             });
-
-            const splits = getBranchSplits(tree, color);
-            splits.forEach((split) => {
-                splitArray.push({
-                    splitNode: split.node,
-                    color: color,
-                    title: title,
-                    chapterName: chapterName,
-                });
-            });
         })
     );
+
+    // Get Combined Trees
+    const whiteCombinedTree = makeCombinedTree({
+        branchArray: whiteBranchEnds,
+        color: "white",
+    });
+    const whiteSplits = getBranchSplits(whiteCombinedTree);
+
+    const blackCombinedTree = makeCombinedTree({
+        branchArray: blackBranchEnds,
+        color: "black",
+    });
+    const blackSplits = getBranchSplits(blackCombinedTree);
 
     return {
         selectedBranchArray,
         finishedBranchArray,
         unselectedBranchArray,
-        splitArray,
-        mistakeNodeArray,
+        whiteSplits,
+        blackSplits,
         treeArray,
+        whiteCombinedTree,
+        blackCombinedTree,
     };
 }

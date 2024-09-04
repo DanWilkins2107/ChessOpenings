@@ -9,7 +9,7 @@ import CurrentStudyViewer from "../components/training/CurrentStudyViewer.jsx";
 import HintAndSkipButtons from "../components/training/HintAndSkipButtons.jsx";
 
 export default function Training() {
-    const chess = new Chess();
+    const [chess, _setChess] = useState(new Chess());
     const chessboardLoading = false;
 
     return (

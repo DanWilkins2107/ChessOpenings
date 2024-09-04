@@ -1,4 +1,4 @@
-export default function findBranchCategory(branchEnd, color, previousStatus) {
+export default function findBranchCategory(branchEnd, color, previousStatus, threshold) {
     // Find out how many moves the branch has
 
     const moves = branchEnd.lastMoveNumber;
@@ -15,14 +15,14 @@ export default function findBranchCategory(branchEnd, color, previousStatus) {
         } else {
             return "unselected";
         }
-    } else if (endNode.confidence >= 1 && endNode.confidence < 5) {
+    } else if (endNode.confidence >= 1 && endNode.confidence < threshold) {
         return "selected";
     }
 
     const findBranchCategoryHelper = (node, moveNumber) => {
         if (moveNumber % 2 != colorValue) {
             node = node.parent;
-        } else if ((node.confidence || 0) !== 5 && node.move !== "Start") {
+        } else if ((node.confidence || 0) !== threshold && node.move !== "Start") {
             return "selected";
         }
     };

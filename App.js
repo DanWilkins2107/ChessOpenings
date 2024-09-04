@@ -41,7 +41,7 @@ const authScreens = [
     { name: "ForgottenPassword", component: ForgottenPasswordScreen, header: false },
 ];
 
-actual = true;
+actual = false;
 
 let userScreens = [];
 

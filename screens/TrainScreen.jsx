@@ -1,26 +1,16 @@
 import { useEffect, useState } from "react";
 import Container from "../components/Container";
-import { View, StyleSheet, Text, ScrollView, Button } from "react-native";
-import getUserStudies from "../functions/fetch/getUserStudies";
-import getStudyDataFromStudyUUID from "../functions/fetch/getStudyDataFromStudyUUID";
-import getPGNfromPGNUUID from "../functions/fetch/getPGNfromPGNUUID";
-import pgnToTree from "../functions/tree/pgnToTree";
-import getBranchEnds from "../functions/test/getBranchEnds";
-import scanBranchForMistakes from "../functions/test/scanBranchForMistakes";
-import getBranchSplits from "../functions/test/getBranchSplits";
+import { View, StyleSheet, Text, ScrollView } from "react-native";
 import getMoveListFromNode from "../functions/test/getMoveListFromNode";
 import checkForFullConfidenceMoveList from "../functions/test/checkForFullConfidenceMoveList";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/Chessboard";
 import updateConfidenceScores from "../functions/test/updateConfidenceScores";
-import findBranchCategory from "../functions/test/findInitialCategory";
-import ChapterAndStudyToString from "../functions/test/chapterAndStudyToString";
 import minimumConfidenceScore from "../functions/test/minimumConfidenceScore";
 import calculateOverallConfidence from "../functions/test/calculateOverallConfidence";
-import resetConfidence from "../functions/test/resetConfidence";
-import saveTreesToDb from "../functions/test/saveTreesToDb";
 import getDataForTraining from "../functions/fetch/getDataForTraining";
-import combineTrees from "../functions/tree/combineTrees";
+import otherColorMoveInstructions from "../functions/test/otherColorMoveInstructions";
+import pause from "../functions/test/pause";
 
 const TrainScreen = ({ navigation, route }) => {
     const [initialLoad, setInitialLoad] = useState(true);
@@ -29,6 +19,8 @@ const TrainScreen = ({ navigation, route }) => {
     const [finishedBranches, setFinishedBranches] = useState([]);
     const [testStyle, setTestStyle] = useState("branch");
     const [splits, setSplits] = useState([]);
+    const [whiteSplits, setWhiteSplits] = useState([]);
+    const [blackSplits, setBlackSplits] = useState([]);
     const [mistakes, setMistakes] = useState([]);
     const [moveList, setMoveList] = useState([]);
     const [moveIndex, setMoveIndex] = useState(0);
@@ -43,6 +35,10 @@ const TrainScreen = ({ navigation, route }) => {
     const [overallTree, setOverallTree] = useState({});
 
     const [overallConfidences, setOverallConfidences] = useState({});
+    const [splitChildMoveList, setSplitChildMoveList] = useState([]);
+
+    const [whiteTree, setWhiteTree] = useState({});
+    const [blackTree, setBlackTree] = useState({});
 
     useEffect(() => {
         const initialize = async () => {
@@ -51,17 +47,23 @@ const TrainScreen = ({ navigation, route }) => {
                 selectedBranchArray,
                 finishedBranchArray,
                 unselectedBranchArray,
-                splitArray,
+                whiteSplits,
+                blackSplits,
                 mistakeNodeArray,
                 treeArray,
+                whiteCombinedTree,
+                blackCombinedTree,
             } = await getDataForTraining(chosenPGNs);
 
             setSelectedBranches(selectedBranchArray);
             setUnselectedBranches(unselectedBranchArray);
             setFinishedBranches(finishedBranchArray);
-            setSplits(splitArray);
+            setWhiteSplits(whiteSplits);
+            setBlackSplits(blackSplits);
             setMistakes(mistakeNodeArray);
             setTrees(treeArray);
+            setWhiteTree(whiteCombinedTree);
+            setBlackTree(blackCombinedTree);
 
             setTrackedBranchesFinished(finishedBranchArray);
             setTrackedBranchesSelected(selectedBranchArray);
@@ -70,14 +72,24 @@ const TrainScreen = ({ navigation, route }) => {
             selectMovesToTest(
                 selectedBranchArray,
                 unselectedBranchArray,
-                splitArray,
-                mistakeNodeArray
+                whiteSplits,
+                blackSplits,
+                whiteCombinedTree,
+                blackCombinedTree
             );
         };
+
         initialize();
     }, []);
 
-    const selectMovesToTest = (selectedBranches, unselectedBranches, splits, mistakes) => {
+    const selectMovesToTest = (
+        selectedBranches,
+        unselectedBranches,
+        whiteSplits,
+        blackSplits,
+        whiteCombinedTree,
+        blackCombinedTree
+    ) => {
         if (selectedBranches.length === 0) {
             if (unselectedBranches.length === 0) {
                 console.log("Finished");
@@ -102,10 +114,10 @@ const TrainScreen = ({ navigation, route }) => {
             minConfidenceObj[minConfidence].push(branch);
         });
 
-        console.log("NEW MOVE");
-        for (let i = 0; i < 5; i++) {
-            console.log("MinConf ", i, ": ", minConfidenceObj[i].length);
-        }
+        const selectedBlackSplit = blackSplits[Math.floor(Math.random() * blackSplits.length)];
+
+        setTestStyle("split");
+        setUpSplitTest(selectedBlackSplit, "black");
 
         // WEIGHTINGS
         const confidenceWeightings = {
@@ -121,10 +133,10 @@ const TrainScreen = ({ navigation, route }) => {
             randomValueCap += confidenceWeightings[i] * minConfidenceObj[i].length;
         }
 
-        console.log("Random Value Cap: ", randomValueCap);
+        // console.log("Random Value Cap: ", randomValueCap);
 
         const randomNumber = Math.random() * randomValueCap;
-        console.log("Random Number: ", randomNumber);
+        // console.log("Random Number: ", randomNumber);
 
         let currentSum = 0;
         let selectedBranch = null;
@@ -132,7 +144,7 @@ const TrainScreen = ({ navigation, route }) => {
             currentSum += confidenceWeightings[i] * minConfidenceObj[i].length;
 
             if (randomNumber < currentSum) {
-                console.log("Selecting from Confidence Level ", i);
+                // console.log("Selecting from Confidence Level ", i);
                 const randomIndex = Math.floor(Math.random() * minConfidenceObj[i].length);
                 selectedBranch = minConfidenceObj[i][randomIndex];
                 break;
@@ -140,11 +152,6 @@ const TrainScreen = ({ navigation, route }) => {
         }
 
         // Now split selected branches into their minimum confidence numbers
-
-        console.log("No of unselected branches: ", unselectedBranches.length);
-        console.log("No of selected branches: ", selectedBranches.length);
-        console.log("No of finished branches: ", finishedBranches.length);
-
         if (randomValueCap < 15) {
             if (unselectedBranches.length > 0) {
                 const randomIndex = Math.floor(Math.random() * unselectedBranches.length);
@@ -152,6 +159,12 @@ const TrainScreen = ({ navigation, route }) => {
                 unselectedBranches.splice(randomIndex, 1);
             }
         }
+
+        setTestStyle("otherColor");
+        setUpOtherColorTest(selectedBranch, whiteCombinedTree, blackCombinedTree);
+        setSelectedBranches(selectedBranches);
+        setUnselectedBranches(unselectedBranches);
+        return;
 
         setTestStyle("branch");
         setUpBranchTest(selectedBranch);
@@ -180,7 +193,119 @@ const TrainScreen = ({ navigation, route }) => {
         }
     };
 
+    const setUpSplitTest = (split, color) => {
+        chess.reset();
+        const moveList = getMoveListFromNode(split, color);
+        setMoveList(moveList);
+
+        setBoardPOV(color);
+
+        const childMoveObj = {};
+        split.children.forEach((child) => {
+            childMoveObj[child.move] = false;
+        });
+        // Change above so it is one object
+        setSplitChildMoveList(childMoveObj);
+
+        const moves = [];
+
+        for (let i = 0; i < moveList.length; i++) {
+            chess.move(moveList[i].move);
+            moves.push(moveList[i].move);
+        }
+    };
+
+    const setUpOtherColorTest = (branch, whiteCombinedTree, blackCombinedTree) => {
+        chess.reset();
+        const povColor = branch.color === "white" ? "black" : "white";
+        const moveList = getMoveListFromNode(branch.endNode, povColor);
+        const { instructionArray, isTestable } = otherColorMoveInstructions(
+            moveList,
+            povColor === "white" ? blackCombinedTree : whiteCombinedTree,
+            povColor
+        );
+
+        if (!isTestable) {
+            console.log("NOT TESTABLE IMPLEMENT BACK TO START HERE!");
+        }
+
+        setMoveList(instructionArray);
+        setMoveIndex(0);
+    };
+
     const moveFunction = (from, to) => {
+        if (testStyle === "branch") {
+            branchMoveFunction(from, to);
+        } else if (testStyle === "split") {
+            splitMoveFunction(from, to);
+        } else if (testStyle === "otherColor") {
+            otherMoveFunction(from, to);
+        }
+    };
+
+    const otherColorHelper = async (moveList, tempMoveIndex) => {
+        if (tempMoveIndex >= moveList.length) {
+            console.log("End of Line");
+            return;
+        }
+        if (moveList[tempMoveIndex].instruction === "test") {
+            setMoveIndex(tempMoveIndex);
+            return;
+        }
+        await pause(500);
+        console.log(moveList[tempMoveIndex].move);
+        chess.move(moveList[tempMoveIndex].move);
+        otherColorHelper(moveList, tempMoveIndex + 1);
+    };
+
+    const otherMoveFunction = (from, to) => {
+        let move = chess.move({ from: from, to: to });
+        if (move.san === moveList[moveIndex].move) {
+            console.log("Correct");
+            otherColorHelper(moveList, moveIndex + 1);
+        } else {
+            chess.undo();
+        }
+    };
+
+    const splitMoveFunction = (from, to) => {
+        let move = chess.move({ from: from, to: to });
+        if (Object.keys(splitChildMoveList).includes(move.san)) {
+            if (splitChildMoveList[move.san]) {
+                console.log("Already Moved!");
+                chess.undo();
+            } else {
+                console.log("Correct!");
+                const newMoveObj = { ...splitChildMoveList, [move.san]: true };
+                setSplitChildMoveList(newMoveObj);
+                // Check all the values
+                let allMoved = true;
+                const moveList = Object.keys(newMoveObj);
+                for (let i = 0; i < moveList.length; i++) {
+                    if (!newMoveObj[moveList[i]]) {
+                        allMoved = false;
+                    }
+                }
+                if (allMoved) {
+                    // Select next move
+                    selectMovesToTest(
+                        selectedBranches,
+                        unselectedBranches,
+                        whiteSplits,
+                        blackSplits,
+                        mistakes
+                    );
+                } else {
+                    chess.undo();
+                }
+            }
+        } else {
+            console.log("Incorrect Move!");
+            chess.undo();
+        }
+    };
+
+    const branchMoveFunction = (from, to) => {
         let move = null;
         try {
             move = chess.move({ from: from, to: to });
@@ -243,10 +368,21 @@ const TrainScreen = ({ navigation, route }) => {
                     chess={chess}
                     moveFunction={moveFunction}
                     backgroundColor={"white"}
-                    pov={boardPOV === "white" ? "w" : "b"}
+                    pov={boardPOV}
                 />
-                <Text style={styles.text}>{JSON.stringify(moveList)}</Text>
-                <Text style={styles.text}>{JSON.stringify(moveIndex)}</Text>
+                {testStyle === "branch" ||
+                    (testStyle === "otherColor" && (
+                        <Text style={styles.text}>{JSON.stringify(moveList)}</Text>
+                    ))}
+                {testStyle === "branch" ||
+                    (testStyle === "otherColor" && (
+                        <Text style={styles.text}>{JSON.stringify(moveIndex)}</Text>
+                    ))}
+                {testStyle === "split" && <Text style={styles.text}>SPLITTIME</Text>}
+
+                {testStyle === "split" && (
+                    <Text style={styles.text}>{JSON.stringify(splitChildMoveList)}</Text>
+                )}
             </View>
             {/* <Button
                 title="Reset Confidence"

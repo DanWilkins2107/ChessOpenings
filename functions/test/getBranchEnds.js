@@ -8,6 +8,7 @@ export default function getBranchEnds(tree, color) {
         if (!node.children || node.children.length === 0) {
             const lastCorrectColourNode = moveNumber % 2 === numberToMatch ? node : node.parent;
             const confidence = lastCorrectColourNode.confidence || 0;
+
             branchEnds.push({ endNode: node, confidence: confidence, lastMoveNumber: moveNumber });
         } else {
             node.children.forEach((child) => getBranchEndsHelper(child, moveNumber + 1));
@@ -16,4 +17,4 @@ export default function getBranchEnds(tree, color) {
 
     getBranchEndsHelper(tree, moveNumber);
     return branchEnds;
-};
+}
