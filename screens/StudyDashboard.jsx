@@ -5,9 +5,6 @@ import Card from "../components/containers/Card";
 import Subheading from "../components/text/Subheading";
 import MainButton from "../components/genericButtons/MainButton";
 import { useState, useEffect } from "react";
-import getUserStudies from "../functions/fetch/getUserStudies";
-import getStudyDataFromStudyUUID from "../functions/fetch/getStudyDataFromStudyUUID";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import StudyButton from "../components/chooseStudy/StudyButton";
 import Subheading2 from "../components/text/Subheading2";
 import getUserStudyData from "../functions/fetch/getUserStudyData";
@@ -29,6 +26,10 @@ export default function StudyDashboard({ navigation }) {
 
     const handleStudyPress = (studyUUID) => {
         navigation.navigate("ViewStudy", { studyUUID: studyUUID });
+    };
+
+    const handleCreatePress = () => {
+        navigation.navigate("AddStudy");
     };
 
     return (
@@ -58,7 +59,11 @@ export default function StudyDashboard({ navigation }) {
                     </ScrollView>
                 )}
             </Card>
-            <MainButton text="Create a New Study" style={styles.button} />
+            <MainButton
+                text="Create a New Opening Study"
+                style={styles.button}
+                onPress={handleCreatePress}
+            />
         </Container>
     );
 }
@@ -80,9 +85,11 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 20,
+        marginBottom: 20,
     },
     card: {
         paddingBottom: 0,
+        flex: 1,
     },
     subtitle: {
         marginBottom: 10,

@@ -7,6 +7,9 @@ function pgnToTree(pgn) {
 
     function addNode(newObject, parent) {
         const firstMove = newObject[0];
+        if (!firstMove) {
+            return
+        }
         const newNode = {
             move: firstMove.move,
             comments: firstMove.comments,

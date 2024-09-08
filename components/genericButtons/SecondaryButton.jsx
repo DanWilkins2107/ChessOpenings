@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.card2,
         height: 40,
         alignItems: "center",
-        paddingLeft: 10,
+        paddingHorizontal: 10,
         flexDirection: "row",
         shadowColor: "rgba(0,0,0,1)",
         shadowOffset: { width: 0, height: 2 },

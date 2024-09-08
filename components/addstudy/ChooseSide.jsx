@@ -1,73 +1,74 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
+import Card from "../containers/Card";
+import OpacityPressable from "../OpacityPressable";
+import Body from "../text/Body";
+import { Colors } from "../../styling";
 
 const ChooseSide = ({ side, setSide }) => {
     return (
-        <View style={styles.container}>
-            <Text style={styles.subtitle}>This Study is for: </Text>
+        <Card style={styles.container} padding={false}>
             <View style={styles.colorToggleContainer}>
-                <TouchableOpacity
-                    onPress={() => setSide("white")}
-                    style={[styles.colorToggle, side === "white" && styles.whiteSelected]}
+                <OpacityPressable
+                    style={[styles.button, side === "white" && styles.selected]}
+                    shadow={false}
+                    onPress={() => {
+                        setSide("white");
+                    }}
                 >
-                    <View style={styles.whiteInner}>
-                        <Text>White</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.colorToggle, side === "black" && styles.blackSelected]}
-                    onPress={() => setSide("black")}
+                    <Image source={require("../../assets/icons/wk.png")} style={styles.icon} />
+                    <Body style={styles.text}>White</Body>
+                </OpacityPressable>
+                <OpacityPressable
+                    style={[styles.button, side === "black" && styles.selected]}
+                    shadow={false}
+                    onPress={() => {
+                        setSide("black");
+                    }}
                 >
-                    <View style={styles.blackInner}>
-                        <Text style={styles.blackText}>Black</Text>
-                    </View>
-                </TouchableOpacity>
+                    <Image source={require("../../assets/icons/bk.png")} style={styles.icon} />
+                    <Body style={styles.text}>Black</Body>
+                </OpacityPressable>
             </View>
-        </View>
+        </Card>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         alignItems: "center",
-    },
-    subtitle: {
-        fontSize: 16,
-        fontWeight: "bold",
-        marginTop: 10,
-        color: "white",
+        height: 50,
+        paddingVertical: 5,
+        backgroundColor: Colors.card2,
     },
     colorToggleContainer: {
         flexDirection: "row",
-        marginBottom: 20,
     },
-    colorToggle: {
+    button: {
+        flex: 1,
         marginHorizontal: 5,
-        justifyContent: "center",
+        height: 40,
+        borderRadius: 5,
         alignItems: "center",
-        backgroundColor: "transparent",
-        borderColor: "transparent",
-        borderWidth: 2,
+        justifyContent: "center",
+        flexDirection: "row",
     },
-    whiteInner: {
-        borderWidth: 2,
-        margin: 2,
-        padding: 10,
-        backgroundColor: "white",
+    text: {
+        marginLeft: 5,
     },
-    blackInner: {
-        backgroundColor: "black",
-        borderWidth: 2,
-        margin: 2,
-        padding: 10,
+    icon: {
+        width: 20,
+        height: 20,
     },
-    blackText: {
-        color: "white",
-    },
-    whiteSelected: {
-        borderColor: "white",
-    },
-    blackSelected: {
-        borderColor: "black",
+    selected: {
+        backgroundColor: Colors.card1,
+
+        shadowColor: "#000000",
+        shadowRadius: 2,
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.25,
     },
 });
 

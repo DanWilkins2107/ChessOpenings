@@ -4,24 +4,21 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Colors } from "../styling";
 
-const Container = ({ theme = "dark", style, children }) => {
+const Container = ({ theme = "dark", style, children, ...props }) => {
     const headerHeight = useHeaderHeight();
     const colors =
         theme === "dark"
             ? ["#13111A", "#1F1025", "#13111A"]
             : [Colors.background, Colors.background];
     return (
-
-            <View style={styles.fill}>
-                <LinearGradient colors={colors} style={styles.fill}>
-                    <View style={[{ paddingTop: headerHeight }, styles.innerContainer]}>
-                        <SafeAreaView style={[styles.innerContainer, style]}>
-                            {children}
-                        </SafeAreaView>
-                    </View>
-                </LinearGradient>
-            </View>
- );
+        <View style={styles.fill}>
+            <LinearGradient colors={colors} style={styles.fill}>
+                <View style={[{ paddingTop: headerHeight }, styles.innerContainer]}>
+                    <SafeAreaView style={[styles.innerContainer, style]}>{children}</SafeAreaView>
+                </View>
+            </LinearGradient>
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({

@@ -6,7 +6,6 @@ import OpacityPressable from "../OpacityPressable";
 import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
 
-
 // TODO: FIX SHADOWS
 export default function StudyAndChapterSelector({
     studyObj,
@@ -106,6 +105,7 @@ export default function StudyAndChapterSelector({
                                     })}
                                 </View>
                             }
+                            height={50}
                         />
                     </View>
                 );
@@ -117,7 +117,7 @@ export default function StudyAndChapterSelector({
 const styles = StyleSheet.create({
     section: {
         marginBottom: 10,
-        paddingHorizontal: 10,  
+        paddingHorizontal: 10,
     },
     topContainer: {
         flexDirection: "row",

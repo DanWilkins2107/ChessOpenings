@@ -5,7 +5,7 @@ import getMoveListFromNode from "../functions/test/getMoveListFromNode";
 import checkForFullConfidenceMoveList from "../functions/test/checkForFullConfidenceMoveList";
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/Chessboard";
-import updateConfidenceScores from "../functions/test/updateConfidenceScores";
+import updateBranchConfidenceScores from "../functions/test/updateBranchConfidenceScores";
 import minimumConfidenceScore from "../functions/test/minimumConfidenceScore";
 import calculateOverallConfidence from "../functions/test/calculateOverallConfidence";
 import getDataForTraining from "../functions/fetch/getDataForTraining";
@@ -26,19 +26,17 @@ const TrainScreen = ({ navigation, route }) => {
     const [moveIndex, setMoveIndex] = useState(0);
     const [boardPOV, setBoardPOV] = useState("white");
     const [chess, _setChess] = useState(new Chess());
-    // Used for setting the confidence levels
     const [isCorrect, setIsCorrect] = useState(true);
     const [trackedBranchesSelected, setTrackedBranchesSelected] = useState([]);
     const [trackedBranchesUnselected, setTrackedBranchesUnselected] = useState([]);
     const [trackedBranchesFinished, setTrackedBranchesFinished] = useState([]);
     const [trees, setTrees] = useState([]);
     const [overallTree, setOverallTree] = useState({});
-
     const [overallConfidences, setOverallConfidences] = useState({});
     const [splitChildMoveList, setSplitChildMoveList] = useState([]);
-
     const [whiteTree, setWhiteTree] = useState({});
     const [blackTree, setBlackTree] = useState({});
+    const [forceRender, setForceRender] = useState(false); // State to force re-render
 
     useEffect(() => {
         const initialize = async () => {
@@ -119,7 +117,6 @@ const TrainScreen = ({ navigation, route }) => {
         setTestStyle("split");
         setUpSplitTest(selectedBlackSplit, "black");
 
-        // WEIGHTINGS
         const confidenceWeightings = {
             0: 2,
             1: 1.5,
@@ -133,10 +130,7 @@ const TrainScreen = ({ navigation, route }) => {
             randomValueCap += confidenceWeightings[i] * minConfidenceObj[i].length;
         }
 
-        // console.log("Random Value Cap: ", randomValueCap);
-
         const randomNumber = Math.random() * randomValueCap;
-        // console.log("Random Number: ", randomNumber);
 
         let currentSum = 0;
         let selectedBranch = null;
@@ -144,14 +138,12 @@ const TrainScreen = ({ navigation, route }) => {
             currentSum += confidenceWeightings[i] * minConfidenceObj[i].length;
 
             if (randomNumber < currentSum) {
-                // console.log("Selecting from Confidence Level ", i);
                 const randomIndex = Math.floor(Math.random() * minConfidenceObj[i].length);
                 selectedBranch = minConfidenceObj[i][randomIndex];
                 break;
             }
         }
 
-        // Now split selected branches into their minimum confidence numbers
         if (randomValueCap < 15) {
             if (unselectedBranches.length > 0) {
                 const randomIndex = Math.floor(Math.random() * unselectedBranches.length);
@@ -182,7 +174,6 @@ const TrainScreen = ({ navigation, route }) => {
         setMoveIndex(move);
         chess.reset();
 
-        // Make the moves up to the move we are testing
         for (let i = 0; i < move; i++) {
             chess.move(moveList[i].move);
         }
@@ -191,6 +182,8 @@ const TrainScreen = ({ navigation, route }) => {
             chess.move(moveList[move].move);
             setMoveIndex(move + 1);
         }
+
+        setForceRender((prev) => !prev);
     };
 
     const setUpSplitTest = (split, color) => {
@@ -204,7 +197,6 @@ const TrainScreen = ({ navigation, route }) => {
         split.children.forEach((child) => {
             childMoveObj[child.move] = false;
         });
-        // Change above so it is one object
         setSplitChildMoveList(childMoveObj);
 
         const moves = [];
@@ -213,6 +205,8 @@ const TrainScreen = ({ navigation, route }) => {
             chess.move(moveList[i].move);
             moves.push(moveList[i].move);
         }
+
+        setForceRender((prev) => !prev);
     };
 
     const setUpOtherColorTest = (branch, whiteCombinedTree, blackCombinedTree) => {
@@ -228,9 +222,11 @@ const TrainScreen = ({ navigation, route }) => {
         if (!isTestable) {
             console.log("NOT TESTABLE IMPLEMENT BACK TO START HERE!");
         }
-
+        setBoardPOV(branch.color);
         setMoveList(instructionArray);
         setMoveIndex(0);
+
+        setForceRender((prev) => !prev);
     };
 
     const moveFunction = (from, to) => {
@@ -255,6 +251,7 @@ const TrainScreen = ({ navigation, route }) => {
         await pause(500);
         console.log(moveList[tempMoveIndex].move);
         chess.move(moveList[tempMoveIndex].move);
+        setForceRender((prev) => !prev);
         otherColorHelper(moveList, tempMoveIndex + 1);
     };
 
@@ -278,7 +275,6 @@ const TrainScreen = ({ navigation, route }) => {
                 console.log("Correct!");
                 const newMoveObj = { ...splitChildMoveList, [move.san]: true };
                 setSplitChildMoveList(newMoveObj);
-                // Check all the values
                 let allMoved = true;
                 const moveList = Object.keys(newMoveObj);
                 for (let i = 0; i < moveList.length; i++) {
@@ -287,7 +283,6 @@ const TrainScreen = ({ navigation, route }) => {
                     }
                 }
                 if (allMoved) {
-                    // Select next move
                     selectMovesToTest(
                         selectedBranches,
                         unselectedBranches,
@@ -314,7 +309,6 @@ const TrainScreen = ({ navigation, route }) => {
         }
 
         if (move.san === moveList[moveIndex].move) {
-            // Deal with confidence scores
             const {
                 newTrackedBranchesUnselected,
                 newTrackedBranchesSelected,
@@ -322,7 +316,7 @@ const TrainScreen = ({ navigation, route }) => {
                 newUnselectedBranches,
                 newSelectedBranches,
                 newFinishedBranches,
-            } = updateConfidenceScores(
+            } = updateBranchConfidenceScores(
                 trackedBranchesUnselected,
                 trackedBranchesSelected,
                 trackedBranchesFinished,
@@ -347,10 +341,8 @@ const TrainScreen = ({ navigation, route }) => {
 
             setIsCorrect(true);
             if (moveIndex >= moveList.length - 2) {
-                // -2 as we make another move after this if the colour is not tested
                 selectMovesToTest(newSelectedBranches, newUnselectedBranches, splits, mistakes);
             } else {
-                // Deal with
                 const nextMove = moveList[moveIndex + 1];
                 chess.move(nextMove.move);
                 setMoveIndex((moveIndex) => moveIndex + 2);
@@ -369,6 +361,7 @@ const TrainScreen = ({ navigation, route }) => {
                     moveFunction={moveFunction}
                     backgroundColor={"white"}
                     pov={boardPOV}
+                    key={forceRender} // Force re-render by changing key
                 />
                 {testStyle === "branch" ||
                     (testStyle === "otherColor" && (
@@ -384,16 +377,8 @@ const TrainScreen = ({ navigation, route }) => {
                     <Text style={styles.text}>{JSON.stringify(splitChildMoveList)}</Text>
                 )}
             </View>
-            {/* <Button
-                title="Reset Confidence"
-                onPress={() => {
-                    resetConfidence(trees[1].tree, trees[1].color);
-                    saveTreesToDb(trees[1].tree, trees[1].pgnUUID);
-                }}
-            /> */}
             <ScrollView style={styles.scroll} contentContainerStyle={{ flexGrow: 1, height: 400 }}>
                 {trees.map((tree) => {
-                    // This needs to be done as state I think
                     const confidenceScore = calculateOverallConfidence(tree.tree, tree.color);
                     return (
                         <Text style={styles.text} key={tree.pgnUUID}>

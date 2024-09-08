@@ -5,7 +5,7 @@ export default async function getPGNfromPGNUUID(pgnUUID) {
     try {
         const pgnRef = ref(db, `pgns/${pgnUUID}`);
         const pgnSnapshot = await get(pgnRef);
-        const pgn = pgnSnapshot.val() || null;
+        const pgn = pgnSnapshot.val() || [];
         return pgn;
     } catch (error) {
         throw new Error(error);

@@ -1,10 +1,9 @@
 // This should update the confidence scores and return array of PGNs that have changed confidence scores and need to be updated in the database.
 import checkForFullConfidenceMoveList from "./checkForFullConfidenceMoveList";
 import getMoveListFromNode from "./getMoveListFromNode";
-import minimumConfidenceScore from "./minimumConfidenceScore";
 import saveTreesToDb from "./saveTreesToDb";
 
-export default function updateConfidenceScores(
+export default function updateBranchConfidenceScores(
     trackedBranchesUnselected,
     trackedBranchesSelected,
     trackedBranchesFinished,
@@ -178,8 +177,6 @@ export default function updateConfidenceScores(
         newSelectedBranches.push(branch);
         newTrackedBranchesSelected.push(branch);
     });
-
-
 
     return {
         newTrackedBranchesUnselected,

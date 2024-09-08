@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Colors } from "../../styling";
-import Card from "../containers/Card";
 import OpacityPressable from "../OpacityPressable";
 
-const DropdownList = ({ topContent, dropdownContent }) => {
+const DropdownList = ({ topContent, dropdownContent, height = 40 }) => {
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
     const handlePress = () => {
@@ -13,8 +12,12 @@ const DropdownList = ({ topContent, dropdownContent }) => {
     };
 
     return (
-        <View>
-            <OpacityPressable style={styles.container} onPress={handlePress}>
+        <View style={styles.view}>
+            <OpacityPressable
+                style={[styles.container, { height: height }]}
+                onPress={handlePress}
+                shadow={false}
+            >
                 {topContent}
                 <Icon name="caret-down" size={30} color={Colors.background} />
             </OpacityPressable>
@@ -26,12 +29,21 @@ const DropdownList = ({ topContent, dropdownContent }) => {
 };
 
 const styles = StyleSheet.create({
+    view: {
+        shadowColor: "#000000",
+        shadowRadius: 2,
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.25,
+    },
     container: {
         width: "100%",
         backgroundColor: Colors.card2,
         justifyContent: "space-between",
         alignItems: "center",
-        height: 50,
+        height: 40,
         flexDirection: "row",
         paddingHorizontal: 10,
     },

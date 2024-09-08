@@ -32,6 +32,8 @@ import ChooseTrain from "./screens/ChooseTrain.jsx";
 import TrainDashboard from "./screens/TrainDashboard.jsx";
 import StudyDashboard from "./screens/StudyDashboard.jsx";
 import ViewStudy from "./screens/ViewStudy.jsx";
+import AddStudy from "./screens/AddStudy.jsx";
+import Settings from "./screens/Settings.jsx";
 
 const Stack = createStackNavigator();
 
@@ -41,7 +43,7 @@ const authScreens = [
     { name: "ForgottenPassword", component: ForgottenPasswordScreen, header: false },
 ];
 
-actual = false;
+actual = true;
 
 let userScreens = [];
 
@@ -111,6 +113,15 @@ const App = () => {
                     }}
                 />
                 <Stack.Screen
+                    name="AddStudy"
+                    component={AddStudy}
+                    options={{
+                        headerTitle: (props) => HeaderCenter(props),
+                        headerTransparent: true,
+                        headerLeft: (props) => HeaderLeft(props),
+                    }}
+                />
+                <Stack.Screen
                     name="ViewStudy"
                     component={ViewStudy}
                     options={{
@@ -149,6 +160,21 @@ const App = () => {
                     options={{
                         headerTitle: (props) => HeaderCenter(props),
                         headerLeft: (props) => HeaderLeft(props),
+                        headerTransparent: true,
+                    }}
+                />
+            </Stack.Navigator>
+        );
+    }
+
+    function SettingsScreens() {
+        return (
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="UserSettings"
+                    component={Settings}
+                    options={{
+                        headerTitle: (props) => HeaderCenter(props),
                         headerTransparent: true,
                     }}
                 />
@@ -222,7 +248,7 @@ const App = () => {
                             />
                             <Tab.Screen
                                 name="Settings"
-                                component={Dashboard}
+                                component={SettingsScreens}
                                 options={{
                                     tabBarIcon: ({ color, size }) => {
                                         return <Icon name="cog" color={color} size={size} />;

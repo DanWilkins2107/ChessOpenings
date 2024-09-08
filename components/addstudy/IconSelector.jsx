@@ -1,11 +1,11 @@
-import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity, Text, Image, View, ScrollView } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import Colors from "../../colors";
+import OpacityPressable from "../OpacityPressable";
+import { Body } from "../text/Body.jsx";
+import { Subheading2 } from "../text/Subheading2.jsx";
+import DropdownList from "../chooseStudy/DropdownList";
+import { Colors, Fonts } from "../../styling";
 
 const SelectIcon = ({ selectedIcon, setSelectedIcon }) => {
-    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
     const iconObj = {
         wb: require("../../assets/icons/wb.png"),
         wr: require("../../assets/icons/wr.png"),
@@ -21,67 +21,45 @@ const SelectIcon = ({ selectedIcon, setSelectedIcon }) => {
         bp: require("../../assets/icons/bp.png"),
     };
 
-    const handlePress = () => {
-        setIsDropdownVisible(!isDropdownVisible);
-    };
-
     const handleSelect = (icon) => {
         setSelectedIcon(icon);
-        setIsDropdownVisible(false);
     };
 
     return (
-        <View style={styles.button}>
-            <TouchableOpacity style={styles.topbar} onPress={handlePress}>
-                {selectedIcon && (
-                    <View style={styles.chosen}>
-                        <Text style={styles.text}>Chosen Icon:</Text>
-                        <View style={{ width: 10 }} />
-                        <Image source={iconObj[selectedIcon]} style={styles.icon} />
-                    </View>
-                )}
-                {!selectedIcon && <Text style={styles.text}>Choose Icon</Text>}
-                <Icon name="caret-down" size={30} color="#fff" />
-            </TouchableOpacity>
-            {isDropdownVisible && (
-                <ScrollView style={styles.dropdown}>
+        <DropdownList
+            topContent={
+                <View>
+                    {selectedIcon && (
+                        <View style={styles.chosen}>
+                            <Text style={styles.text}>Selected Icon:</Text>
+                            <Image source={iconObj[selectedIcon]} style={styles.selectedIcon} />
+                        </View>
+                    )}
+                    {!selectedIcon && <Text style={styles.text}>Choose Icon</Text>}
+                </View>
+            }
+            dropdownContent={
+                <ScrollView>
                     <View style={styles.dropdownInner}>
                         {Object.keys(iconObj).map((icon) => (
-                            <TouchableOpacity
+                            <OpacityPressable
                                 style={styles.iconContainer}
                                 key={icon}
                                 onPress={() => handleSelect(icon)}
+                                shadow={false}
                             >
                                 <Image source={iconObj[icon]} style={styles.icon} />
-                            </TouchableOpacity>
+                            </OpacityPressable>
                         ))}
                     </View>
                 </ScrollView>
-            )}
-        </View>
+            }
+            height={50}
+        />
     );
 };
 
 const styles = StyleSheet.create({
-    button: {
-        width: "100%",
-        borderRadius: 10,
-        backgroundColor: Colors.primary,
-        borderColor: Colors.primaryBorder,
-        borderWidth: 2,
-        flexDirection: "column",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    topbar: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        width: "100%",
-        height: "100%",
-        paddingHorizontal: 20,
-        height: 60,
-    },
     chosen: {
         flexDirection: "row",
         alignItems: "center",
@@ -90,23 +68,27 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
     },
-    text: {
-        fontSize: 20,
-        color: "#fff",
+    selectedIcon: {
+        width: 40,
+        height: 40,
+        marginLeft: 10,
     },
-    dropdown: {
-        width: "100%",
-        maxHeight: 200,
+    text: {
+        fontSize: 16,
+        color: Colors.text,
+        fontFamily: Fonts.main,
     },
     dropdownInner: {
         flexDirection: "row",
         flexWrap: "wrap",
-        justifyContent: "center",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 5,
     },
     iconContainer: {
         width: "16%",
         justifyContent: "center",
-        paddingVertical: 10,
+        alignItems: "center",
     },
 });
 

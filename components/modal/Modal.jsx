@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import IconFA5 from "react-native-vector-icons/FontAwesome5";
 import { ModalContext } from "./ModalContextProvider";
-import Colors from "../../colors";
+import { Colors } from "../../styling";
 
 const Modal = () => {
     const { modal, setModal } = useContext(ModalContext);
@@ -46,7 +46,7 @@ const Modal = () => {
                     <Animated.View style={[styles.modalContainer]}>
                         <Pressable style={styles.header} onPress={() => Keyboard.dismiss()}>
                             <TouchableOpacity onPress={handleDismiss} style={styles.closeButton}>
-                                <IconFA5 name="times" size={30} color="white" />
+                                <IconFA5 name="times" size={30} color={Colors.text} />
                             </TouchableOpacity>
                         </Pressable>
                         <Pressable style={styles.content} onPress={() => Keyboard.dismiss()}>
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         zIndex: 10,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
     overlay: {
         position: "absolute",
@@ -83,19 +84,17 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: "90%",
-        backgroundColor: "white",
         borderRadius: 10,
-        overflow: "hidden",
-        elevation: 5, // For Android shadow
-        shadowColor: "#000", // For iOS shadow
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 3,
-        borderColor: Colors.primaryBorder,
-        borderWidth: 2,
+        backgroundColor: Colors.card1,
+        shadowColor: "#000000",
+        shadowRadius: 4,
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.25,
     },
     header: {
-        backgroundColor: Colors.primary,
         padding: 10,
         alignItems: "flex-end",
     },
@@ -106,7 +105,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     content: {
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingBottom: 20,
     },
 });
 

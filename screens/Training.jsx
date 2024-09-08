@@ -7,6 +7,7 @@ import { Colors, Fonts } from "../styling";
 import ProgressBar from "../components/training/ProgressBar.jsx";
 import CurrentStudyViewer from "../components/training/CurrentStudyViewer.jsx";
 import HintAndSkipButtons from "../components/training/HintAndSkipButtons.jsx";
+import { useState } from "react";
 
 export default function Training() {
     const [chess, _setChess] = useState(new Chess());

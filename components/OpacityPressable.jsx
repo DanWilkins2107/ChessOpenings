@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet } from "react-native";
 
-const OpacityPressable = ({ children, style, ...props }) => {
+const OpacityPressable = ({ children, style, shadow = true, ...props }) => {
     return (
         <Pressable
             {...props}
@@ -8,7 +8,7 @@ const OpacityPressable = ({ children, style, ...props }) => {
                 {
                     opacity: pressed ? 0.5 : 1,
                 },
-                styles.pressableShadow,
+                shadow && styles.pressableShadow,
                 style,
             ]}
         >

@@ -30,6 +30,7 @@ export default function ViewStudy({ navigation, route }) {
         const setUpStudy = async () => {
             const studyUUID = route.params.studyUUID;
             const studyData = await getStudyDataFromStudyUUID(studyUUID);
+            console.log(studyData);
             setStudyData(studyData);
         };
         setUpStudy();
