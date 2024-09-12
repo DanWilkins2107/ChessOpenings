@@ -30,7 +30,7 @@ const ChapterSelector = ({
                 <Subheading style={styles.addChapterText}>Add Chapter</Subheading>
             </TouchableOpacity>
             <ScrollView style={styles.scroll}>
-                {chapters.map((chapter, index) => {
+                {chapters?.map((chapter, index) => {
                     return (
                         <TouchableOpacity
                             key={index}

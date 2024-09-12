@@ -25,7 +25,7 @@ const AddChapterModal = ({ addChapterFunction }) => {
                 <Body style={styles.subtitle2}>PGN (optional):</Body>
                 <FormField value={pgn} placeholder={"PGN"} onChangeText={setPgn} />
             </Card>
-            <MainButton style={styles.button} text="Add Chapter" />
+            <MainButton style={styles.button} text="Add Chapter" onPress={addChapterFunction} />
         </View>
     );
 };

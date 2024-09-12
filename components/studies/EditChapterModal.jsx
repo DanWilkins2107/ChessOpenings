@@ -27,14 +27,22 @@ const EditChapterModal = ({ editNameFunction, deleteChapterFunction, chapterName
                 <MainButton
                     text="Save Changes"
                     style={styles.button}
-                    disabled={newName === chapterName}
+                    disabled={newName === displayName}
                     onPress={async () => {
                         editNameFunction(newName);
                         setDisplayName(newName);
                     }}
                 />
                 <Body style={styles.headings}>Delete Chapter:</Body>
-                <SecondaryButton text="Delete Chapter" icon="trash-alt" style={styles.button2} />
+                <SecondaryButton
+                    text="Delete Chapter"
+                    icon="trash-alt"
+                    style={styles.button2}
+                    onPress={() => {
+                        deleteChapterFunction();
+                        setModal(null);
+                    }}
+                />
             </Card>
         </View>
     );

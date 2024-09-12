@@ -7,7 +7,7 @@ import { Colors } from "../../styling";
 
 export default function StudyButton({ study, onPress }) {
     const name = study.title || "Unnamed Study";
-    const chapterNumber = study.chapters.length || 0;
+    const chapterNumber = study.chapters?.length || 0;
     const chapterString = chapterNumber === 1 ? "Chapter" : "Chapters";
 
     const iconObj = {

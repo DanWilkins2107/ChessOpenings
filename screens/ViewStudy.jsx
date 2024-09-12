@@ -25,6 +25,7 @@ import { Colors } from "../styling";
 import { ref, set } from "firebase/database";
 import { db } from "../firebase";
 import { AlertContext } from "../components/alert/AlertContextProvider";
+import deleteChapter from "../functions/set/deleteChapter";
 
 export default function ViewStudy({ navigation, route }) {
     const [studyLoading, setStudyLoading] = useState(true);
@@ -49,7 +50,6 @@ export default function ViewStudy({ navigation, route }) {
         const setUpStudy = async () => {
             const studyUUID = route.params.studyUUID;
             const studyData = await getStudyDataFromStudyUUID(studyUUID);
-            console.log(studyData);
             setStudyData(studyData);
         };
         setUpStudy();
@@ -104,6 +104,18 @@ export default function ViewStudy({ navigation, route }) {
         setStudyData({ ...studyData, chapters: newChapters });
     };
 
+    const onDeleteChapter = async (index) => {
+        if (studyData.chapters.length === 1) {
+            setAlert("Cannot delete last chapter", "red");
+            return;
+        }
+        try {
+            await deleteChapter(route.params.studyUUID, studyData, index, setStudyData);
+        } catch (error) {
+            setAlert("Error deleting chapter", "red");
+        }
+    };
+
     return (
         <Container theme="light" style={styles.container}>
             <View style={styles.subheadingView}>
@@ -152,7 +164,7 @@ export default function ViewStudy({ navigation, route }) {
                         setCurrentChapter={setCurrentChapter}
                         addChapterFunction={() => {}}
                         editChapterFunction={onEditChapter}
-                        deleteChapterFunction={() => {}}
+                        deleteChapterFunction={onDeleteChapter}
                     />
                 )}
                 <TabSelector selectedTab={selectedTabIndex} setSelectedTab={setSelectedTabIndex} />
