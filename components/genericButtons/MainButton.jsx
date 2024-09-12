@@ -3,14 +3,11 @@ import { StyleSheet } from "react-native";
 import Subheading2 from "../text/Subheading2";
 import OpacityPressable from "../OpacityPressable";
 
-export default function MainButton({ text, style, onPress }) {
+export default function MainButton({ text, style, onPress, disabled }) {
     return (
         <OpacityPressable
-            style={[
-                styles.button,
-                style
-            ]}
-            onPress={onPress}
+            style={[styles.button, style, disabled && styles.disabled]}
+            onPress={disabled ? () => {} : onPress}
         >
             <Subheading2 style={styles.text}>{text}</Subheading2>
         </OpacityPressable>
@@ -29,5 +26,8 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "white",
+    },
+    disabled: {
+        backgroundColor: Colors.buttonDeselected,
     },
 });

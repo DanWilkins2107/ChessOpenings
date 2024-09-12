@@ -7,7 +7,7 @@ import OpacityPressable from "../OpacityPressable";
 export default function SecondaryButton({ text, icon, style, onPress }) {
     return (
         <OpacityPressable style={[styles.button, style]} onPress={onPress}>
-            {icon && <IconFA6 name={icon} size={25} color={Colors.text} />}
+            {icon && <IconFA6 name={icon} size={20} color={Colors.text} />}
             <Subheading2 style={styles.text}>{text}</Subheading2>
         </OpacityPressable>
     );

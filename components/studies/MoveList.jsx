@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Text, View, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import { AlertContext } from "../alert/AlertContextProvider";
-
+import Body from "../text/Body";
+import { Colors } from "../../styling";
 const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     const [rootNode, setRootNode] = useState(null);
     const { setAlert } = useContext(AlertContext);
@@ -22,7 +23,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         while (tempNode.children && tempNode.children.length > 0) {
             tempNode = tempNode.children[0];
             let move = (
-                <Text key={tempNode.move} style={styles.text}>
+                <Text key={tempNode.move}>
                     {renderMove(
                         tempNode,
                         moveNumber + Math.floor(moveIndex / 2),
@@ -31,12 +32,12 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                         moveIndex === 0
                     )}
                     {tempNode.parent.children.length > 1 && (
-                        <Text key={`${tempNode.move}-variations`} style={styles.text}>
+                        <Text key={`${tempNode.move}-variations`}>
                             <View style={styles.bracketContainer}>
-                                <Text style={styles.text}>(</Text>
+                                <Body>(</Body>
                             </View>
                             {tempNode.parent.children.slice(1).map((child, index) => (
-                                <Text key={child.move} style={styles.text}>
+                                <Text key={child.move}>
                                     {renderMove(
                                         child,
                                         moveNumber + Math.floor(moveIndex / 2),
@@ -45,7 +46,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                                         index === 0
                                     )}
                                     {child.children && child.children.length > 0 && (
-                                        <Text style={styles.text}>
+                                        <Text>
                                             {renderTree(
                                                 child,
                                                 moveNumber + Math.floor(moveIndex / 2) + 1,
@@ -56,7 +57,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                                 </Text>
                             ))}
                             <View style={styles.bracketContainer}>
-                                <Text style={styles.text}>)</Text>
+                                <Body>)</Body>
                             </View>
                         </Text>
                     )}
@@ -90,15 +91,11 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
             <TouchableOpacity
                 key={move}
                 onPress={() => handleMoveClick(node)}
-                style={{
-                    borderRadius: 5,
-                    backgroundColor: isActive ? "black" : "transparent",
-                    padding: 2,
-                }}
+                style={[styles.moveCircle, isActive && styles.activeMove]}
             >
-                <Text style={[{ color: isActive ? "white" : "black" }, styles.text]}>
+                <Body style={[isActive && { color: Colors.background}, styles.text]}>
                     {prefix + move}
-                </Text>
+                </Body>
             </TouchableOpacity>
         );
     };
@@ -130,25 +127,20 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
 };
 
 const styles = StyleSheet.create({
-    move: {
-        color: "black",
-    },
     activeMove: {
-        color: "white",
-        backgroundColor: "black",
-    },
-    text: {
-        fontSize: 18,
+        backgroundColor: Colors.primaryButton,
     },
     container: {
-        backgroundColor: "white",
         paddingVertical: 4,
         paddingHorizontal: 2,
     },
     bracketContainer: {
-        backgroundColor: "white",
-        paddingVertical: 2,
+        paddingBottom: 2,
     },
+    moveCircle: {
+        borderRadius: 5,
+        padding: 2,
+    }
 });
 
 export default MoveList;

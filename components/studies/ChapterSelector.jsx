@@ -1,16 +1,20 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import Colors from "../../colors";
+import ColorsOld from "../../colors";
+import { Colors } from "../../styling.js";
 import { useContext } from "react";
 import { ModalContext } from "../modal/ModalContextProvider.jsx";
 import AddChapterModal from "./AddChapterModal.jsx";
-import DeleteChapterModal from "./DeleteChapterModal.jsx";
+import EditChapterModal from "./EditChapterModal.jsx";
+import Subheading from "../text/Subheading.jsx";
+import Body from "../text/Body.jsx";
 
 const ChapterSelector = ({
     chapters,
     currentChapter,
     setCurrentChapter,
     addChapterFunction,
+    editChapterFunction,
     deleteChapterFunction,
 }) => {
     const { setModal } = useContext(ModalContext);
@@ -22,40 +26,36 @@ const ChapterSelector = ({
                     setModal(<AddChapterModal addChapterFunction={addChapterFunction} />)
                 }
             >
-                <Icon size={20} name="plus" />
-                <Text style={styles.addChapterText}>Add Chapter</Text>
+                <Icon size={20} name="plus" color={Colors.background} />
+                <Subheading style={styles.addChapterText}>Add Chapter</Subheading>
             </TouchableOpacity>
             <ScrollView style={styles.scroll}>
                 {chapters.map((chapter, index) => {
-                    const backgroundColor =
-                        index === currentChapter
-                            ? Colors.primaryBorder
-                            : index % 2 === 0
-                            ? "#eeeeee"
-                            : "white";
                     return (
                         <TouchableOpacity
                             key={index}
-                            style={[styles.chapterBar, { backgroundColor: backgroundColor }]}
+                            style={[
+                                styles.chapterBar,
+                                index === currentChapter && { backgroundColor: Colors.card2 },
+                            ]}
                             onPress={() => {
                                 setCurrentChapter(index);
                             }}
                         >
                             <View style={styles.leftBarSection}>
-                                <View style={styles.numberSection}>
-                                    <Text style={styles.numberText}>{index + 1}</Text>
-                                </View>
-                                <Text style={styles.nameText}>{chapter.name}</Text>
+                                <Body style={styles.numberText}>
+                                    {index + 1}. {chapter.name}
+                                </Body>
                             </View>
 
                             <View style={styles.iconContainer}>
-                                <TouchableOpacity onPress={() => {}} style={styles.iconButton}>
-                                    <Icon name="pencil" size={"30%"} />
-                                </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => {
                                         setModal(
-                                            <DeleteChapterModal
+                                            <EditChapterModal
+                                                editNameFunction={(newName) =>
+                                                    editChapterFunction(newName, index)
+                                                }
                                                 deleteChapterFunction={() =>
                                                     deleteChapterFunction(index)
                                                 }
@@ -65,7 +65,7 @@ const ChapterSelector = ({
                                     }}
                                     style={styles.iconButton}
                                 >
-                                    <Icon name="trash" size={"30%"} />
+                                    <Icon name="pencil" size={20} color={Colors.text} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -80,25 +80,20 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: "space-between",
         flex: 1,
-        backgroundColor: "white",
     },
     addChapterBar: {
         flexDirection: "row",
         justifyContent: "center",
         width: "100%",
-        height: "20%",
-        backgroundColor: "lightgrey",
+        height: 40,
+        backgroundColor: Colors.primaryButton,
         alignItems: "center",
-        borderBottomWidth: 1,
     },
     addChapterText: {
         marginLeft: 10,
-        fontSize: 20,
-        color: "black",
-        fontWeight: "semibold",
+        color: Colors.background,
     },
     scroll: {
-        backgroundColor: "white",
         flex: 1,
     },
     chapterBar: {
@@ -114,7 +109,6 @@ const styles = StyleSheet.create({
         aspectRatio: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "lightgrey",
         borderRadius: 100,
     },
     numberText: {
@@ -132,9 +126,14 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: "row",
         alignItems: "center",
+        height: 40,
+        width: 40,
     },
     iconButton: {
-        marginHorizontal: 5,
+        width: 40,
+        height: 40,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 

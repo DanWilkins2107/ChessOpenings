@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Container from "../components/Container";
 import Subheading from "../components/text/Subheading";
 import { StyleSheet, View, Text } from "react-native";
@@ -9,6 +9,22 @@ import getStudyDataFromStudyUUID from "../functions/fetch/getStudyDataFromStudyU
 import getPGNfromPGNUUID from "../functions/fetch/getPGNfromPGNUUID";
 import pgnToTree from "../functions/tree/pgnToTree";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import TabSelector from "../components/studies/TabSelector";
+import Card from "../components/containers/Card";
+import {
+    handleDoubleLeftPress,
+    handleDoubleRightPress,
+    navigateToChildNode,
+    navigateToParentNode,
+} from "../functions/tree/treeFunctions";
+import MoveList from "../components/studies/MoveList";
+import ChapterSelector from "../components/studies/ChapterSelector";
+import OpacityPressable from "../components/OpacityPressable";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Colors } from "../styling";
+import { ref, set } from "firebase/database";
+import { db } from "../firebase";
+import { AlertContext } from "../components/alert/AlertContextProvider";
 
 export default function ViewStudy({ navigation, route }) {
     const [studyLoading, setStudyLoading] = useState(true);
@@ -17,6 +33,9 @@ export default function ViewStudy({ navigation, route }) {
     const [studyData, setStudyData] = useState({});
     const [chess] = useState(new Chess());
     const [currentChapter, setCurrentChapter] = useState(0);
+    const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+    const { setAlert } = useContext(AlertContext);
 
     const [currentNode, setCurrentNode] = useState({
         move: "Start",
@@ -62,8 +81,28 @@ export default function ViewStudy({ navigation, route }) {
             }
         };
         setBoardLoading(true);
+        chess.reset();
         getPGN();
     }, [studyData, currentChapter]);
+
+    // Functions for editing chapters
+    const onEditChapter = async (newName, index) => {
+        const chapterRef = ref(
+            db,
+            "studies/" + route.params.studyUUID + "/chapters/" + index + "/name"
+        );
+        try {
+            await set(chapterRef, newName);
+        } catch (error) {
+            console.log(error);
+            setAlert("Error editing chapter name", "red");
+            return;
+        }
+
+        const newChapters = [...studyData.chapters];
+        newChapters[index].name = newName;
+        setStudyData({ ...studyData, chapters: newChapters });
+    };
 
     return (
         <Container theme="light" style={styles.container}>
@@ -71,6 +110,9 @@ export default function ViewStudy({ navigation, route }) {
                 <Subheading style={styles.title}>
                     {studyLoading ? "Loading Study..." : studyData.title}
                 </Subheading>
+                <OpacityPressable shadow={false}>
+                    <Icon name="cog" size={22} color={Colors.text} />
+                </OpacityPressable>
             </View>
             <Chessboard
                 chess={chess}
@@ -80,8 +122,41 @@ export default function ViewStudy({ navigation, route }) {
                 onTopHeight={46}
                 style={styles.chessboard}
             />
-            <Navigation />
-            <Text>TODO: STUFF NEEDS TO BE LOOKED AT! IDK WHAT I WANT IT TO LOOK LIKE YET </Text>
+            <Navigation
+                onDoubleLeftPress={() => handleDoubleLeftPress(currentNode, setCurrentNode, chess)}
+                onLeftPress={() => {
+                    navigateToParentNode(currentNode, setCurrentNode, chess);
+                }}
+                onFlipPress={() => setPov(pov === "white" ? "black" : "white")}
+                onRightPress={() => {
+                    navigateToChildNode(null, currentNode, setCurrentNode, chess, true);
+                }}
+                onDoubleRightPress={() => {
+                    handleDoubleRightPress(currentNode, setCurrentNode, chess);
+                }}
+            />
+            <Card style={styles.bottomSection} padding={false}>
+                {selectedTabIndex === 0 && (
+                    <MoveList
+                        currentNode={currentNode}
+                        setCurrentNode={setCurrentNode}
+                        chess={chess}
+                    />
+                )}
+                {selectedTabIndex === 1 && <Text>Opening Exp</Text>}
+                {selectedTabIndex === 2 && <Text>Engine Analysis</Text>}
+                {selectedTabIndex === 3 && (
+                    <ChapterSelector
+                        chapters={studyData.chapters}
+                        currentChapter={currentChapter}
+                        setCurrentChapter={setCurrentChapter}
+                        addChapterFunction={() => {}}
+                        editChapterFunction={onEditChapter}
+                        deleteChapterFunction={() => {}}
+                    />
+                )}
+                <TabSelector selectedTab={selectedTabIndex} setSelectedTab={setSelectedTabIndex} />
+            </Card>
         </Container>
     );
 }
@@ -94,8 +169,16 @@ const styles = StyleSheet.create({
     subheadingView: {
         height: 26,
         marginBottom: 10,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginRight: 10,
     },
     chessboard: {
         marginBottom: 10,
+    },
+    bottomSection: {
+        flex: 1,
+        marginVertical: 10,
     },
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import IconFA5 from "react-native-vector-icons/FontAwesome5";
-import Card from "../containers/Card";
+import { View } from "react-native";
 import OpacityPressable from "../OpacityPressable";
 import { Colors } from "../../styling";
 
@@ -21,13 +21,13 @@ const Navigation = ({
     onDoubleRightPress,
 }) => {
     return (
-        <Card style={styles.container} padding={false}>
+        <View style={styles.container} padding={false}>
             <NavigationButton icon="angle-double-left" onPress={onDoubleLeftPress} />
             <NavigationButton icon="angle-left" onPress={onLeftPress} />
             <NavigationButton icon="retweet" onPress={onFlipPress} />
             <NavigationButton icon="angle-right" onPress={onRightPress} />
             <NavigationButton icon="angle-double-right" onPress={onDoubleRightPress} />
-        </Card>
+        </View>
     );
 };
 
@@ -36,8 +36,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: 5,
-        height: 50,
     },
     button: {
         backgroundColor: Colors.card2,
