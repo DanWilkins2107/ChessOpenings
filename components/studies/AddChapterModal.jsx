@@ -21,11 +21,16 @@ const AddChapterModal = ({ addChapterFunction }) => {
             <Card>
                 <Body style={styles.subtitle}>Chapter Name:</Body>
                 <FormField value={chapterName} placeholder={"Name"} onChangeText={setChapterName} />
-
                 <Body style={styles.subtitle2}>PGN (optional):</Body>
                 <FormField value={pgn} placeholder={"PGN"} onChangeText={setPgn} />
             </Card>
-            <MainButton style={styles.button} text="Add Chapter" onPress={addChapterFunction} />
+            <MainButton
+                style={styles.button}
+                text="Add Chapter"
+                onPress={() => {
+                    addChapterFunction(chapterName, pgn);
+                }}
+            />
         </View>
     );
 };

@@ -26,6 +26,8 @@ import { ref, set } from "firebase/database";
 import { db } from "../firebase";
 import { AlertContext } from "../components/alert/AlertContextProvider";
 import deleteChapter from "../functions/set/deleteChapter";
+import addChapterToStudy from "../functions/set/addChapterToStudy";
+import { ModalContext } from "../components/modal/ModalContextProvider";
 
 export default function ViewStudy({ navigation, route }) {
     const [studyLoading, setStudyLoading] = useState(true);
@@ -37,6 +39,7 @@ export default function ViewStudy({ navigation, route }) {
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
     const { setAlert } = useContext(AlertContext);
+    const { setModal } = useContext(ModalContext);
 
     const [currentNode, setCurrentNode] = useState({
         move: "Start",
@@ -61,7 +64,7 @@ export default function ViewStudy({ navigation, route }) {
             // This line is needed to prevent the function from running before the study data is set
             if (!studyData.chapters) return;
 
-            const chapterPGN = studyData.chapters[currentChapter].pgn;
+            const chapterPGN = studyData.chapters[currentChapter]?.pgn;
 
             const asyncStorageData = await AsyncStorage.getItem("pgnData/" + chapterPGN);
 
@@ -111,8 +114,33 @@ export default function ViewStudy({ navigation, route }) {
         }
         try {
             await deleteChapter(route.params.studyUUID, studyData, index, setStudyData);
+            if (index > studyData.chapters.length - 1) {
+                setCurrentChapter(studyData.chapters.length - 1);
+            }
         } catch (error) {
             setAlert("Error deleting chapter", "red");
+        }
+    };
+
+    const onAddChapter = async (chapterName, chapterPGN) => {
+        if (!chapterName) {
+            setAlert("Please enter a chapter name.", "red");
+            return;
+        }
+
+        try {
+            await addChapterToStudy(
+                route.params.studyUUID,
+                studyData,
+                chapterName,
+                chapterPGN,
+                setStudyData
+            );
+            setAlert("Chapter added successfully.", "green");
+            setCurrentChapter(studyData.chapters.length - 1);
+            setModal(null);
+        } catch (error) {
+            setAlert(error.message || "Error adding chapter.", "red");
         }
     };
 
@@ -162,7 +190,7 @@ export default function ViewStudy({ navigation, route }) {
                         chapters={studyData.chapters}
                         currentChapter={currentChapter}
                         setCurrentChapter={setCurrentChapter}
-                        addChapterFunction={() => {}}
+                        addChapterFunction={onAddChapter}
                         editChapterFunction={onEditChapter}
                         deleteChapterFunction={onDeleteChapter}
                     />
