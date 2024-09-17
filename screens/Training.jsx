@@ -35,8 +35,6 @@ export default function Training() {
             <CurrentStudyViewer style={styles.studyViewer} />
 
             <ProgressBar progress={50} style={styles.progressBar} />
-
-            
         </Container>
     );
 }

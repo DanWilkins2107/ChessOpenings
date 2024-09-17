@@ -4,25 +4,30 @@ import Title from "../components/text/Title";
 import Card from "../components/containers/Card";
 import Subheading from "../components/text/Subheading";
 import MainButton from "../components/genericButtons/MainButton";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import StudyButton from "../components/chooseStudy/StudyButton";
 import Subheading2 from "../components/text/Subheading2";
 import getUserStudyData from "../functions/fetch/getUserStudyData";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function StudyDashboard({ navigation }) {
     const [studyObj, setStudyObj] = useState({});
     const [studyList, setStudyList] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchStudies = async () => {
-            const { studyObjToAdd, sortedStudies } = await getUserStudyData();
-            setStudyList(sortedStudies);
-            setStudyObj(studyObjToAdd);
-            setLoading(false);
-        };
-        fetchStudies();
-    }, []);
+    const fetchStudies = async () => {
+        const { studyObjToAdd, sortedStudies } = await getUserStudyData();
+        setStudyList(sortedStudies);
+        setStudyObj(studyObjToAdd);
+        setLoading(false);
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            setLoading(true);
+            fetchStudies();
+        }, [])
+    );
 
     const handleStudyPress = (studyUUID) => {
         navigation.navigate("ViewStudy", { studyUUID: studyUUID });

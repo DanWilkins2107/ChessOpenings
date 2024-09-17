@@ -28,8 +28,11 @@ import { AlertContext } from "../components/alert/AlertContextProvider";
 import deleteChapter from "../functions/set/deleteChapter";
 import addChapterToStudy from "../functions/set/addChapterToStudy";
 import { ModalContext } from "../components/modal/ModalContextProvider";
+import StudyOptionsModal from "../components/studies/StudyOptionsModal";
 
 export default function ViewStudy({ navigation, route }) {
+    const studyUUID = route.params.studyUUID;
+
     const [studyLoading, setStudyLoading] = useState(true);
     const [boardLoading, setBoardLoading] = useState(true);
 
@@ -51,7 +54,6 @@ export default function ViewStudy({ navigation, route }) {
     // Set up study
     useEffect(() => {
         const setUpStudy = async () => {
-            const studyUUID = route.params.studyUUID;
             const studyData = await getStudyDataFromStudyUUID(studyUUID);
             setStudyData(studyData);
         };
@@ -150,7 +152,19 @@ export default function ViewStudy({ navigation, route }) {
                 <Subheading style={styles.title}>
                     {studyLoading ? "Loading Study..." : studyData.title}
                 </Subheading>
-                <OpacityPressable shadow={false}>
+                <OpacityPressable
+                    shadow={false}
+                    onPress={() => {
+                        setModal(
+                            <StudyOptionsModal
+                                study={studyData}
+                                studyUUID={studyUUID}
+                                setStudy={setStudyData}
+                                navigation={navigation}
+                            />
+                        );
+                    }}
+                >
                     <Icon name="cog" size={22} color={Colors.text} />
                 </OpacityPressable>
             </View>

@@ -22,7 +22,7 @@ const AddChapterModal = ({ addChapterFunction }) => {
                 <Body style={styles.subtitle}>Chapter Name:</Body>
                 <FormField value={chapterName} placeholder={"Name"} onChangeText={setChapterName} />
                 <Body style={styles.subtitle2}>PGN (optional):</Body>
-                <FormField value={pgn} placeholder={"PGN"} onChangeText={setPgn} />
+                <FormField value={pgn} placeholder={"PGN"} onChangeText={setPgn} multiline={true} style={styles.pgn} />
             </Card>
             <MainButton
                 style={styles.button}
@@ -49,6 +49,10 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         marginTop: 10,
     },
+    pgn: {
+        height: 80,
+        paddingTop: 10,
+    }
 });
 
 export default AddChapterModal;

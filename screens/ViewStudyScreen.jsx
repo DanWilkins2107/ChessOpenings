@@ -15,7 +15,7 @@ import pgnToTree from "../functions/tree/pgnToTree.js";
 import TabSelector from "../components/studies/TabSelector.jsx";
 import Colors from "../colors.js";
 import ChapterSelector from "../components/studies/ChapterSelector.jsx";
-import StudyOptions from "../components/studies/StudyOptions.jsx";
+import StudyOptions from "../components/studies/StudyOptionsModal.jsx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { randomUUID } from "expo-crypto";
 

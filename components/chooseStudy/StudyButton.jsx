@@ -6,8 +6,8 @@ import OpacityPressable from "../OpacityPressable";
 import { Colors } from "../../styling";
 
 export default function StudyButton({ study, onPress }) {
-    const name = study.title || "Unnamed Study";
-    const chapterNumber = study.chapters?.length || 0;
+    const name = study?.title || "Unnamed Study";
+    const chapterNumber = study?.chapters?.length || 0;
     const chapterString = chapterNumber === 1 ? "Chapter" : "Chapters";
 
     const iconObj = {
@@ -27,7 +27,7 @@ export default function StudyButton({ study, onPress }) {
 
     return (
         <OpacityPressable style={styles.pressable} onPress={onPress}>
-            <Image source={iconObj[study.icon]} style={styles.icon} />
+            <Image source={iconObj[study?.icon || "wk"]} style={styles.icon} />
             <View style={styles.contentContainer}>
                 <Subheading2 numberOfLines={1}>{name}</Subheading2>
                 <Body>

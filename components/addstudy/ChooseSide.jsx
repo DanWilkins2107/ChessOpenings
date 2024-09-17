@@ -4,9 +4,9 @@ import OpacityPressable from "../OpacityPressable";
 import Body from "../text/Body";
 import { Colors } from "../../styling";
 
-const ChooseSide = ({ side, setSide }) => {
+const ChooseSide = ({ side, setSide, style }) => {
     return (
-        <Card style={styles.container} padding={false}>
+        <Card style={[styles.container, style]} padding={false}>
             <View style={styles.colorToggleContainer}>
                 <OpacityPressable
                     style={[styles.button, side === "white" && styles.selected]}

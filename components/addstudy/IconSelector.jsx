@@ -5,7 +5,7 @@ import { Subheading2 } from "../text/Subheading2.jsx";
 import DropdownList from "../chooseStudy/DropdownList";
 import { Colors, Fonts } from "../../styling";
 
-const SelectIcon = ({ selectedIcon, setSelectedIcon }) => {
+const SelectIcon = ({ selectedIcon, setSelectedIcon, style }) => {
     const iconObj = {
         wb: require("../../assets/icons/wb.png"),
         wr: require("../../assets/icons/wr.png"),

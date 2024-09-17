@@ -16,7 +16,7 @@ export default async function addChapterToStudy(
     if (chapterPGN) {
         let pgnArray;
         try {
-            pgnArray = convertPGNToFormat(chapterPGN);
+            pgnArray = convertPGNToFormat(chapterPGN)?.moves;
         } catch {
             throw new Error("Invalid PGN");
         }
@@ -24,9 +24,7 @@ export default async function addChapterToStudy(
         const pgnRef = ref(db, "pgns/" + pgnUUID);
 
         try {
-            set(pgnRef, {
-                pgn: pgnArray,
-            });
+            set(pgnRef, pgnArray);
         } catch {
             throw new Error("Error adding PGN to database");
         }

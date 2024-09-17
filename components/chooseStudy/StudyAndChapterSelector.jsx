@@ -6,7 +6,6 @@ import OpacityPressable from "../OpacityPressable";
 import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
 
-// TODO: FIX SHADOWS
 export default function StudyAndChapterSelector({
     studyObj,
     studyUUIDs,
