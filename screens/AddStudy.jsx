@@ -28,8 +28,12 @@ export default function AddStudy({ navigation }) {
     const [lichessUrl, setLichessUrl] = useState("");
     const { setAlert } = useContext(AlertContext);
     const { setModal } = useContext(ModalContext);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
 
-    // Handle Reloads
+    const handleDropdownPress = () => {
+        setDropdownVisible(!dropdownVisible);
+    };
+
     const handleReload = () => {
         setTitle("");
         setIcon("");
@@ -174,6 +178,8 @@ export default function AddStudy({ navigation }) {
                                         Import Moves
                                     </Subheading>
                                     <DropdownList
+                                        isDropdownVisible={dropdownVisible}
+                                        setIsDropdownVisible={handleDropdownPress}
                                         topContent={
                                             <View>
                                                 <Subheading2>Import From {importFrom}</Subheading2>
@@ -184,14 +190,20 @@ export default function AddStudy({ navigation }) {
                                                 <OpacityPressable
                                                     style={styles.importButton}
                                                     shadow={false}
-                                                    onPress={() => setImportFrom("PGN")}
+                                                    onPress={() => {
+                                                        setImportFrom("PGN");
+                                                        handleDropdownPress();
+                                                    }}
                                                 >
                                                     <Body>Import From PGN</Body>
                                                 </OpacityPressable>
                                                 <OpacityPressable
                                                     style={styles.importButton}
                                                     shadow={false}
-                                                    onPress={() => setImportFrom("Lichess")}
+                                                    onPress={() => {
+                                                        setImportFrom("Lichess");
+                                                        handleDropdownPress();
+                                                    }}
                                                 >
                                                     <Body>Import From Lichess</Body>
                                                 </OpacityPressable>

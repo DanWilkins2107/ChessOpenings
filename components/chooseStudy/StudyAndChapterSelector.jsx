@@ -5,6 +5,7 @@ import Checkbox from "./Checkbox";
 import OpacityPressable from "../OpacityPressable";
 import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
+import { useState } from "react";
 
 export default function StudyAndChapterSelector({
     studyObj,
@@ -35,12 +36,24 @@ export default function StudyAndChapterSelector({
         setChosenChapters(newChosenChapters);
     };
 
+    const [openDropdownList, setOpenDropdownList] = useState([]);
+
+    const handleDropdownPress = (studyUUID) => {
+        if (openDropdownList.includes(studyUUID)) {
+            setOpenDropdownList(openDropdownList.filter((uuid) => uuid !== studyUUID));
+        } else {
+            setOpenDropdownList([...openDropdownList, studyUUID]);
+        }
+    };
+
     return (
         <>
             {studyUUIDs.map((studyUUID) => {
                 return (
                     <View key={studyUUID} style={styles.section}>
                         <DropdownList
+                            isDropdownVisible={openDropdownList.includes(studyUUID)}
+                            setIsDropdownVisible={() => handleDropdownPress(studyUUID)}
                             topContent={
                                 <View style={styles.topContainer}>
                                     <View style={styles.leftContainer}>

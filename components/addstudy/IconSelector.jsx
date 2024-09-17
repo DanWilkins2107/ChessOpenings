@@ -1,11 +1,12 @@
-import { StyleSheet, TouchableOpacity, Text, Image, View, ScrollView } from "react-native";
+import { StyleSheet, Text, Image, View, ScrollView } from "react-native";
 import OpacityPressable from "../OpacityPressable";
-import { Body } from "../text/Body.jsx";
-import { Subheading2 } from "../text/Subheading2.jsx";
 import DropdownList from "../chooseStudy/DropdownList";
 import { Colors, Fonts } from "../../styling";
+import { useState } from "react";
 
-const SelectIcon = ({ selectedIcon, setSelectedIcon, style }) => {
+const SelectIcon = ({ selectedIcon, setSelectedIcon }) => {
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
     const iconObj = {
         wb: require("../../assets/icons/wb.png"),
         wr: require("../../assets/icons/wr.png"),
@@ -23,10 +24,17 @@ const SelectIcon = ({ selectedIcon, setSelectedIcon, style }) => {
 
     const handleSelect = (icon) => {
         setSelectedIcon(icon);
+        handlePress();
     };
+
+    const handlePress = () => {
+        setIsDropdownVisible(!isDropdownVisible);
+    }
 
     return (
         <DropdownList
+            isDropdownVisible={isDropdownVisible}
+            setIsDropdownVisible={handlePress}
             topContent={
                 <View>
                     {selectedIcon && (

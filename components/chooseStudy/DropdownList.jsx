@@ -4,8 +4,13 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { Colors } from "../../styling";
 import OpacityPressable from "../OpacityPressable";
 
-const DropdownList = ({ topContent, dropdownContent, height = 40 }) => {
-    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+const DropdownList = ({
+    topContent,
+    dropdownContent,
+    height = 40,
+    isDropdownVisible,
+    setIsDropdownVisible,
+}) => {
 
     const handlePress = () => {
         setIsDropdownVisible(!isDropdownVisible);
