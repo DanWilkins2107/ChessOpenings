@@ -6,6 +6,9 @@ export default function findBranchCategory(branchEnd, color, previousStatus, thr
     let endNode = branchEnd.endNode;
 
     if (moves % 2 != colorValue) {
+        if (endNode.parent === null) {
+            return "finished";
+        }
         endNode = endNode.parent;
     }
 

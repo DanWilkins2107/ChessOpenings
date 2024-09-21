@@ -27,7 +27,6 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                     {renderMove(
                         tempNode,
                         moveNumber + Math.floor(moveIndex / 2),
-                        !isVariation,
                         moveIndex % 2 === 0,
                         moveIndex === 0
                     )}
@@ -41,7 +40,6 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                                     {renderMove(
                                         child,
                                         moveNumber + Math.floor(moveIndex / 2),
-                                        false,
                                         moveIndex % 2 === 0,
                                         index === 0
                                     )}
@@ -77,14 +75,14 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         );
     };
 
-    const renderMove = (node, moveNumber, isMainLine, isWhiteMove, isFirstVariationMove) => {
+    const renderMove = (node, moveNumber, isWhiteMove, isFirstVariationMove) => {
         const move = node.move;
         const isActive = node === currentNode;
         let prefix = "";
-        if (isMainLine) {
-            prefix = isWhiteMove ? `${moveNumber}.` : "";
-        } else if (isFirstVariationMove) {
+        if (isFirstVariationMove) {
             prefix = isWhiteMove ? `${moveNumber}.` : `${moveNumber}...`;
+        } else {
+            prefix = isWhiteMove ? `${moveNumber}.` : "";
         }
 
         return (

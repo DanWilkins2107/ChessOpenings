@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Container from "../components/Container";
 import { Text, View } from "react-native";
-import getDataForTraining from "../functions/fetch/getDataForTraining";
+import getDataForTraining from "../functions/fetch/setUpTraining";
 
 const DailyTestScreen = ({ navigation }) => {
     const testArray = [];

@@ -8,7 +8,7 @@ import Chessboard from "../components/chessboard/Chessboard";
 import updateBranchConfidenceScores from "../functions/test/updateBranchConfidenceScores";
 import minimumConfidenceScore from "../functions/test/minimumConfidenceScore";
 import calculateOverallConfidence from "../functions/test/calculateOverallConfidence";
-import getDataForTraining from "../functions/fetch/getDataForTraining";
+import getDataForTraining from "../functions/fetch/setUpTraining";
 import otherColorMoveInstructions from "../functions/test/otherColorMoveInstructions";
 import pause from "../functions/test/pause";
 
@@ -112,10 +112,12 @@ const TrainScreen = ({ navigation, route }) => {
             minConfidenceObj[minConfidence].push(branch);
         });
 
-        const selectedBlackSplit = blackSplits[Math.floor(Math.random() * blackSplits.length)];
-
-        setTestStyle("split");
-        setUpSplitTest(selectedBlackSplit, "black");
+        if (blackSplits.length !== 0) {
+            const selectedBlackSplit = blackSplits[Math.floor(Math.random() * blackSplits.length)];
+            setTestStyle("split");
+            setUpSplitTest(selectedBlackSplit, "black");
+            return;
+        }
 
         const confidenceWeightings = {
             0: 2,
@@ -156,7 +158,6 @@ const TrainScreen = ({ navigation, route }) => {
         setUpOtherColorTest(selectedBranch, whiteCombinedTree, blackCombinedTree);
         setSelectedBranches(selectedBranches);
         setUnselectedBranches(unselectedBranches);
-        return;
 
         setTestStyle("branch");
         setUpBranchTest(selectedBranch);
