@@ -30,9 +30,6 @@ export default async function setUpTraining(treeArray) {
         branchObj[category].push(end);
     });
 
-    // TEMPORARY DELETE LATER
-    branchObj.selected.push(branchObj.unselected[0]);
-
     // Get Combined Trees
     const whiteCombinedTree = makeCombinedTree({
         branchArray: whiteBranchEnds,
@@ -90,12 +87,6 @@ export default async function setUpTraining(treeArray) {
         const category = findOtherBranchCategory(end, "unselected");
         otherBranchObj[category].push(end);
     });
-
-    return {
-        branchObj,
-        splitObj,
-        otherBranchObj,
-        whiteCombinedTree,
-        blackCombinedTree,
-    };
+    
+    return { branchObj, splitObj, otherBranchObj, whiteCombinedTree, blackCombinedTree };
 }

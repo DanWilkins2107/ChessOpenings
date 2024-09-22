@@ -6,7 +6,7 @@ import checkForFullConfidenceMoveList from "../functions/test/checkForFullConfid
 import { Chess } from "chess.js";
 import Chessboard from "../components/chessboard/Chessboard";
 import updateBranchConfidenceScores from "../functions/test/updateBranchConfidenceScores";
-import minimumConfidenceScore from "../functions/test/minimumConfidenceScore";
+import minimumConfidenceScore from "../functions/test/branchMinConfScore";
 import calculateOverallConfidence from "../functions/test/calculateOverallConfidence";
 import getDataForTraining from "../functions/fetch/setUpTraining";
 import otherColorMoveInstructions from "../functions/test/otherColorMoveInstructions";
