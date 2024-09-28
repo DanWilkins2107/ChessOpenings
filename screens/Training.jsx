@@ -24,7 +24,6 @@ import setUpOtherBranchTest from "../functions/test/setUpOtherBranchTest.js";
 import otherBranchSkipMoves from "../functions/test/otherBranchSkipMoves.js";
 import {
     MessageBoxContext,
-    MessageBoxProvider,
 } from "../components/chessboard/MessageBoxContextProvider.jsx";
 import { useContext } from "react";
 
@@ -69,8 +68,8 @@ export default function Training({ route }) {
             setPermMessage({
                 message: "Setting up Training...",
                 backgroundColor: Colors.card1,
-                textColor: Colors.text
-            })
+                textColor: Colors.text,
+            });
             const studyStringArray = route?.params?.chosenPGNs || (await getStudyStringArray());
             const trees = await getTrainingTrees(studyStringArray);
             setTrees(trees);
@@ -214,7 +213,6 @@ export default function Training({ route }) {
                     if (finished) {
                         // DEAL WITH SPLIT FINISHING CONFIDENCE AFFECTING
 
-                        // Then restart training
                         createTraining(
                             branchObj,
                             splitObj,
@@ -235,7 +233,6 @@ export default function Training({ route }) {
             }
         } else if (typeOfTraining === "otherBranch") {
             // moveOtherBranchTest(chosenItem, chess);
-            console.log("Moved on Other Branch: TODO");
             if (
                 validateBranchMove(
                     from,

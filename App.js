@@ -17,7 +17,6 @@ import ViewStudyScreen from "./screens/ViewStudyScreen.jsx";
 import AddStudyScreen from "./screens/AddStudyScreen.jsx";
 import ChooseTrainStudyScreen from "./screens/ChooseTrainStudyScreen.jsx";
 import ChooseViewStudyScreen from "./screens/ChooseViewStudyScreen.jsx";
-import TrainScreen from "./screens/TrainScreen.jsx";
 import DailyTestScreen from "./screens/DailyTestScreen.jsx";
 import ChangePlanScreen from "./screens/ChangePlanScreen.jsx";
 import HeaderCenter from "./components/header/HeaderCenter.jsx";
@@ -34,7 +33,10 @@ import StudyDashboard from "./screens/StudyDashboard.jsx";
 import ViewStudy from "./screens/ViewStudy.jsx";
 import AddStudy from "./screens/AddStudy.jsx";
 import Settings from "./screens/Settings.jsx";
-import { MessageBoxProvider } from "./components/chessboard/MessageBoxContextProvider.jsx";
+import {
+    MessageBoxContext,
+    MessageBoxProvider,
+} from "./components/chessboard/MessageBoxContextProvider.jsx";
 
 const Stack = createStackNavigator();
 
@@ -56,7 +58,6 @@ if (!actual) {
         { name: "AddStudy", component: AddStudyScreen, header: true },
         { name: "ChooseTrainStudy", component: ChooseTrainStudyScreen, header: true },
         { name: "ChooseViewStudy", component: ChooseViewStudyScreen, header: true },
-        { name: "Train", component: TrainScreen, header: true },
         { name: "DailyTest", component: DailyTestScreen, header: true },
         { name: "ChangePlan", component: ChangePlanScreen, header: true },
     ];
@@ -157,7 +158,7 @@ const App = () => {
                 />
                 <Stack.Screen
                     name="Training"
-                    component={Training}
+                    component={WrappedTrainScreen}
                     options={{
                         headerTitle: (props) => HeaderCenter(props),
                         headerLeft: (props) => HeaderLeft(props),
@@ -183,86 +184,98 @@ const App = () => {
         );
     }
 
+    function WrappedTrainScreen() {
+        return (
+            <MessageBoxProvider>
+                <Training />
+            </MessageBoxProvider>
+        );
+    }
+
+    // function WrappedDailyTest() {
+    //     return (
+    //         <MessageBoxProvider>
+                
+    //         </MessageBoxProvider>
+    //     )
+    // }
+
     return (
         <AlertProvider>
             <ModalProvider>
-                <MessageBoxProvider>
-                    <NavigationContainer>
-                        <Alert />
-                        <Modal />
-                        {!actual && (
-                            <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
-                                {(user ? userScreens : authScreens).map((screen) => (
-                                    <Stack.Screen
-                                        key={screen.name}
-                                        name={screen.name}
-                                        component={screen.component}
-                                        options={
-                                            screen.header
-                                                ? {
-                                                      headerTitle: (props) => HeaderCenter(props),
-                                                      headerLeft: (props) => HeaderLeft(props),
-                                                      headerTransparent: true,
-                                                  }
-                                                : { headerShown: false }
-                                        }
-                                    />
-                                ))}
-                            </Stack.Navigator>
-                        )}
-                        {actual && (
-                            <Tab.Navigator
-                                initialRouteName="Home"
-                                screenOptions={{
-                                    headerShown: false,
-                                    tabBarStyle: {
-                                        backgroundColor: Colors.background,
-                                        borderTopWidth: 0,
+                <NavigationContainer>
+                    <Alert />
+                    <Modal />
+                    {!actual && (
+                        <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
+                            {(user ? userScreens : authScreens).map((screen) => (
+                                <Stack.Screen
+                                    key={screen.name}
+                                    name={screen.name}
+                                    component={screen.component}
+                                    options={
+                                        screen.header
+                                            ? {
+                                                  headerTitle: (props) => HeaderCenter(props),
+                                                  headerLeft: (props) => HeaderLeft(props),
+                                                  headerTransparent: true,
+                                              }
+                                            : { headerShown: false }
+                                    }
+                                />
+                            ))}
+                        </Stack.Navigator>
+                    )}
+                    {actual && (
+                        <Tab.Navigator
+                            initialRouteName="Home"
+                            screenOptions={{
+                                headerShown: false,
+                                tabBarStyle: {
+                                    backgroundColor: Colors.background,
+                                    borderTopWidth: 0,
+                                },
+                            }}
+                        >
+                            <Tab.Screen
+                                name="Home"
+                                component={HomeScreens}
+                                options={{
+                                    tabBarIcon: ({ color, size }) => {
+                                        return <Icon name="home" color={color} size={size} />;
                                     },
                                 }}
-                            >
-                                <Tab.Screen
-                                    name="Home"
-                                    component={HomeScreens}
-                                    options={{
-                                        tabBarIcon: ({ color, size }) => {
-                                            return <Icon name="home" color={color} size={size} />;
-                                        },
-                                    }}
-                                />
-                                <Tab.Screen
-                                    name="Study"
-                                    component={StudyScreens}
-                                    options={{
-                                        tabBarIcon: ({ color, size }) => {
-                                            return <Icon name="book" color={color} size={size} />;
-                                        },
-                                    }}
-                                />
-                                <Tab.Screen
-                                    name="Train"
-                                    component={TrainScreens}
-                                    options={{
-                                        tabBarIcon: ({ color, size }) => {
-                                            return (
-                                                <Icon name="refresh" color={color} size={size} />
-                                            );
-                                        },
-                                    }}
-                                />
-                                <Tab.Screen
-                                    name="Settings"
-                                    component={SettingsScreens}
-                                    options={{
-                                        tabBarIcon: ({ color, size }) => {
-                                            return <Icon name="cog" color={color} size={size} />;
-                                        },
-                                    }}
-                                />
-                            </Tab.Navigator>
-                        )}
-                    </NavigationContainer>
-                </MessageBoxProvider>
+                            />
+                            <Tab.Screen
+                                name="Study"
+                                component={StudyScreens}
+                                options={{
+                                    tabBarIcon: ({ color, size }) => {
+                                        return <Icon name="book" color={color} size={size} />;
+                                    },
+                                }}
+                            />
+                            <Tab.Screen
+                                name="Train"
+                                component={TrainScreens}
+                                options={{
+                                    tabBarIcon: ({ color, size }) => {
+                                        return <Icon name="refresh" color={color} size={size} />;
+                                    },
+                                }}
+                            />
+                            <Tab.Screen
+                                name="Settings"
+                                component={SettingsScreens}
+                                options={{
+                                    tabBarIcon: ({ color, size }) => {
+                                        return <Icon name="cog" color={color} size={size} />;
+                                    },
+                                }}
+                            />
+                        </Tab.Navigator>
+                    )}
+                </NavigationContainer>
             </ModalProvider>
         </AlertProvider>
     );
