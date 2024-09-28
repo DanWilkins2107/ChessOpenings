@@ -20,6 +20,8 @@ import setUpSplitTest from "../functions/test/setUpSplitTest.js";
 import validateSplitMove from "../functions/test/validateSplitMove.js";
 import checkRepeatedSplitMove from "../functions/test/checkRepeatedSplitMove.js";
 import isSplitFinished from "../functions/test/isSplitFinished.js";
+import setUpOtherBranchTest from "../functions/test/setUpOtherBranchTest.js";
+import otherBranchSkipMoves from "../functions/test/otherBranchSkipMoves.js";
 
 export default function Training({ route }) {
     const [chess, setChess] = useState(new Chess());
@@ -69,7 +71,13 @@ export default function Training({ route }) {
             const { branchObj, splitObj, otherBranchObj, whiteCombinedTree, blackCombinedTree } =
                 await setUpTraining(trees);
 
-            createTraining(branchObj, splitObj, otherBranchObj);
+            createTraining(
+                branchObj,
+                splitObj,
+                otherBranchObj,
+                whiteCombinedTree,
+                blackCombinedTree
+            );
 
             setBranchObj(branchObj);
             setSplitObj(splitObj);
@@ -82,7 +90,13 @@ export default function Training({ route }) {
         initialize();
     }, []);
 
-    const createTraining = (branchObj, splitObj, otherBranchObj) => {
+    const createTraining = (
+        branchObj,
+        splitObj,
+        otherBranchObj,
+        whiteCombinedTree,
+        blackCombinedTree
+    ) => {
         const { typeOfTraining, chosenItem } = chooseLineToTrain(
             branchObj,
             splitObj,
@@ -92,21 +106,13 @@ export default function Training({ route }) {
         setTypeOfTraining(typeOfTraining);
         setCurrentItem(chosenItem);
 
-        setupBoard(typeOfTraining, chosenItem);
+        setupBoard(typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree);
     };
 
-    const setupBoard = (typeOfTraining, chosenItem) => {
+    const setupBoard = (typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree) => {
         if (typeOfTraining === "branch") {
             console.log("Setting up branch test");
-            setUpBranchTest(
-                chosenItem,
-                chess,
-                setMessageObj,
-                setPov,
-                setMoveList,
-                setMoveIndex,
-                false
-            );
+            setUpBranchTest(chosenItem, chess, setMessageObj, setPov, setMoveList, setMoveIndex);
             setCurrentItem(chosenItem);
             setTrackedBranchObj({
                 unselected: [...branchObj.unselected],
@@ -118,14 +124,15 @@ export default function Training({ route }) {
             setUpSplitTest(chosenItem, chess, setMessageObj, setPov, setMoveList);
         } else if (typeOfTraining === "otherBranch") {
             console.log("Setting up other branch test");
-            setUpBranchTest(
+            setUpOtherBranchTest(
                 chosenItem,
                 chess,
                 setMessageObj,
                 setPov,
                 setMoveList,
                 setMoveIndex,
-                true
+                whiteCombinedTree,
+                blackCombinedTree
             );
         }
     };
@@ -166,7 +173,13 @@ export default function Training({ route }) {
                     setForceRerender(!forceRerender);
                     setMoveIndex(moveIndex + 2);
                 } else {
-                    createTraining(branchObj, splitObj, otherBranchObj);
+                    createTraining(
+                        branchObj,
+                        splitObj,
+                        otherBranchObj,
+                        whiteCombinedTree,
+                        blackCombinedTree
+                    );
                 }
             } else {
                 setIsMoveCorrect(false);
@@ -195,7 +208,13 @@ export default function Training({ route }) {
                         // DEAL WITH SPLIT FINISHING CONFIDENCE AFFECTING
 
                         // Then restart training
-                        createTraining(branchObj, splitObj, otherBranchObj);
+                        createTraining(
+                            branchObj,
+                            splitObj,
+                            otherBranchObj,
+                            whiteCombinedTree,
+                            blackCombinedTree
+                        );
                     } else {
                         chess.undo();
                     }
@@ -209,7 +228,49 @@ export default function Training({ route }) {
             }
         } else if (typeOfTraining === "otherBranch") {
             // moveOtherBranchTest(chosenItem, chess);
-            console.log("Moved on Other Branch: TODO")
+            console.log("Moved on Other Branch: TODO");
+            if (
+                validateBranchMove(
+                    from,
+                    to,
+                    chess,
+                    moveList,
+                    moveIndex,
+                    setMessageObj,
+                    streak,
+                    setStreak
+                )
+            ) {
+                if (moveIndex + 2 < moveList.length) {
+                    const newMoveIndex = await otherBranchSkipMoves(
+                        chess,
+                        moveList,
+                        moveIndex,
+                        forceRerender,
+                        setForceRerender
+                    );
+                    setMoveIndex(newMoveIndex);
+                    if (!newMoveIndex) {
+                        createTraining(
+                            branchObj,
+                            splitObj,
+                            otherBranchObj,
+                            whiteCombinedTree,
+                            blackCombinedTree
+                        );
+                    }
+                } else {
+                    createTraining(
+                        branchObj,
+                        splitObj,
+                        otherBranchObj,
+                        whiteCombinedTree,
+                        blackCombinedTree
+                    );
+                }
+            } else {
+                setIsMoveCorrect(false);
+            }
         }
     };
 
