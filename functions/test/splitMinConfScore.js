@@ -1,9 +1,9 @@
 export default function splitMinConfScore(split) {
     let minimumConfidence = 2;
 
-    split.children?.map((child) => {
-        if (child.confidence < minimumConfidence) {
-            minimumConfidence = child.confidence;
+    split.splitNode.children?.map((child) => {
+        if ((child.confidence || 0) < minimumConfidence) {
+            minimumConfidence = child.confidence || 0;
         }
     });
 

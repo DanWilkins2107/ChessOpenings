@@ -4,19 +4,19 @@ import getMoveListFromNode from "./getMoveListFromNode";
 import saveTreesToDb from "./saveTreesToDb";
 
 export default function updateBranchConfidenceScores(
-    trackedBranchesUnselected,
-    trackedBranchesSelected,
-    trackedBranchesFinished,
-    unselectedBranches,
-    selectedBranches,
-    finishedBranches,
+    trackedBranchObj,
+    branchObj,
     isCorrect,
     moveList,
     moveIndex,
-    trees
+    trees,
+    color
 ) {
     // Update the confidence scores in the trees
     trees.forEach((tree) => {
+        if (tree.color !== color) {
+            return;
+        }
         const treeRootNode = tree.tree;
         let needsSaving = false;
         const treeHelperFunction = (node, currentMoveNumber) => {
@@ -88,7 +88,7 @@ export default function updateBranchConfidenceScores(
     const selectedToFinished = [];
     const finishedToSelected = [];
 
-    trackedBranchesUnselected.forEach((branch) => {
+    trackedBranchObj.unselected.forEach((branch) => {
         moveBranches(branch, nodesToRemoveFromTrackedUnselected, (currentNode, branch) => {
             // Unselected can move to finished if it is fully confident
             const branchMoves = getMoveListFromNode(branch.endNode, branch.color);
@@ -103,7 +103,7 @@ export default function updateBranchConfidenceScores(
         });
     });
 
-    trackedBranchesSelected.forEach((branch) => {
+    trackedBranchObj.selected.forEach((branch) => {
         moveBranches(branch, nodesToRemoveFromTrackedSelected, (currentNode, branch) => {
             // Selected can move to finished if it is fully confident
             const branchMoves = getMoveListFromNode(branch.endNode, branch.color);
@@ -113,7 +113,7 @@ export default function updateBranchConfidenceScores(
         });
     });
 
-    trackedBranchesFinished.forEach((branch) => {
+    trackedBranchObj.finished.forEach((branch) => {
         moveBranches(branch, nodesToRemoveFromTrackedFinished, (currentNode, branch, isCorrect) => {
             // Finished can move to selected if it is no longer fully confident
             if (!isCorrect) {
@@ -126,34 +126,34 @@ export default function updateBranchConfidenceScores(
     });
 
     // Perform list filtering
-    const newTrackedBranchesUnselected = trackedBranchesUnselected.filter(
+    const newTrackedBranchesUnselected = trackedBranchObj.unselected.filter(
         (branch) =>
             !nodesToRemoveFromTrackedUnselected.includes(branch) &&
             !unselectedToFinished.includes(branch) &&
             !unselectedToSelected.includes(branch)
     );
 
-    const newUnselectedBranches = unselectedBranches.filter(
+    const newUnselectedBranches = branchObj.unselected.filter(
         (branch) => !unselectedToFinished.includes(branch) && !unselectedToSelected.includes(branch)
     );
 
-    const newTrackedBranchesSelected = trackedBranchesSelected.filter(
+    const newTrackedBranchesSelected = branchObj.selected.filter(
         (branch) =>
             !nodesToRemoveFromTrackedSelected.includes(branch) &&
             !selectedToFinished.includes(branch)
     );
 
-    const newSelectedBranches = selectedBranches.filter(
+    const newSelectedBranches = branchObj.selected.filter(
         (branch) => !selectedToFinished.includes(branch)
     );
 
-    const newTrackedBranchesFinished = trackedBranchesFinished.filter(
+    const newTrackedBranchesFinished = branchObj.finished.filter(
         (branch) =>
             !nodesToRemoveFromTrackedFinished.includes(branch) &&
             !finishedToSelected.includes(branch)
     );
 
-    const newFinishedBranches = finishedBranches.filter(
+    const newFinishedBranches = branchObj.finished.filter(
         (branch) => !finishedToSelected.includes(branch)
     );
 

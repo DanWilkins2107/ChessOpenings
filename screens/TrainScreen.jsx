@@ -169,7 +169,6 @@ const TrainScreen = ({ navigation, route }) => {
         const moveList = getMoveListFromNode(branch.endNode, branch.color);
         const move = checkForFullConfidenceMoveList(moveList, branch.color);
 
-        setMoveIndex(moveIndex, branch.color);
         setBoardPOV(branch.color);
         setMoveList(moveList);
         setMoveIndex(move);

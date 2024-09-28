@@ -6,9 +6,13 @@ export const Colors = {
     buttonDeselected: "#9196A1",
     primaryLogo: "#4577E2",
     text: "#4F3824",
-    activePiece: "orange",
-}
+    activePiece: "#f7a414",
+    correctMove: "#CFEED3",
+    correctMoveText: "#244F36",
+    incorrectMove: "#EED0CF",
+    incorrectMoveText: "#4F2424",
+};
 
 export const Fonts = {
     main: "Salsa-Regular",
-}
+};

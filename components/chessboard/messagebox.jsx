@@ -1,37 +1,12 @@
-import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { Fonts } from "../../styling";
-
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { View, Text } from "react-native";
 
 const MessageBox = ({ message, backgroundColor, textColor, style }) => {
-    // Shared values for animation
-    const bgColor = useSharedValue(backgroundColor);
-    const txtColor = useSharedValue(textColor);
-
-    // Animated styles
-    const animatedStyle = useAnimatedStyle(() => {
-        return {
-            backgroundColor: bgColor.value,
-        };
-    });
-
-    const animatedTextStyle = useAnimatedStyle(() => {
-        return {
-            color: txtColor.value,
-        };
-    });
-
-    // Trigger color changes on prop changes
-    useEffect(() => {
-        bgColor.value = withTiming(backgroundColor, { duration: 500 }); // Animate background color change
-        txtColor.value = withTiming(textColor, { duration: 500 }); // Animate text color change
-    }, [backgroundColor, textColor]);
-
     return (
-        <Animated.View style={[styles.container, animatedStyle, style]}>
-            <Animated.Text style={[styles.text, animatedTextStyle]}>{message}</Animated.Text>
-        </Animated.View>
+        <View style={[styles.container, { backgroundColor: backgroundColor }, style]}>
+            <Text style={[styles.text, { color: textColor }]}>{message}</Text>
+        </View>
     );
 };
 
