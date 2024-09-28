@@ -98,7 +98,15 @@ export default function Training({ route }) {
     const setupBoard = (typeOfTraining, chosenItem) => {
         if (typeOfTraining === "branch") {
             console.log("Setting up branch test");
-            setUpBranchTest(chosenItem, chess, setMessageObj, setPov, setMoveList, setMoveIndex);
+            setUpBranchTest(
+                chosenItem,
+                chess,
+                setMessageObj,
+                setPov,
+                setMoveList,
+                setMoveIndex,
+                false
+            );
             setCurrentItem(chosenItem);
             setTrackedBranchObj({
                 unselected: [...branchObj.unselected],
@@ -110,8 +118,15 @@ export default function Training({ route }) {
             setUpSplitTest(chosenItem, chess, setMessageObj, setPov, setMoveList);
         } else if (typeOfTraining === "otherBranch") {
             console.log("Setting up other branch test");
-            createTraining(branchObj, splitObj, otherBranchObj);
-            // setUpOtherBranchTest(chosenItem, chess);
+            setUpBranchTest(
+                chosenItem,
+                chess,
+                setMessageObj,
+                setPov,
+                setMoveList,
+                setMoveIndex,
+                true
+            );
         }
     };
 
@@ -167,7 +182,6 @@ export default function Training({ route }) {
                         textColor: Colors.correctMoveText,
                     });
                     setStreak((streak) => streak + 1);
-                    console.log("CORRECT MOVE PLAYED");
                     moveList.forEach((splitMoveObj) => {
                         if (splitMoveObj.move === move) {
                             splitMoveObj.guessed = true;
@@ -195,6 +209,7 @@ export default function Training({ route }) {
             }
         } else if (typeOfTraining === "otherBranch") {
             // moveOtherBranchTest(chosenItem, chess);
+            console.log("Moved on Other Branch: TODO")
         }
     };
 

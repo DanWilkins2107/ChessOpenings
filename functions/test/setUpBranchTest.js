@@ -8,13 +8,20 @@ export default function setUpBranchTest(
     setMessageObj,
     setPov,
     setMoveList,
-    setMoveIndex
+    setMoveIndex,
+    isOtherBranch
 ) {
+    const threshold = isOtherBranch ? 2 : 5;
     const moveList = getMoveListFromNode(branch.endNode, branch.color);
-    const moveIndex = checkForFullConfidenceMoveList(moveList, branch.color);
+    const moveIndex = checkForFullConfidenceMoveList(moveList, branch.color, threshold);
 
     if (moveIndex === -1) {
-        console.log("Fully Confident");
+        console.log("Fully Confident. TODO");
+    }
+
+    if (isOtherBranch) {
+        console.log(branch.color);
+        console.log(moveList);
     }
 
     chess.reset();
@@ -23,12 +30,23 @@ export default function setUpBranchTest(
     });
 
     const color = branch.color === "white" ? "White" : "Black";
-    setPov(branch.color);
-    setMessageObj({
-        message: `${color} to Move.`,
-        backgroundColor: Colors.card1,
-        textColor: Colors.text,
-    });
+    const povColor = isOtherBranch ? (branch.color === "white" ? "black" : "white") : branch.color;
+
+    setPov(povColor);
+    if (isOtherBranch) {
+        setMessageObj({
+            message: `What is ${color}'s move?`,
+            backgroundColor: Colors.card1,
+            textColor: Colors.text,
+        });
+    } else {
+        setMessageObj({
+            message: `${color} to Move.`,
+            backgroundColor: Colors.card1,
+            textColor: Colors.text,
+        });
+    }
+
     setMoveList(moveList);
     setMoveIndex(moveIndex);
 }
