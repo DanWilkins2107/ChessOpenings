@@ -1,6 +1,6 @@
 import { Colors } from "../../styling";
 
-export default function validateSplitMove(from, to, chess, moveList, setMessageObj) {
+export default function validateSplitMove(from, to, chess, moveList, setTempMessage) {
     const testMove = chess.move({ from: from, to: to });
     const move = testMove.san;
 
@@ -12,7 +12,7 @@ export default function validateSplitMove(from, to, chess, moveList, setMessageO
     });
 
     if (!correctMove) {
-        setMessageObj({
+        setTempMessage({
             message: `Try Again.`,
             backgroundColor: Colors.incorrectMove,
             textColor: Colors.incorrectMoveText,

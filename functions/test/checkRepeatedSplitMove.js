@@ -1,8 +1,8 @@
 import { Colors } from "../../styling";
 
-export default function checkRepeatedSplitMove(move, moveList, setMessageObj) {
+export default function checkRepeatedSplitMove(move, moveList, setTempMessage) {
     if (moveList[move]?.guessed) {
-        setMessageObj({
+        setTempMessage({
             message: `Already Guessed.`,
             backgroundColor: Colors.card1,
             textColor: Colors.text,

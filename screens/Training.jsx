@@ -22,6 +22,11 @@ import checkRepeatedSplitMove from "../functions/test/checkRepeatedSplitMove.js"
 import isSplitFinished from "../functions/test/isSplitFinished.js";
 import setUpOtherBranchTest from "../functions/test/setUpOtherBranchTest.js";
 import otherBranchSkipMoves from "../functions/test/otherBranchSkipMoves.js";
+import {
+    MessageBoxContext,
+    MessageBoxProvider,
+} from "../components/chessboard/MessageBoxContextProvider.jsx";
+import { useContext } from "react";
 
 export default function Training({ route }) {
     const [chess, setChess] = useState(new Chess());
@@ -50,12 +55,9 @@ export default function Training({ route }) {
     const [typeOfTraining, setTypeOfTraining] = useState("");
     const [currentItem, setCurrentItem] = useState({});
 
-    const [messageObj, setMessageObj] = useState({
-        message: "Setting Up Training",
-        backgroundColor: Colors.card1,
-        textColor: Colors.text,
-    });
     const [streak, setStreak] = useState(0);
+
+    const { permMessage, temp, setPermMessage, setTempMessage } = useContext(MessageBoxContext);
 
     // State Management for during training
     const [moveList, setMoveList] = useState([]);
@@ -64,6 +66,11 @@ export default function Training({ route }) {
 
     useEffect(() => {
         const initialize = async () => {
+            setPermMessage({
+                message: "Setting up Training...",
+                backgroundColor: Colors.card1,
+                textColor: Colors.text
+            })
             const studyStringArray = route?.params?.chosenPGNs || (await getStudyStringArray());
             const trees = await getTrainingTrees(studyStringArray);
             setTrees(trees);
@@ -112,7 +119,7 @@ export default function Training({ route }) {
     const setupBoard = (typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree) => {
         if (typeOfTraining === "branch") {
             console.log("Setting up branch test");
-            setUpBranchTest(chosenItem, chess, setMessageObj, setPov, setMoveList, setMoveIndex);
+            setUpBranchTest(chosenItem, chess, setPermMessage, setPov, setMoveList, setMoveIndex);
             setCurrentItem(chosenItem);
             setTrackedBranchObj({
                 unselected: [...branchObj.unselected],
@@ -121,13 +128,13 @@ export default function Training({ route }) {
             });
         } else if (typeOfTraining === "split") {
             console.log("Setting up split test");
-            setUpSplitTest(chosenItem, chess, setMessageObj, setPov, setMoveList);
+            setUpSplitTest(chosenItem, chess, setPermMessage, setPov, setMoveList);
         } else if (typeOfTraining === "otherBranch") {
             console.log("Setting up other branch test");
             setUpOtherBranchTest(
                 chosenItem,
                 chess,
-                setMessageObj,
+                setPermMessage,
                 setPov,
                 setMoveList,
                 setMoveIndex,
@@ -146,7 +153,7 @@ export default function Training({ route }) {
                     chess,
                     moveList,
                     moveIndex,
-                    setMessageObj,
+                    setTempMessage,
                     streak,
                     setStreak
                 )
@@ -185,11 +192,11 @@ export default function Training({ route }) {
                 setIsMoveCorrect(false);
             }
         } else if (typeOfTraining === "split") {
-            const move = validateSplitMove(from, to, chess, moveList, setMessageObj);
+            const move = validateSplitMove(from, to, chess, moveList, setTempMessage);
             if (move) {
-                const repeated = checkRepeatedSplitMove(move, moveList, setMessageObj);
+                const repeated = checkRepeatedSplitMove(move, moveList, setTempMessage);
                 if (!repeated) {
-                    setMessageObj({
+                    setTempMessage({
                         message: `Correct Move! ${streak + 1} in a Row.`,
                         backgroundColor: Colors.correctMove,
                         textColor: Colors.correctMoveText,
@@ -236,7 +243,7 @@ export default function Training({ route }) {
                     chess,
                     moveList,
                     moveIndex,
-                    setMessageObj,
+                    setTempMessage,
                     streak,
                     setStreak
                 )
@@ -284,12 +291,7 @@ export default function Training({ route }) {
                 moveFunction={moveFunction}
                 key={forceRerender}
             />
-            <MessageBox
-                message={messageObj.message}
-                backgroundColor={messageObj.backgroundColor}
-                textColor={messageObj.textColor}
-                style={styles.messageBox}
-            />
+            <MessageBox tempObj={temp} permObj={permMessage} style={styles.messageBox} />
             <HintAndSkipButtons style={styles.hintAndSkipButtons} />
 
             <CurrentStudyViewer style={styles.studyViewer} />

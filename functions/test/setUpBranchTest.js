@@ -5,7 +5,7 @@ import getMoveListFromNode from "./getMoveListFromNode";
 export default function setUpBranchTest(
     branch,
     chess,
-    setMessageObj,
+    setPermMessage,
     setPov,
     setMoveList,
     setMoveIndex
@@ -25,7 +25,7 @@ export default function setUpBranchTest(
     const color = branch.color === "white" ? "White" : "Black";
 
     setPov(branch.color);
-    setMessageObj({
+    setPermMessage({
         message: `${color} to Move.`,
         backgroundColor: Colors.card1,
         textColor: Colors.text,

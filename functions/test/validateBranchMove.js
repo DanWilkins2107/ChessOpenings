@@ -6,7 +6,7 @@ export default function validateBranchMove(
     chess,
     moveList,
     moveIndex,
-    setMessageObj,
+    setTempMessage,
     streak,
     setStreak
 ) {
@@ -15,7 +15,7 @@ export default function validateBranchMove(
     const currentMove = moveList[moveIndex].move;
 
     if (move.san === currentMove) {
-        setMessageObj({
+        setTempMessage({
             message: `Correct Move! ${streak + 1} in a Row.`,
             backgroundColor: Colors.correctMove,
             textColor: Colors.correctMoveText,
@@ -25,7 +25,7 @@ export default function validateBranchMove(
     } else {
         chess.undo();
         setStreak(0);
-        setMessageObj({
+        setTempMessage({
             message: "Try Again.",
             backgroundColor: Colors.incorrectMove,
             textColor: Colors.incorrectMoveText,

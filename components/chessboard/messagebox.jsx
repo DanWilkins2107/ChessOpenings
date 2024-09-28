@@ -2,9 +2,12 @@ import { StyleSheet } from "react-native";
 import { Fonts } from "../../styling";
 import { View, Text } from "react-native";
 
-const MessageBox = ({ message, backgroundColor, textColor, style }) => {
+const MessageBox = ({ tempObj, permObj, style }) => {
+    const backgroundColor = tempObj.message ? tempObj.backgroundColor : permObj.backgroundColor;
+    const message = tempObj.message || permObj.message;
+    const textColor = tempObj.message ? tempObj.textColor : permObj.textColor;
     return (
-        <View style={[styles.container, { backgroundColor: backgroundColor }, style]}>
+        <View style={[styles.container, style, { backgroundColor: backgroundColor }]}>
             <Text style={[styles.text, { color: textColor }]}>{message}</Text>
         </View>
     );

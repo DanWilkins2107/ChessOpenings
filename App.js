@@ -34,6 +34,7 @@ import StudyDashboard from "./screens/StudyDashboard.jsx";
 import ViewStudy from "./screens/ViewStudy.jsx";
 import AddStudy from "./screens/AddStudy.jsx";
 import Settings from "./screens/Settings.jsx";
+import { MessageBoxProvider } from "./components/chessboard/MessageBoxContextProvider.jsx";
 
 const Stack = createStackNavigator();
 
@@ -185,79 +186,83 @@ const App = () => {
     return (
         <AlertProvider>
             <ModalProvider>
-                <NavigationContainer>
-                    <Alert />
-                    <Modal />
-                    {!actual && (
-                        <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
-                            {(user ? userScreens : authScreens).map((screen) => (
-                                <Stack.Screen
-                                    key={screen.name}
-                                    name={screen.name}
-                                    component={screen.component}
-                                    options={
-                                        screen.header
-                                            ? {
-                                                  headerTitle: (props) => HeaderCenter(props),
-                                                  headerLeft: (props) => HeaderLeft(props),
-                                                  headerTransparent: true,
-                                              }
-                                            : { headerShown: false }
-                                    }
+                <MessageBoxProvider>
+                    <NavigationContainer>
+                        <Alert />
+                        <Modal />
+                        {!actual && (
+                            <Stack.Navigator initialRouteName={user ? "UserDashboard" : "Login"}>
+                                {(user ? userScreens : authScreens).map((screen) => (
+                                    <Stack.Screen
+                                        key={screen.name}
+                                        name={screen.name}
+                                        component={screen.component}
+                                        options={
+                                            screen.header
+                                                ? {
+                                                      headerTitle: (props) => HeaderCenter(props),
+                                                      headerLeft: (props) => HeaderLeft(props),
+                                                      headerTransparent: true,
+                                                  }
+                                                : { headerShown: false }
+                                        }
+                                    />
+                                ))}
+                            </Stack.Navigator>
+                        )}
+                        {actual && (
+                            <Tab.Navigator
+                                initialRouteName="Home"
+                                screenOptions={{
+                                    headerShown: false,
+                                    tabBarStyle: {
+                                        backgroundColor: Colors.background,
+                                        borderTopWidth: 0,
+                                    },
+                                }}
+                            >
+                                <Tab.Screen
+                                    name="Home"
+                                    component={HomeScreens}
+                                    options={{
+                                        tabBarIcon: ({ color, size }) => {
+                                            return <Icon name="home" color={color} size={size} />;
+                                        },
+                                    }}
                                 />
-                            ))}
-                        </Stack.Navigator>
-                    )}
-                    {actual && (
-                        <Tab.Navigator
-                            initialRouteName="Home"
-                            screenOptions={{
-                                headerShown: false,
-                                tabBarStyle: {
-                                    backgroundColor: Colors.background,
-                                    borderTopWidth: 0,
-                                },
-                            }}
-                        >
-                            <Tab.Screen
-                                name="Home"
-                                component={HomeScreens}
-                                options={{
-                                    tabBarIcon: ({ color, size }) => {
-                                        return <Icon name="home" color={color} size={size} />;
-                                    },
-                                }}
-                            />
-                            <Tab.Screen
-                                name="Study"
-                                component={StudyScreens}
-                                options={{
-                                    tabBarIcon: ({ color, size }) => {
-                                        return <Icon name="book" color={color} size={size} />;
-                                    },
-                                }}
-                            />
-                            <Tab.Screen
-                                name="Train"
-                                component={TrainScreens}
-                                options={{
-                                    tabBarIcon: ({ color, size }) => {
-                                        return <Icon name="refresh" color={color} size={size} />;
-                                    },
-                                }}
-                            />
-                            <Tab.Screen
-                                name="Settings"
-                                component={SettingsScreens}
-                                options={{
-                                    tabBarIcon: ({ color, size }) => {
-                                        return <Icon name="cog" color={color} size={size} />;
-                                    },
-                                }}
-                            />
-                        </Tab.Navigator>
-                    )}
-                </NavigationContainer>
+                                <Tab.Screen
+                                    name="Study"
+                                    component={StudyScreens}
+                                    options={{
+                                        tabBarIcon: ({ color, size }) => {
+                                            return <Icon name="book" color={color} size={size} />;
+                                        },
+                                    }}
+                                />
+                                <Tab.Screen
+                                    name="Train"
+                                    component={TrainScreens}
+                                    options={{
+                                        tabBarIcon: ({ color, size }) => {
+                                            return (
+                                                <Icon name="refresh" color={color} size={size} />
+                                            );
+                                        },
+                                    }}
+                                />
+                                <Tab.Screen
+                                    name="Settings"
+                                    component={SettingsScreens}
+                                    options={{
+                                        tabBarIcon: ({ color, size }) => {
+                                            return <Icon name="cog" color={color} size={size} />;
+                                        },
+                                    }}
+                                />
+                            </Tab.Navigator>
+                        )}
+                    </NavigationContainer>
+                </MessageBoxProvider>
             </ModalProvider>
         </AlertProvider>
     );

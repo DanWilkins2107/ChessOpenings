@@ -4,7 +4,7 @@ import getMoveListFromNode from "./getMoveListFromNode";
 export default function setUpOtherBranchTest(
     branch,
     chess,
-    setMessageObj,
+    setPermMessage,
     setPov,
     setMoveList,
     setMoveIndex,
@@ -58,7 +58,7 @@ export default function setUpOtherBranchTest(
     const color = branch.color === "white" ? "White" : "Black";
     const pov = branch.color === "white" ? "black" : "white";
     setPov(pov);
-    setMessageObj({
+    setPermMessage({
         message: `What is ${color}'s move?`,
         backgroundColor: Colors.card1,
         textColor: Colors.text,
