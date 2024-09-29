@@ -22,10 +22,10 @@ import checkRepeatedSplitMove from "../functions/test/checkRepeatedSplitMove.js"
 import isSplitFinished from "../functions/test/isSplitFinished.js";
 import setUpOtherBranchTest from "../functions/test/setUpOtherBranchTest.js";
 import otherBranchSkipMoves from "../functions/test/otherBranchSkipMoves.js";
-import {
-    MessageBoxContext,
-} from "../components/chessboard/MessageBoxContextProvider.jsx";
+import { MessageBoxContext } from "../components/chessboard/MessageBoxContextProvider.jsx";
 import { useContext } from "react";
+import updateSplitScores from "../functions/test/updateSplitScores.js";
+import updateOtherBranchScores from "../functions/test/updateOtherBranchScores.js";
 
 export default function Training({ route }) {
     const [chess, setChess] = useState(new Chess());
@@ -54,8 +54,8 @@ export default function Training({ route }) {
     const [typeOfTraining, setTypeOfTraining] = useState("");
     const [currentItem, setCurrentItem] = useState({});
 
+    // States for the Message Box
     const [streak, setStreak] = useState(0);
-
     const { permMessage, temp, setPermMessage, setTempMessage } = useContext(MessageBoxContext);
 
     // State Management for during training
@@ -117,7 +117,6 @@ export default function Training({ route }) {
 
     const setupBoard = (typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree) => {
         if (typeOfTraining === "branch") {
-            console.log("Setting up branch test");
             setUpBranchTest(chosenItem, chess, setPermMessage, setPov, setMoveList, setMoveIndex);
             setCurrentItem(chosenItem);
             setTrackedBranchObj({
@@ -126,10 +125,8 @@ export default function Training({ route }) {
                 finished: [...branchObj.finished],
             });
         } else if (typeOfTraining === "split") {
-            console.log("Setting up split test");
             setUpSplitTest(chosenItem, chess, setPermMessage, setPov, setMoveList);
         } else if (typeOfTraining === "otherBranch") {
-            console.log("Setting up other branch test");
             setUpOtherBranchTest(
                 chosenItem,
                 chess,
@@ -212,6 +209,7 @@ export default function Training({ route }) {
                     const finished = isSplitFinished(moveList);
                     if (finished) {
                         // DEAL WITH SPLIT FINISHING CONFIDENCE AFFECTING
+                        updateSplitScores();
 
                         createTraining(
                             branchObj,
@@ -233,6 +231,7 @@ export default function Training({ route }) {
             }
         } else if (typeOfTraining === "otherBranch") {
             // moveOtherBranchTest(chosenItem, chess);
+            updateOtherBranchScores();
             if (
                 validateBranchMove(
                     from,
