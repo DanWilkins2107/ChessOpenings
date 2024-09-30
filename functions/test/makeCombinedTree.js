@@ -21,8 +21,8 @@ export default function makeCombinedTree({ branchArray }) {
                 if (child.move === moveObj.move) {
                     currentTreeNode = child;
                     found = true;
-                    if (moveObj.moveSplitConfidence || 0 < currentNode.moveSplitConfidence || 0) {
-                        currentNode.moveSplitConfidence = moveSplitConfidence;
+                    if (moveObj.confidence || 0 < currentNode.confidence || 0) {
+                        currentNode.confidence = moveObj.confidence || 0;
                     }
                 }
             });
@@ -32,7 +32,7 @@ export default function makeCombinedTree({ branchArray }) {
                     children: [],
                     parent: currentTreeNode,
                     move: moveObj.move,
-                    splitConfidenceScore: moveObj.splitConfidenceScore || 0,
+                    confidence: moveObj.confidence || 0,
                 };
                 currentTreeNode.children.push(newTreeNode);
                 currentTreeNode = newTreeNode;

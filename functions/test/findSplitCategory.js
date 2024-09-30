@@ -1,5 +1,6 @@
 export default function findSplitCategory(split, previousStatus, threshold) {
     let status = previousStatus;
+
     if (previousStatus === "unselected") {
         let reached = true;
         split.children?.forEach((child) => {
@@ -15,7 +16,7 @@ export default function findSplitCategory(split, previousStatus, threshold) {
     if (previousStatus === "selected") {
         let upgrade = true;
         split.children?.forEach((child) => {
-            if (child.confidenceScore || 0 < threshold) {
+            if (child.confidence || 0 < threshold) {
                 upgrade = false;
             }
         });
@@ -23,5 +24,6 @@ export default function findSplitCategory(split, previousStatus, threshold) {
             status = "finished";
         }
     }
+
     return status;
 }

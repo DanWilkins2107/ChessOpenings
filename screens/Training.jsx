@@ -26,6 +26,7 @@ import { MessageBoxContext } from "../components/chessboard/MessageBoxContextPro
 import { useContext } from "react";
 import updateSplitScores from "../functions/test/updateSplitScores.js";
 import updateOtherBranchScores from "../functions/test/updateOtherBranchScores.js";
+import checkAllSplits from "../functions/test/checkAllSplits.js";
 
 export default function Training({ route }) {
     const [chess, setChess] = useState(new Chess());
@@ -116,6 +117,18 @@ export default function Training({ route }) {
     };
 
     const setupBoard = (typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree) => {
+        // TEMPORARY TO TRAIN ONLY SPLITS
+        if (typeOfTraining !== "split") {
+            createTraining(
+                branchObj,
+                splitObj,
+                otherBranchObj,
+                whiteCombinedTree,
+                blackCombinedTree
+            );
+            return;
+        }
+
         if (typeOfTraining === "branch") {
             setUpBranchTest(chosenItem, chess, setPermMessage, setPov, setMoveList, setMoveIndex);
             setCurrentItem(chosenItem);
@@ -126,6 +139,7 @@ export default function Training({ route }) {
             });
         } else if (typeOfTraining === "split") {
             setUpSplitTest(chosenItem, chess, setPermMessage, setPov, setMoveList);
+            setIsMoveCorrect(true);
         } else if (typeOfTraining === "otherBranch") {
             setUpOtherBranchTest(
                 chosenItem,
@@ -137,6 +151,7 @@ export default function Training({ route }) {
                 whiteCombinedTree,
                 blackCombinedTree
             );
+            setIsMoveCorrect(true);
         }
     };
 
@@ -208,12 +223,13 @@ export default function Training({ route }) {
                     });
                     const finished = isSplitFinished(moveList);
                     if (finished) {
-                        // DEAL WITH SPLIT FINISHING CONFIDENCE AFFECTING
-                        updateSplitScores();
-
+                        updateSplitScores(currentItem, moveList, trees);
+                        // Check split status and move
+                        const newSplitObj = checkAllSplits(splitObj);
+                        setSplitObj(newSplitObj);
                         createTraining(
                             branchObj,
-                            splitObj,
+                            newSplitObj,
                             otherBranchObj,
                             whiteCombinedTree,
                             blackCombinedTree
