@@ -117,17 +117,17 @@ export default function Training({ route }) {
     };
 
     const setupBoard = (typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree) => {
-        // TEMPORARY TO TRAIN ONLY SPLITS
-        if (typeOfTraining !== "split") {
-            createTraining(
-                branchObj,
-                splitObj,
-                otherBranchObj,
-                whiteCombinedTree,
-                blackCombinedTree
-            );
-            return;
-        }
+        // TEMPORARY TO TRAIN ONLY OTHER BRANCHES
+        // if (typeOfTraining !== "otherBranch") {
+        //     createTraining(
+        //         branchObj,
+        //         splitObj,
+        //         otherBranchObj,
+        //         whiteCombinedTree,
+        //         blackCombinedTree
+        //     );
+        //     return;
+        // }
 
         if (typeOfTraining === "branch") {
             setUpBranchTest(chosenItem, chess, setPermMessage, setPov, setMoveList, setMoveIndex);
