@@ -1,5 +1,4 @@
 import Card from "../containers/Card";
-
 import Body from "../text/Body";
 import Subheading from "../text/Subheading";
 import { StyleSheet } from "react-native";

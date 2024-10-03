@@ -64,6 +64,9 @@ export default function Training({ route }) {
     const [moveIndex, setMoveIndex] = useState(0);
     const [isMoveCorrect, setIsMoveCorrect] = useState(true);
 
+    const [confidenceScore, setConfidenceScore] = useState(0);
+    const [confidenceScoreObj, setConfidenceScoreObj] = useState({});
+
     useEffect(() => {
         const initialize = async () => {
             setPermMessage({
@@ -241,7 +244,15 @@ export default function Training({ route }) {
             }
         } else if (typeOfTraining === "otherBranch") {
             // moveOtherBranchTest(chosenItem, chess);
-            updateOtherBranchScores(moveList, moveIndex, isMoveCorrect, trees, whiteCombinedTree, blackCombinedTree, currentItem.color);
+            updateOtherBranchScores(
+                moveList,
+                moveIndex,
+                isMoveCorrect,
+                trees,
+                whiteCombinedTree,
+                blackCombinedTree,
+                currentItem.color
+            );
             if (
                 validateBranchMove(
                     from,
@@ -303,7 +314,7 @@ export default function Training({ route }) {
             {/* <CurrentStudyViewer style={styles.studyViewer} /> */}
             <Text>{JSON.stringify(moveList)}</Text>
 
-            <ProgressBar progress={50} style={styles.progressBar} />
+            <ProgressBar progress={confidenceScore} style={styles.progressBar} progressObj={confidenceScoreObj} />
         </Container>
     );
 }
