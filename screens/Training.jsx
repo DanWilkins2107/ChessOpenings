@@ -1,7 +1,7 @@
 import Chessboard from "../components/chessboard/Chessboard";
 import Container from "../components/Container";
 import { Chess } from "chess.js";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import MessageBox from "../components/chessboard/MessageBox.jsx";
 import { Colors, Fonts } from "../styling";
 import ProgressBar from "../components/training/ProgressBar.jsx";
@@ -117,18 +117,6 @@ export default function Training({ route }) {
     };
 
     const setupBoard = (typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree) => {
-        // TEMPORARY TO TRAIN ONLY OTHER BRANCHES
-        // if (typeOfTraining !== "otherBranch") {
-        //     createTraining(
-        //         branchObj,
-        //         splitObj,
-        //         otherBranchObj,
-        //         whiteCombinedTree,
-        //         blackCombinedTree
-        //     );
-        //     return;
-        // }
-
         if (typeOfTraining === "branch") {
             setUpBranchTest(chosenItem, chess, setPermMessage, setPov, setMoveList, setMoveIndex);
             setCurrentItem(chosenItem);
@@ -223,7 +211,13 @@ export default function Training({ route }) {
                     });
                     const finished = isSplitFinished(moveList);
                     if (finished) {
-                        updateSplitScores(currentItem, moveList, trees);
+                        updateSplitScores(
+                            currentItem,
+                            moveList,
+                            trees,
+                            whiteCombinedTree,
+                            blackCombinedTree
+                        );
                         // Check split status and move
                         const newSplitObj = checkAllSplits(splitObj);
                         setSplitObj(newSplitObj);
@@ -247,7 +241,7 @@ export default function Training({ route }) {
             }
         } else if (typeOfTraining === "otherBranch") {
             // moveOtherBranchTest(chosenItem, chess);
-            updateOtherBranchScores();
+            updateOtherBranchScores(moveList, moveIndex, isMoveCorrect, trees, whiteCombinedTree, blackCombinedTree, currentItem.color);
             if (
                 validateBranchMove(
                     from,
@@ -306,7 +300,8 @@ export default function Training({ route }) {
             <MessageBox tempObj={temp} permObj={permMessage} style={styles.messageBox} />
             <HintAndSkipButtons style={styles.hintAndSkipButtons} />
 
-            <CurrentStudyViewer style={styles.studyViewer} />
+            {/* <CurrentStudyViewer style={styles.studyViewer} /> */}
+            <Text>{JSON.stringify(moveList)}</Text>
 
             <ProgressBar progress={50} style={styles.progressBar} />
         </Container>

@@ -1,12 +1,17 @@
 import getMoveListFromNode from "./getMoveListFromNode";
 import saveTreesToDb from "./saveTreesToDb";
 
-export default function updateSplitScores(split, splitObj, trees) {
+export default function updateSplitScores(
+    split,
+    splitObj,
+    trees,
+    whiteCombinedTree,
+    blackCombinedTree
+) {
     const moves = getMoveListFromNode(split.splitNode, split.color);
 
     trees.forEach((tree) => {
         let currentNode = tree.tree;
-        let currentMoveIndex = 0;
 
         for (let index = 0; index < moves.length; index++) {
             const move = moves[index].move;
@@ -46,4 +51,32 @@ export default function updateSplitScores(split, splitObj, trees) {
             saveTreesToDb(tree.tree, tree.pgnUUID);
         }
     });
+
+    const relevantTree = split.color === "white" ? whiteCombinedTree : blackCombinedTree;
+    let currentNode = relevantTree;
+
+    for (let index = 0; index < moves.length; index++) {
+        const move = moves[index].move;
+        const nextNode = currentNode.children?.find((child) => child.move === move);
+        if (nextNode) {
+            currentNode = nextNode;
+        } else {
+            return;
+        }
+    }
+
+    for (const split of splitObj) {
+        const correctChild = currentNode.children.find((child) => child.move === split.move);
+        if (correctChild) {
+            if (split.correct) {
+                if (correctChild.confidence < 2) {
+                    correctChild.confidence += 1;
+                }
+            } else {
+                if (correctChild.confidence > 0) {
+                    correctChild.confidence -= 1;
+                }
+            }
+        }
+    }
 }
