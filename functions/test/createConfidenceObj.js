@@ -29,18 +29,10 @@ export default function createConfidenceObj(trees) {
         total += obj.total;
     }
 
-    console.log("Total: ", total);
     let score = 0;
     for (const obj of objArray) {
         score += (obj.score * obj.total) / total;
     }
-
-    console.log("Score: ", score);
-
-    const returnValue = {
-        score: score,
-        obj: confidenceObj,
-    };
 
     return {
         score,

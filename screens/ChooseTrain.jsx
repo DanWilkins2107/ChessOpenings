@@ -63,6 +63,7 @@ export default function ChooseTrain({ navigation }) {
             setAlert("Please select at least one chapter to train", "red");
             return;
         }
+        console.log("Chosen PGNs", chosenPGNs);
         navigation.navigate("Training", { chosenPGNs: chosenPGNs });
     };
 

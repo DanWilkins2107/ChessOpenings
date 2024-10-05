@@ -184,10 +184,10 @@ const App = () => {
         );
     }
 
-    function WrappedTrainScreen() {
+    function WrappedTrainScreen(navigation) {
         return (
             <MessageBoxProvider>
-                <Training />
+                <Training navigation={navigation} route={navigation.route} />
             </MessageBoxProvider>
         );
     }
@@ -195,7 +195,7 @@ const App = () => {
     // function WrappedDailyTest() {
     //     return (
     //         <MessageBoxProvider>
-                
+
     //         </MessageBoxProvider>
     //     )
     // }

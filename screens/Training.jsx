@@ -29,7 +29,7 @@ import updateOtherBranchScores from "../functions/test/updateOtherBranchScores.j
 import checkAllSplits from "../functions/test/checkAllSplits.js";
 import createConfidenceObj from "../functions/test/createConfidenceObj.js";
 
-export default function Training({ route }) {
+export default function Training({ navigation, route }) {
     const [chess, setChess] = useState(new Chess());
     const [chessboardLoading, setChessboardLoading] = useState(true);
     const [pov, setPov] = useState("white");
@@ -75,6 +75,7 @@ export default function Training({ route }) {
                 backgroundColor: Colors.card1,
                 textColor: Colors.text,
             });
+            console.log(route.params.chosenPGNs)
             const studyStringArray = route?.params?.chosenPGNs || (await getStudyStringArray());
             const trees = await getTrainingTrees(studyStringArray);
             setTrees(trees);
@@ -321,8 +322,8 @@ export default function Training({ route }) {
             <MessageBox tempObj={temp} permObj={permMessage} style={styles.messageBox} />
             <HintAndSkipButtons style={styles.hintAndSkipButtons} />
 
-            {/* <CurrentStudyViewer style={styles.studyViewer} /> */}
-            <Text>{JSON.stringify(moveList)}</Text>
+            <CurrentStudyViewer style={styles.studyViewer} />
+            {/* <Text>{JSON.stringify(moveList)}</Text> */}
 
             <ProgressBar
                 progress={confidenceScore}
