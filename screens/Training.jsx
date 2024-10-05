@@ -27,6 +27,7 @@ import { useContext } from "react";
 import updateSplitScores from "../functions/test/updateSplitScores.js";
 import updateOtherBranchScores from "../functions/test/updateOtherBranchScores.js";
 import checkAllSplits from "../functions/test/checkAllSplits.js";
+import createConfidenceObj from "../functions/test/createConfidenceObj.js";
 
 export default function Training({ route }) {
     const [chess, setChess] = useState(new Chess());
@@ -86,7 +87,8 @@ export default function Training({ route }) {
                 splitObj,
                 otherBranchObj,
                 whiteCombinedTree,
-                blackCombinedTree
+                blackCombinedTree,
+                trees
             );
 
             setBranchObj(branchObj);
@@ -105,7 +107,8 @@ export default function Training({ route }) {
         splitObj,
         otherBranchObj,
         whiteCombinedTree,
-        blackCombinedTree
+        blackCombinedTree,
+        trees
     ) => {
         const { typeOfTraining, chosenItem } = chooseLineToTrain(
             branchObj,
@@ -115,6 +118,9 @@ export default function Training({ route }) {
         );
         setTypeOfTraining(typeOfTraining);
         setCurrentItem(chosenItem);
+        const {score, confidenceObj} = createConfidenceObj(trees);
+        setConfidenceScoreObj(confidenceObj);
+        setConfidenceScore(score);
 
         setupBoard(typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree);
     };
@@ -187,7 +193,8 @@ export default function Training({ route }) {
                         splitObj,
                         otherBranchObj,
                         whiteCombinedTree,
-                        blackCombinedTree
+                        blackCombinedTree,
+                        trees
                     );
                 }
             } else {
@@ -229,7 +236,8 @@ export default function Training({ route }) {
                             newSplitObj,
                             otherBranchObj,
                             whiteCombinedTree,
-                            blackCombinedTree
+                            blackCombinedTree,
+                            trees
                         );
                     } else {
                         chess.undo();
@@ -280,7 +288,8 @@ export default function Training({ route }) {
                             splitObj,
                             otherBranchObj,
                             whiteCombinedTree,
-                            blackCombinedTree
+                            blackCombinedTree,
+                            trees
                         );
                     }
                 } else {
@@ -289,7 +298,8 @@ export default function Training({ route }) {
                         splitObj,
                         otherBranchObj,
                         whiteCombinedTree,
-                        blackCombinedTree
+                        blackCombinedTree,
+                        trees
                     );
                 }
             } else {
@@ -314,7 +324,11 @@ export default function Training({ route }) {
             {/* <CurrentStudyViewer style={styles.studyViewer} /> */}
             <Text>{JSON.stringify(moveList)}</Text>
 
-            <ProgressBar progress={confidenceScore} style={styles.progressBar} progressObj={confidenceScoreObj} />
+            <ProgressBar
+                progress={confidenceScore}
+                style={styles.progressBar}
+                progressObj={confidenceScoreObj}
+            />
         </Container>
     );
 }

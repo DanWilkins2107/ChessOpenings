@@ -1,20 +1,34 @@
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import Title from "../text/Title";
+import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
 import Card from "../containers/Card";
 import { Colors } from "../../styling";
 import Body from "../text/Body";
 
-export default function ProgressModal(progressObj) {
+export default function ProgressModal({ progressObj }) {
     return (
-        <View>
-            <Title style={styles.title}>Study Progress</Title>
-            <ScrollView>
-                <Card style={styles.card}>
-                    <Subheading2 style={styles.subheading}>StudyNaME</Subheading2>
-                    <Body>ChapterNAME</Body>
-                    <Body>ChapterNAeme1</Body>
-                </Card>
+        <View style={styles.container}>
+            <Subheading style={styles.title}>Study Progress</Subheading>
+            <ScrollView style={styles.scrollView}>
+                <Pressable>
+                    {Object.keys(progressObj).map((study) => {
+                        return (
+                            <Card key={study} style={styles.card}>
+                                <Subheading2 style={styles.subheading}>{progressObj[study].title}</Subheading2>
+                                {progressObj[study].chapters.map((chapter) => {
+                                    return (
+                                        <View style={styles.line}>
+                                            <Body>
+                                                {chapter.title} - {chapter.score}
+                                            </Body>
+                                        </View>
+                                    );
+                                })}
+                            </Card>
+                        );
+                    })}
+                </Pressable>
             </ScrollView>
         </View>
     );
@@ -23,11 +37,21 @@ export default function ProgressModal(progressObj) {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: Colors.card2,
+        marginBottom: 10,
     },
     title: {
         marginBottom: 10,
     },
     subheading: {
         marginBottom: 5,
+    },
+    scrollView: {
+        flex: 1,
+    },
+    container: {
+        height: "95%",
+    },
+    line: {
+        width: "100%",
     },
 });

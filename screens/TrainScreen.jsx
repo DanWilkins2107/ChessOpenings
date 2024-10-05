@@ -258,7 +258,6 @@ const TrainScreen = ({ navigation, route }) => {
     const otherMoveFunction = (from, to) => {
         let move = chess.move({ from: from, to: to });
         if (move.san === moveList[moveIndex].move) {
-            console.log("Correct");
             otherColorHelper(moveList, moveIndex + 1);
         } else {
             chess.undo();
@@ -272,7 +271,6 @@ const TrainScreen = ({ navigation, route }) => {
                 console.log("Already Moved!");
                 chess.undo();
             } else {
-                console.log("Correct!");
                 const newMoveObj = { ...splitChildMoveList, [move.san]: true };
                 setSplitChildMoveList(newMoveObj);
                 let allMoved = true;

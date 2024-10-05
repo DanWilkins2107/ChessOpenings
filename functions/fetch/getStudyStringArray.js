@@ -14,7 +14,7 @@ export default async function getStudyStringArray() {
             const chapters = studyData.chapters;
 
             chapters.forEach((chapter) => {
-                const chapterString = ChapterAndStudyToString(chapter, studyData);
+                const chapterString = ChapterAndStudyToString(chapter, studyData, studyUUID);
                 studyStringArray.push(chapterString);
             });
         })

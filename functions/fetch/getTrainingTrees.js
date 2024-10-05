@@ -5,7 +5,7 @@ export default async function getTrainingTrees(studyStringArray) {
     const treeArray = [];
     await Promise.all(
         studyStringArray.map(async (pgnString) => {
-            const [pgnUUID, color, title, chapterName] = pgnString.split("___");
+            const [pgnUUID, color, title, chapterName, studyUUID] = pgnString.split("___");
             const pgnData = await getPGNfromPGNUUID(pgnUUID);
 
             if (!pgnData) {
@@ -17,6 +17,7 @@ export default async function getTrainingTrees(studyStringArray) {
                 pgnUUID: pgnUUID,
                 tree: pgnToTree(pgnData),
                 color: color,
+                studyUUID: studyUUID,
             };
             treeArray.push(tree);
         })

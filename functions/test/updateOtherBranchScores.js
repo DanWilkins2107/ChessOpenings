@@ -42,7 +42,6 @@ export default function updateOtherBranchScores(
     });
 
     // Update combined tree
-    console.log("Color", color);
     const relevantTree = color === "white" ? blackCombinedTree : whiteCombinedTree;
 
     let currentNode = relevantTree;

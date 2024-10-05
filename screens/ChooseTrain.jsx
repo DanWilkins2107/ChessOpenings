@@ -52,7 +52,8 @@ export default function ChooseTrain({ navigation }) {
                 if (chapter) {
                     const chapterString = ChapterAndStudyToString(
                         studyObj[study].chapters[index],
-                        studyObj[study]
+                        studyObj[study],
+                        study
                     );
                     chosenPGNs.push(chapterString);
                 }
