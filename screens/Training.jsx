@@ -1,7 +1,7 @@
 import Chessboard from "../components/chessboard/Chessboard";
 import Container from "../components/Container";
 import { Chess } from "chess.js";
-import { StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import MessageBox from "../components/chessboard/MessageBox.jsx";
 import { Colors, Fonts } from "../styling";
 import ProgressBar from "../components/training/ProgressBar.jsx";
@@ -75,7 +75,6 @@ export default function Training({ navigation, route }) {
                 backgroundColor: Colors.card1,
                 textColor: Colors.text,
             });
-            console.log(route.params.chosenPGNs)
             const studyStringArray = route?.params?.chosenPGNs || (await getStudyStringArray());
             const trees = await getTrainingTrees(studyStringArray);
             setTrees(trees);
@@ -119,7 +118,7 @@ export default function Training({ navigation, route }) {
         );
         setTypeOfTraining(typeOfTraining);
         setCurrentItem(chosenItem);
-        const {score, confidenceObj} = createConfidenceObj(trees);
+        const { score, confidenceObj } = createConfidenceObj(trees);
         setConfidenceScoreObj(confidenceObj);
         setConfidenceScore(score);
 
@@ -252,16 +251,6 @@ export default function Training({ navigation, route }) {
                 chess.undo();
             }
         } else if (typeOfTraining === "otherBranch") {
-            // moveOtherBranchTest(chosenItem, chess);
-            updateOtherBranchScores(
-                moveList,
-                moveIndex,
-                isMoveCorrect,
-                trees,
-                whiteCombinedTree,
-                blackCombinedTree,
-                currentItem.color
-            );
             if (
                 validateBranchMove(
                     from,
@@ -274,6 +263,15 @@ export default function Training({ navigation, route }) {
                     setStreak
                 )
             ) {
+                updateOtherBranchScores(
+                    moveList,
+                    moveIndex,
+                    isMoveCorrect,
+                    trees,
+                    whiteCombinedTree,
+                    blackCombinedTree,
+                    currentItem.color
+                );
                 if (moveIndex + 2 < moveList.length) {
                     const newMoveIndex = await otherBranchSkipMoves(
                         chess,
@@ -322,8 +320,10 @@ export default function Training({ navigation, route }) {
             <MessageBox tempObj={temp} permObj={permMessage} style={styles.messageBox} />
             <HintAndSkipButtons style={styles.hintAndSkipButtons} />
 
-            <CurrentStudyViewer style={styles.studyViewer} />
-            {/* <Text>{JSON.stringify(moveList)}</Text> */}
+            {/* <CurrentStudyViewer style={styles.studyViewer} /> */}
+            <ScrollView>
+                <Text>{JSON.stringify(moveList)}</Text>
+            </ScrollView>
 
             <ProgressBar
                 progress={confidenceScore}

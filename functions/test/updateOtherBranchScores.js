@@ -10,6 +10,7 @@ export default function updateOtherBranchScores(
     color
 ) {
     const movesPlayed = moveList.slice(0, moveIndex + 1);
+    console.log(movesPlayed);
     trees.forEach((tree) => {
         let currentNode = tree.tree;
         let currentMoveIndex = 0;
@@ -26,15 +27,20 @@ export default function updateOtherBranchScores(
         }
 
         // Update the confidence score
+        console.log("Current node", currentNode.move);
+        console.log(isCorrect)
         const currentConfidence = currentNode.confidence || 0;
+        console.log("Current confidence", currentConfidence);
 
         if (isCorrect) {
             if (currentConfidence < 2) {
+                console.log("Increasing confidence");
                 currentNode.confidence = currentConfidence + 1;
                 saveTreesToDb(tree.tree, tree.pgnUUID);
             }
         } else {
             if (currentConfidence > 0) {
+                console.log("Decreasing confidence");
                 currentNode.confidence = currentConfidence - 1;
                 saveTreesToDb(tree.tree, tree.pgnUUID);
             }

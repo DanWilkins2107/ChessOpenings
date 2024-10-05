@@ -56,12 +56,17 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
     };
 
     let total = 0;
+    console.log("Start");
     for (let i = 0; i < 5; i++) {
         total += branchMinConfObj[i].length * branchWeightings[i];
+        console.log(`branch ${i}`, branchMinConfObj[i].length);
     }
     for (let i = 0; i < 2; i++) {
         total += splitMinConfObj[i].length * splitWeightings[i];
+        console.log(`split ${i}`, splitMinConfObj[i].length);
+
         total += otherBranchMinConfObj[i].length * otherBranchWeightings[i];
+        console.log(`other ${i}`, splitMinConfObj[i].length);
     }
 
     if (total < minMoveValue) {
@@ -89,13 +94,13 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
             0: 1,
             1: 0.5,
         },
-    }
+    };
 
     let totalPickingProb = 0;
     let branchTotal = 0;
     let splitTotal = 0;
     let otherBranchTotal = 0;
-    
+
     for (let i = 0; i < 5; i++) {
         totalPickingProb += pickingProbabilities.branch[i] * branchMinConfObj[i].length;
         branchTotal += pickingProbabilities.branch[i] * branchMinConfObj[i].length;

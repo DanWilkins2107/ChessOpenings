@@ -18,9 +18,9 @@ export default function ProgressModal({ progressObj }) {
                                 <Subheading2 style={styles.subheading}>{progressObj[study].title}</Subheading2>
                                 {progressObj[study].chapters.map((chapter) => {
                                     return (
-                                        <View style={styles.line}>
+                                        <View style={styles.line} key={chapter.UUID}>
                                             <Body>
-                                                {chapter.title} - {chapter.score}
+                                                {chapter.title} - {chapter.score}%
                                             </Body>
                                         </View>
                                     );
