@@ -4,7 +4,7 @@ import { Chess } from "chess.js";
 import { ScrollView, StyleSheet, Text } from "react-native";
 import MessageBox from "../components/chessboard/MessageBox.jsx";
 import { Colors, Fonts } from "../styling";
-import ProgressBar from "../components/training/ProgressBar.jsx";
+import BottomProgressBar from "../components/training/BottomProgressBar.jsx";
 import CurrentStudyViewer from "../components/training/CurrentStudyViewer.jsx";
 import HintAndSkipButtons from "../components/training/HintAndSkipButtons.jsx";
 import { useEffect, useState } from "react";
@@ -325,7 +325,7 @@ export default function Training({ navigation, route }) {
                 <Text>{JSON.stringify(moveList)}</Text>
             </ScrollView>
 
-            <ProgressBar
+            <BottomProgressBar
                 progress={confidenceScore}
                 style={styles.progressBar}
                 progressObj={confidenceScoreObj}

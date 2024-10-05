@@ -5,8 +5,14 @@ import Subheading2 from "../text/Subheading2";
 import Card from "../containers/Card";
 import { Colors } from "../../styling";
 import Body from "../text/Body";
+import OpacityPressable from "../OpacityPressable";
+import IconFA5 from "react-native-vector-icons/FontAwesome5";
+import ProgressBar from "./ProgressBar";
 
 export default function ProgressModal({ progressObj }) {
+    const handleReset = () => {
+        console.log("TODO: reset");
+    }
     return (
         <View style={styles.container}>
             <Subheading style={styles.title}>Study Progress</Subheading>
@@ -22,6 +28,12 @@ export default function ProgressModal({ progressObj }) {
                                             <Body>
                                                 {chapter.title} - {chapter.score}%
                                             </Body>
+                                            <View style={styles.row}>
+                                                <ProgressBar progress={chapter.score} />
+                                                <OpacityPressable style={styles.reset}>
+                                                    <IconFA5 name="undo-alt" size={15} color={Colors.text} />
+                                                </OpacityPressable>
+                                            </View>
                                         </View>
                                     );
                                 })}
@@ -37,7 +49,7 @@ export default function ProgressModal({ progressObj }) {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: Colors.card2,
-        marginBottom: 10,
+        marginBottom: 20,
     },
     title: {
         marginBottom: 10,
@@ -54,4 +66,18 @@ const styles = StyleSheet.create({
     line: {
         width: "100%",
     },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "100%",
+        alignItems: "center",
+    },
+    reset: {
+        backgroundColor: Colors.card3,
+        width: 40,
+        height: 30,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 5,
+    }
 });

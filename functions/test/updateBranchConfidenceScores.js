@@ -17,38 +17,35 @@ export default function updateBranchConfidenceScores(
         if (tree.color !== color) {
             return;
         }
-        const treeRootNode = tree.tree;
+        let currentNode = tree.tree;
         let needsSaving = false;
-        const treeHelperFunction = (node, currentMoveNumber) => {
-            if (!node.children || node.children.length === 0) {
+
+        for (let i = 0; i < moveIndex + 1; i++) {
+            const move = moveList[i].move;
+            const nextNode = currentNode.children?.find((child) => child.move === move);
+            if (nextNode) {
+                currentNode = nextNode;
+            } else {
                 return;
             }
-            // Attempt to find a child that matches the move, there will only be one
-            const matchingChild = node.children.find(
-                (child) => child.move === moveList[currentMoveNumber].move
-            );
-            if (matchingChild) {
-                if (currentMoveNumber === moveIndex) {
-                    if (isCorrect) {
-                        if ((matchingChild.confidence || 0) < 5) {
-                            matchingChild.confidence = (matchingChild.confidence || 0) + 1;
-                            needsSaving = true;
-                        }
-                    } else {
-                        if ((matchingChild.confidence || 0) > 0) {
-                            matchingChild.confidence = (matchingChild.confidence || 0) - 1;
-                            needsSaving = true;
-                        }
-                    }
-                } else {
-                    treeHelperFunction(matchingChild, currentMoveNumber + 1);
-                }
-            }
-        };
+        }
 
-        treeHelperFunction(treeRootNode, 0);
+        if (isCorrect) {
+            if ((currentNode.confidence || 0) < 5) {
+                console.log("upped confidence", currentNode.confidence);
+                currentNode.confidence = (currentNode.confidence || 0) + 1;
+                needsSaving = true;
+            }
+        } else {
+            if ((currentNode.confidence || 0) > 0) {
+                console.log("lowered confidence", currentNode.confidence);
+                currentNode.confidence = (currentNode.confidence || 0) - 1;
+                needsSaving = true;
+            }
+        }
+
         if (needsSaving) {
-            saveTreesToDb(treeRootNode, tree.pgnUUID);
+            saveTreesToDb(tree.tree, tree.pgnUUID);
         }
     });
 

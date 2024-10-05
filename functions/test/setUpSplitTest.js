@@ -17,7 +17,7 @@ export default function setUpSplitTest(split, chess, setPermMessage, setPov, set
 
     const correctMoveArray = [];
     split.splitNode.children.forEach((child) => {
-        correctMoveArray.push({ move: child.move, guessed: false, correct: false });
+        correctMoveArray.push({ move: child.move, guessed: false, correct: false, confidence: child.confidence || 0 });
     });
 
     setMoveList(correctMoveArray);

@@ -17,7 +17,7 @@ const getMoveListFromNode = (node, color) => {
     const moveListTemp = moveList.reverse();
 
     for (let i = 0; i < moveListTemp.length; i++) {
-        if (i % 2 === movesToRemoveConfidence) {
+        if (true) {
             // Note indexing starts at 0
             reversedMoveList.push({ move: moveListTemp[i].move });
         } else {

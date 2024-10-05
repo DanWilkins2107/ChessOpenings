@@ -1,5 +1,5 @@
 import editReachedTree from "../test/editReachedTree";
-import findBranchCategory from "../test/findBranchCategory";
+import findInitialBranchCategory from "../test/findInitialBranchCategory";
 import findOtherBranchCategory from "../test/findOtherBranchCategory";
 import findSplitCategory from "../test/findSplitCategory";
 import getBranchEnds from "../test/getBranchEnds";
@@ -26,7 +26,7 @@ export default async function setUpTraining(treeArray) {
     // Sort Branches
     const branchObj = { unselected: [], selected: [], finished: [] };
     allBranchEnds.forEach((end) => {
-        const category = findBranchCategory(end, end.color, "unselected", 5);
+        const category = findInitialBranchCategory(end);
         branchObj[category].push(end);
     });
 
