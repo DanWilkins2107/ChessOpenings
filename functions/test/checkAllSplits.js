@@ -13,12 +13,12 @@ export default function checkAllSplits(splitObj) {
     });
 
     splitObj.selected.map((split) => {
-        const category = findSplitCategory(split, "selected", 2);
+        const category = findSplitCategory(split.splitNode, "selected", 2);
         newSplitObj[category].push(split);
     });
 
     splitObj.finished.map((split) => {
-        const category = findSplitCategory(split, "finished", 2);
+        const category = findSplitCategory(split.splitNode, "finished", 2);
         newSplitObj[category].push(split);
     });
     

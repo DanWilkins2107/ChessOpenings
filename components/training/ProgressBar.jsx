@@ -2,9 +2,9 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Colors } from '../../styling';
 
-export default function ProgressBar({ progress }) {
+export default function ProgressBar({ progress, style = {} }) {
     return (
-        <View style={styles.barWrapper}>
+        <View style={[styles.barWrapper, style]}>
             <View style={[{ width: `${progress}%` }, styles.barInner]} />
         </View>
     );

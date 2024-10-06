@@ -29,7 +29,7 @@ export default function ProgressModal({ progressObj }) {
                                                 {chapter.title} - {chapter.score}%
                                             </Body>
                                             <View style={styles.row}>
-                                                <ProgressBar progress={chapter.score} />
+                                                <ProgressBar progress={chapter.score} style={styles.bar} />
                                                 <OpacityPressable style={styles.reset}>
                                                     <IconFA5 name="undo-alt" size={15} color={Colors.text} />
                                                 </OpacityPressable>
@@ -79,5 +79,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 5,
+    },
+    bar: {
+        backgroundColor: Colors.card3,
     }
 });

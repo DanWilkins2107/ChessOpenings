@@ -9,21 +9,31 @@ export default function makeCombinedTree({ branchArray }) {
 
     branchArray.forEach((branch) => {
         // Move to initial node of the branch
-        let currentNode = branch.endNode;
-        const branchMoveList = getMoveListFromNode(currentNode);
-        while (currentNode.parent) {
-            currentNode = currentNode.parent;
+        let currentBranchNode = branch.endNode;
+        const branchMoveList = getMoveListFromNode(currentBranchNode);
+        while (currentBranchNode.parent) {
+            currentBranchNode = currentBranchNode.parent;
         }
+        console.log(currentBranchNode);
         let currentTreeNode = combinedTree;
         branchMoveList.forEach((moveObj) => {
             let found = false;
             currentTreeNode.children.forEach((child) => {
-                if (child.move === moveObj.move) {
-                    currentTreeNode = child;
-                    found = true;
-                    if (moveObj.confidence || 0 < currentNode.confidence || 0) {
-                        currentNode.confidence = moveObj.confidence || 0;
-                    }
+                if (found || child.move !== moveObj.move) {
+                    return;
+                }
+
+                found = true;
+                currentTreeNode = child;
+                currentBranchNode = currentBranchNode.children.find(
+                    (child) => child.move === moveObj.move
+                );
+                const currentConfidence = currentTreeNode.confidence || 0;
+                const currentBranchConfidence = currentBranchNode.confidence || 0;
+
+                // Choose the smallest confidence to ensure testing continues until 100% confidence
+                if (currentConfidence > currentBranchConfidence) {
+                    currentTreeNode.confidence = currentConfidence;
                 }
             });
 
@@ -36,6 +46,12 @@ export default function makeCombinedTree({ branchArray }) {
                 };
                 currentTreeNode.children.push(newTreeNode);
                 currentTreeNode = newTreeNode;
+                console.log(
+                    "Added new node: move:",
+                    moveObj.move,
+                    "confidence:",
+                    moveObj.confidence || 0
+                );
             }
         });
     });

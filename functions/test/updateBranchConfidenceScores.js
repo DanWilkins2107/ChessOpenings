@@ -30,15 +30,15 @@ export default function updateBranchConfidenceScores(
             }
         }
 
+        console.log("Current node", currentNode.move);
+
         if (isCorrect) {
             if ((currentNode.confidence || 0) < 5) {
-                console.log("upped confidence", currentNode.confidence);
                 currentNode.confidence = (currentNode.confidence || 0) + 1;
                 needsSaving = true;
             }
         } else {
             if ((currentNode.confidence || 0) > 0) {
-                console.log("lowered confidence", currentNode.confidence);
                 currentNode.confidence = (currentNode.confidence || 0) - 1;
                 needsSaving = true;
             }
@@ -86,7 +86,7 @@ export default function updateBranchConfidenceScores(
     const finishedToSelected = [];
 
     trackedBranchObj.unselected.forEach((branch) => {
-        moveBranches(branch, nodesToRemoveFromTrackedUnselected, (currentNode, branch) => {
+        moveBranches(branch, nodesToRemoveFromTrackedUnselected, (branch) => {
             // Unselected can move to finished if it is fully confident
             const branchMoves = getMoveListFromNode(branch.endNode, branch.color);
             if (checkForFullConfidenceMoveList(branchMoves) === -1) {
@@ -111,7 +111,7 @@ export default function updateBranchConfidenceScores(
     });
 
     trackedBranchObj.finished.forEach((branch) => {
-        moveBranches(branch, nodesToRemoveFromTrackedFinished, (currentNode, branch, isCorrect) => {
+        moveBranches(branch, nodesToRemoveFromTrackedFinished, (branch, isCorrect) => {
             // Finished can move to selected if it is no longer fully confident
             if (!isCorrect) {
                 const branchMoves = getMoveListFromNode(branch.endNode, branch.color);

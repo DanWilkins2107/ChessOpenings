@@ -263,6 +263,7 @@ export default function Training({ navigation, route }) {
                     setStreak
                 )
             ) {
+                console.log("Here 1")
                 updateOtherBranchScores(
                     moveList,
                     moveIndex,

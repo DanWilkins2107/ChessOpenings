@@ -65,15 +65,11 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
     }
 
     if (total < minMoveValue) {
-        console.log(branchObj.unselected.length);
         if (branchObj.unselected.length > 0) {
             const randomBranch = randomItem(branchObj.unselected);
-            console.log("randomBranch", randomBranch);
             branchObj.unselected = branchObj.unselected.filter((branch) => branch !== randomBranch);
             branchObj.selected.push(randomBranch);
             branchMinConfObj[0].push(randomBranch);
-        } else {
-
         }
     }
 
@@ -154,6 +150,10 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
             }
         }
     }
+
+    console.log("Branch", branchObj.unselected.length, branchObj.selected.length, branchObj.finished.length);
+    console.log("Split", splitObj.unselected.length, splitObj.selected.length, splitObj.finished.length);
+    console.log("OtherBranch", otherBranchObj.unselected.length, otherBranchObj.selected.length, otherBranchObj.finished.length);
 
     return { typeOfTraining, chosenItem };
 }

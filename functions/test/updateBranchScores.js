@@ -49,7 +49,7 @@ export default function updateBranchScores(
     updateCombinedTree(validTree, moveList, moveIndex);
 
     splitObj.unselected.map((split) => {
-        const category = findSplitCategory(split, "unselected", 2);
+        const category = findSplitCategory(split.splitNode, "unselected", 2);
         if (category === "selected") {
             splitObj.selected.push(split);
         } else if (category === "finished") {
