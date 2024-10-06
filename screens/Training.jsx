@@ -167,7 +167,7 @@ export default function Training({ navigation, route }) {
                 )
             ) {
                 setIsMoveCorrect(true);
-                const { newBranchObj, newTrackedBranchObj } = updateBranchScores(
+                const newBranchObj = updateBranchScores(
                     branchObj,
                     trackedBranchObj,
                     whiteCombinedTree,
@@ -181,7 +181,6 @@ export default function Training({ navigation, route }) {
                     currentItem.color
                 );
                 setBranchObj(newBranchObj);
-                setTrackedBranchObj(newTrackedBranchObj);
                 if (moveIndex + 2 < moveList.length) {
                     await pause(200);
                     chess.move(moveList[moveIndex + 1].move);
@@ -263,7 +262,7 @@ export default function Training({ navigation, route }) {
                     setStreak
                 )
             ) {
-                console.log("Here 1")
+                console.log("Here 1");
                 updateOtherBranchScores(
                     moveList,
                     moveIndex,

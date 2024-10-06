@@ -30,8 +30,6 @@ export default function updateBranchConfidenceScores(
             }
         }
 
-        console.log("Current node", currentNode.move);
-
         if (isCorrect) {
             if ((currentNode.confidence || 0) < 5) {
                 currentNode.confidence = (currentNode.confidence || 0) + 1;
@@ -75,17 +73,13 @@ export default function updateBranchConfidenceScores(
         }
     };
 
-    const nodesToRemoveFromTrackedUnselected = [];
-    const nodesToRemoveFromTrackedSelected = [];
-    const nodesToRemoveFromTrackedFinished = [];
-
     // Possible changes: unselected -> finished, unselected -> selected, selected -> finished, finished -> selected
     const unselectedToFinished = [];
     const unselectedToSelected = [];
     const selectedToFinished = [];
     const finishedToSelected = [];
 
-    trackedBranchObj.unselected.forEach((branch) => {
+    branchObj.unselected.forEach((branch) => {
         moveBranches(branch, nodesToRemoveFromTrackedUnselected, (branch) => {
             // Unselected can move to finished if it is fully confident
             const branchMoves = getMoveListFromNode(branch.endNode, branch.color);
@@ -100,7 +94,7 @@ export default function updateBranchConfidenceScores(
         });
     });
 
-    trackedBranchObj.selected.forEach((branch) => {
+    branchObj.selected.forEach((branch) => {
         moveBranches(branch, nodesToRemoveFromTrackedSelected, (currentNode, branch) => {
             // Selected can move to finished if it is fully confident
             const branchMoves = getMoveListFromNode(branch.endNode, branch.color);
@@ -110,7 +104,7 @@ export default function updateBranchConfidenceScores(
         });
     });
 
-    trackedBranchObj.finished.forEach((branch) => {
+    branchObj.finished.forEach((branch) => {
         moveBranches(branch, nodesToRemoveFromTrackedFinished, (branch, isCorrect) => {
             // Finished can move to selected if it is no longer fully confident
             if (!isCorrect) {
@@ -123,31 +117,12 @@ export default function updateBranchConfidenceScores(
     });
 
     // Perform list filtering
-    const newTrackedBranchesUnselected = trackedBranchObj.unselected.filter(
-        (branch) =>
-            !nodesToRemoveFromTrackedUnselected.includes(branch) &&
-            !unselectedToFinished.includes(branch) &&
-            !unselectedToSelected.includes(branch)
-    );
-
     const newUnselectedBranches = branchObj.unselected.filter(
         (branch) => !unselectedToFinished.includes(branch) && !unselectedToSelected.includes(branch)
     );
 
-    const newTrackedBranchesSelected = branchObj.selected.filter(
-        (branch) =>
-            !nodesToRemoveFromTrackedSelected.includes(branch) &&
-            !selectedToFinished.includes(branch)
-    );
-
     const newSelectedBranches = branchObj.selected.filter(
         (branch) => !selectedToFinished.includes(branch)
-    );
-
-    const newTrackedBranchesFinished = branchObj.finished.filter(
-        (branch) =>
-            !nodesToRemoveFromTrackedFinished.includes(branch) &&
-            !finishedToSelected.includes(branch)
     );
 
     const newFinishedBranches = branchObj.finished.filter(
@@ -157,28 +132,21 @@ export default function updateBranchConfidenceScores(
     // Perform adding of nodes
     unselectedToFinished.forEach((branch) => {
         newFinishedBranches.push(branch);
-        newTrackedBranchesFinished.push(branch);
     });
 
     unselectedToSelected.forEach((branch) => {
         newSelectedBranches.push(branch);
-        newTrackedBranchesSelected.push(branch);
     });
 
     selectedToFinished.forEach((branch) => {
         newFinishedBranches.push(branch);
-        newTrackedBranchesFinished.push(branch);
     });
 
     finishedToSelected.forEach((branch) => {
         newSelectedBranches.push(branch);
-        newTrackedBranchesSelected.push(branch);
     });
 
     return {
-        newTrackedBranchesUnselected,
-        newTrackedBranchesSelected,
-        newTrackedBranchesFinished,
         newUnselectedBranches,
         newSelectedBranches,
         newFinishedBranches,

@@ -5,7 +5,6 @@ import updateCombinedTree from "./updateCombinedTree";
 
 export default function updateBranchScores(
     branchObj,
-    trackedBranchObj,
     whiteCombinedTree,
     blackCombinedTree,
     splitObj,
@@ -17,14 +16,10 @@ export default function updateBranchScores(
     color
 ) {
     const {
-        newTrackedBranchesUnselected,
-        newTrackedBranchesSelected,
-        newTrackedBranchesFinished,
         newUnselectedBranches,
         newSelectedBranches,
         newFinishedBranches,
     } = updateBranchConfidenceScores(
-        trackedBranchObj,
         branchObj,
         isCorrect,
         moveList,
@@ -37,12 +32,6 @@ export default function updateBranchScores(
         unselected: newUnselectedBranches,
         selected: newSelectedBranches,
         finished: newFinishedBranches,
-    };
-
-    const newTrackedBranchObj = {
-        unselected: newTrackedBranchesUnselected,
-        selected: newTrackedBranchesSelected,
-        finished: newTrackedBranchesFinished,
     };
 
     const validTree = color === "white" ? whiteCombinedTree : blackCombinedTree;
@@ -76,5 +65,5 @@ export default function updateBranchScores(
         }
     });
 
-    return { newBranchObj, newTrackedBranchObj };
+    return newBranchObj;
 }

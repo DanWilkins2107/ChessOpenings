@@ -24,6 +24,9 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
 
     branchObj.selected.map((branch) => {
         const confidence = branchMinConfScore(branch);
+        if (confidence === 5) {
+            console.log("TODO: FIX/REMOVE MOI")
+        }
         branchMinConfObj[confidence].push(branch);
     });
 
