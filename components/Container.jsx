@@ -1,5 +1,13 @@
 import React from "react";
-import { SafeAreaView, View, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
+import {
+    SafeAreaView,
+    KeyboardAvoidingView,
+    View,
+    StyleSheet,
+    TouchableWithoutFeedback,
+    Keyboard,
+    Platform,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Colors } from "../styling";
@@ -13,9 +21,12 @@ const Container = ({ theme = "dark", style, children, ...props }) => {
     return (
         <View style={styles.fill}>
             <LinearGradient colors={colors} style={styles.fill}>
-                <View style={[{ paddingTop: headerHeight }, styles.innerContainer]}>
+                <KeyboardAvoidingView
+                    style={[{ paddingTop: headerHeight }, styles.innerContainer]}
+                    behavior={Platform.OS === "ios" ? "height" : "padding"}
+                >
                     <SafeAreaView style={[styles.innerContainer, style]}>{children}</SafeAreaView>
-                </View>
+                </KeyboardAvoidingView>
             </LinearGradient>
         </View>
     );

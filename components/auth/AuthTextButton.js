@@ -1,17 +1,22 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import Subheading2 from "../text/Subheading2";
+import { Colors } from "../../styling";
 
-const AuthTextButton = ({ title, onPress, fontSize }) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <Text style={[styles.text, { fontSize: fontSize }]}>{title}</Text>
-    </TouchableOpacity>
-  );
+const AuthTextButton = ({ text, onPress }) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={styles.button}>
+            <Subheading2 style={styles.text}>{text}</Subheading2>
+        </TouchableOpacity>
+    );
 };
 
 const styles = StyleSheet.create({
-  text: {
-    color: "#C7B8EA",
-  },
+    text: {
+        color: Colors.primaryButton,
+    },
+    button: {
+        marginHorizontal: 5,
+    },
 });
 
 export default AuthTextButton;

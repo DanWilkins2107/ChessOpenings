@@ -7,12 +7,20 @@ import ObjectiveButton from "../components/dashboard/ObjectiveButton";
 import MainButton from "../components/genericButtons/MainButton";
 import Body from "../components/text/Body";
 import SecondaryButton from "../components/genericButtons/SecondaryButton";
+import { useEffect, useState } from "react";
+import { auth } from "../firebase";
 
 export default function Dashboard() {
+    const [displayName, setDisplayName] = useState(null);
+    useEffect(() => {
+        // Fetch user display name
+        const displayName = auth.currentUser.displayName;
+        setDisplayName(displayName);
+    })
     return (
         <Container theme="light">
             <ScrollView style={styles.container}>
-                <Title style={styles.title}>Hi __________</Title>
+                <Title style={styles.title}>{displayName ? "Hi " + displayName : "Welcome"}</Title>
                 <Card style={styles.card}>
                     <Subheading style={styles.subheading}>Get Started</Subheading>
                     <ObjectiveButton style={styles.button} text="Create a Study" completed />

@@ -37,6 +37,9 @@ import {
     MessageBoxContext,
     MessageBoxProvider,
 } from "./components/chessboard/MessageBoxContextProvider.jsx";
+import Login from "./screens/Login.jsx";
+import SignUp from "./screens/SignUp.jsx";
+import ForgotPassword from "./screens/ForgotPassword.jsx";
 
 const Stack = createStackNavigator();
 
@@ -98,6 +101,20 @@ const App = () => {
                         headerTitle: (props) => HeaderCenter(props),
                         headerTransparent: true,
                     }}
+                />
+            </Stack.Navigator>
+        );
+    }
+
+    function AuthScreens() {
+        return (
+            <Stack.Navigator>
+                <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+                <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
+                <Stack.Screen
+                    name="ForgotPassword"
+                    component={ForgotPassword}
+                    options={{ headerShown: false }}
                 />
             </Stack.Navigator>
         );
@@ -226,55 +243,60 @@ const App = () => {
                             ))}
                         </Stack.Navigator>
                     )}
-                    {actual && (
-                        <Tab.Navigator
-                            initialRouteName="Home"
-                            screenOptions={{
-                                headerShown: false,
-                                tabBarStyle: {
-                                    backgroundColor: Colors.background,
-                                    borderTopWidth: 0,
-                                },
-                            }}
-                        >
-                            <Tab.Screen
-                                name="Home"
-                                component={HomeScreens}
-                                options={{
-                                    tabBarIcon: ({ color, size }) => {
-                                        return <Icon name="home" color={color} size={size} />;
+                    {actual &&
+                        (user ? (
+                            <Tab.Navigator
+                                initialRouteName="Home"
+                                screenOptions={{
+                                    headerShown: false,
+                                    tabBarStyle: {
+                                        backgroundColor: Colors.background,
+                                        borderTopWidth: 0,
                                     },
                                 }}
-                            />
-                            <Tab.Screen
-                                name="Study"
-                                component={StudyScreens}
-                                options={{
-                                    tabBarIcon: ({ color, size }) => {
-                                        return <Icon name="book" color={color} size={size} />;
-                                    },
-                                }}
-                            />
-                            <Tab.Screen
-                                name="Train"
-                                component={TrainScreens}
-                                options={{
-                                    tabBarIcon: ({ color, size }) => {
-                                        return <Icon name="refresh" color={color} size={size} />;
-                                    },
-                                }}
-                            />
-                            <Tab.Screen
-                                name="Settings"
-                                component={SettingsScreens}
-                                options={{
-                                    tabBarIcon: ({ color, size }) => {
-                                        return <Icon name="cog" color={color} size={size} />;
-                                    },
-                                }}
-                            />
-                        </Tab.Navigator>
-                    )}
+                            >
+                                <Tab.Screen
+                                    name="Home"
+                                    component={HomeScreens}
+                                    options={{
+                                        tabBarIcon: ({ color, size }) => {
+                                            return <Icon name="home" color={color} size={size} />;
+                                        },
+                                    }}
+                                />
+                                <Tab.Screen
+                                    name="Study"
+                                    component={StudyScreens}
+                                    options={{
+                                        tabBarIcon: ({ color, size }) => {
+                                            return <Icon name="book" color={color} size={size} />;
+                                        },
+                                    }}
+                                />
+                                <Tab.Screen
+                                    name="Train"
+                                    component={TrainScreens}
+                                    options={{
+                                        tabBarIcon: ({ color, size }) => {
+                                            return (
+                                                <Icon name="refresh" color={color} size={size} />
+                                            );
+                                        },
+                                    }}
+                                />
+                                <Tab.Screen
+                                    name="Settings"
+                                    component={SettingsScreens}
+                                    options={{
+                                        tabBarIcon: ({ color, size }) => {
+                                            return <Icon name="cog" color={color} size={size} />;
+                                        },
+                                    }}
+                                />
+                            </Tab.Navigator>
+                        ) : (
+                            <AuthScreens />
+                        ))}
                 </NavigationContainer>
             </ModalProvider>
         </AlertProvider>
