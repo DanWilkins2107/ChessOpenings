@@ -15,11 +15,11 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         setRootNode(tempNode);
     }, [currentNode]);
 
-    const renderTree = (node, moveNumber, isVariation = false) => {
+    const renderTree = (node, moveNumber, moveIndex = 0) => {
         if (!node) return null;
         let moves = [];
         let tempNode = node;
-        let moveIndex = 0;
+        let afterVariation = false;
         while (tempNode.children && tempNode.children.length > 0) {
             tempNode = tempNode.children[0];
             let move = (
@@ -28,7 +28,8 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                         tempNode,
                         moveNumber + Math.floor(moveIndex / 2),
                         moveIndex % 2 === 0,
-                        moveIndex === 0
+                        moveIndex === 0,
+                        afterVariation
                     )}
                     {tempNode.parent.children.length > 1 && (
                         <Text key={`${tempNode.move}-variations`}>
@@ -47,8 +48,8 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                                         <Text>
                                             {renderTree(
                                                 child,
-                                                moveNumber + Math.floor(moveIndex / 2) + 1,
-                                                true
+                                                moveNumber + Math.floor(moveIndex / 2),
+                                                (moveIndex + 1) % 2
                                             )}
                                         </Text>
                                     )}
@@ -63,6 +64,11 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
             );
             moves.push(move);
             moveIndex++;
+            if (tempNode.parent.children.length > 1) {
+                afterVariation = true;
+            } else {
+                afterVariation = false;
+            }
         }
         return (
             <Text style={styles.text}>
@@ -75,11 +81,17 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         );
     };
 
-    const renderMove = (node, moveNumber, isWhiteMove, isFirstVariationMove) => {
+    const renderMove = (
+        node,
+        moveNumber,
+        isWhiteMove,
+        isFirstVariationMove,
+        isAfterVariationMove
+    ) => {
         const move = node.move;
         const isActive = node === currentNode;
         let prefix = "";
-        if (isFirstVariationMove) {
+        if (isFirstVariationMove || isAfterVariationMove) {
             prefix = isWhiteMove ? `${moveNumber}.` : `${moveNumber}...`;
         } else {
             prefix = isWhiteMove ? `${moveNumber}.` : "";
@@ -91,7 +103,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                 onPress={() => handleMoveClick(node)}
                 style={[styles.moveCircle, isActive && styles.activeMove]}
             >
-                <Body style={[isActive && { color: Colors.background}, styles.text]}>
+                <Body style={[isActive && { color: Colors.background }, styles.text]}>
                     {prefix + move}
                 </Body>
             </TouchableOpacity>
@@ -138,7 +150,7 @@ const styles = StyleSheet.create({
     moveCircle: {
         borderRadius: 5,
         padding: 2,
-    }
+    },
 });
 
 export default MoveList;

@@ -21,12 +21,12 @@ const Container = ({ theme = "dark", style, children, ...props }) => {
     return (
         <View style={styles.fill}>
             <LinearGradient colors={colors} style={styles.fill}>
-                <KeyboardAvoidingView
+                <View
                     style={[{ paddingTop: headerHeight }, styles.innerContainer]}
                     behavior={Platform.OS === "ios" ? "height" : "padding"}
                 >
                     <SafeAreaView style={[styles.innerContainer, style]}>{children}</SafeAreaView>
-                </KeyboardAvoidingView>
+                </View>
             </LinearGradient>
         </View>
     );
