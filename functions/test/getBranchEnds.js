@@ -15,6 +15,7 @@ export default function getBranchEnds(tree) {
                 confidence: confidence,
                 lastMoveNumber: moveNumber,
                 color: tree.color,
+                pgnUUID: tree.pgnUUID
             });
         } else {
             node.children.forEach((child) => getBranchEndsHelper(child, moveNumber + 1));

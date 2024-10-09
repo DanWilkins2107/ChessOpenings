@@ -40,7 +40,7 @@ export default function updateBranchConfidenceScores(
 
         if (needsSaving) {
             saveTreesToDb(tree.tree, tree.pgnUUID);
-            treesToUpdate.push(tree);
+            treesToUpdate.push(tree.pgnUUID);
         }
     });
 

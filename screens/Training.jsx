@@ -166,6 +166,7 @@ export default function Training({ navigation, route }) {
                 )
             ) {
                 setIsMoveCorrect(true);
+                console.log("branchObj1", branchObj)
                 const newBranchObj = updateBranchScores(
                     branchObj,
                     whiteCombinedTree,
@@ -260,7 +261,6 @@ export default function Training({ navigation, route }) {
                     setStreak
                 )
             ) {
-                console.log("Here 1");
                 updateOtherBranchScores(
                     moveList,
                     moveIndex,

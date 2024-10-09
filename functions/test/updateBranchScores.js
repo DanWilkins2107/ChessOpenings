@@ -16,7 +16,8 @@ export default function updateBranchScores(
     trees,
     color
 ) {
-    console.log(trees)
+    console.log("BRanchOBJ", branchObj)
+    console.log("TREES", trees)
     const treesToUpdate = updateBranchConfidenceScores(
         isCorrect,
         moveList,
@@ -25,15 +26,7 @@ export default function updateBranchScores(
         color
     );
 
-    const newBranchObj = updateBranchCategories(branchObj, treesToUpdate);
-
-    return branchObj;
-
-    // const newBranchObj = {
-    //     unselected: newUnselectedBranches,
-    //     selected: newSelectedBranches,
-    //     finished: newFinishedBranches,
-    // };
+    const newBranchObj = updateBranchCategories(branchObj, treesToUpdate, isCorrect);
 
     const validTree = color === "white" ? whiteCombinedTree : blackCombinedTree;
     updateCombinedTree(validTree, moveList, moveIndex);
