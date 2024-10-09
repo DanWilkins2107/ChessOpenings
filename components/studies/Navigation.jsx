@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import IconFA5 from "react-native-vector-icons/FontAwesome5";
 import { View } from "react-native";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import { Colors } from "../../styling";
 
 const NavigationButton = ({ icon, onPress }) => {

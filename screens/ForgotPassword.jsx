@@ -1,8 +1,8 @@
 import { Image, Keyboard, Pressable, StyleSheet } from "react-native";
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import Card from "../components/containers/Card";
 import Subheading2 from "../components/text/Subheading2";
-import FormField from "../components/FormField";
+import FormField from "../components/inputs/FormField";
 import MainButton from "../components/genericButtons/MainButton";
 import { View } from "react-native";
 import AuthTextButton from "../components/auth/AuthTextButton";

@@ -1,5 +1,5 @@
 import { StyleSheet, ActivityIndicator, View, ScrollView } from "react-native";
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import Title from "../components/text/Title";
 import Card from "../components/containers/Card";
 import Subheading from "../components/text/Subheading";

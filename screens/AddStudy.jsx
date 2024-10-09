@@ -1,6 +1,6 @@
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import Card from "../components/containers/Card";
-import FormField from "../components/FormField";
+import FormField from "../components/inputs/FormField";
 import Subheading from "../components/text/Subheading";
 import Subheading2 from "../components/text/Subheading2";
 import Title from "../components/text/Title";
@@ -11,7 +11,7 @@ import ChooseSide from "../components/addstudy/ChooseSide";
 import DropdownList from "../components/chooseStudy/DropdownList";
 import MainButton from "../components/genericButtons/MainButton";
 import Body from "../components/text/Body";
-import OpacityPressable from "../components/OpacityPressable";
+import OpacityPressable from "../components/genericButtons/OpacityPressable";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import createStudy from "../functions/set/createStudy";
 import { AlertContext } from "../components/alert/AlertContextProvider";

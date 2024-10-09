@@ -1,5 +1,5 @@
 import { StyleSheet, Text, Image, View, ScrollView } from "react-native";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import DropdownList from "../chooseStudy/DropdownList";
 import { Colors, Fonts } from "../../styling";
 import { useState } from "react";

@@ -1,6 +1,5 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import ColorsOld from "../../colors";
 import { Colors } from "../../styling.js";
 import { useContext } from "react";
 import { ModalContext } from "../modal/ModalContextProvider.jsx";

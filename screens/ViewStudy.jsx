@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import Subheading from "../components/text/Subheading";
 import { StyleSheet, View, Text } from "react-native";
 import Chessboard from "../components/chessboard/Chessboard";
@@ -19,7 +19,7 @@ import {
 } from "../functions/tree/treeFunctions";
 import MoveList from "../components/studies/MoveList";
 import ChapterSelector from "../components/studies/ChapterSelector";
-import OpacityPressable from "../components/OpacityPressable";
+import OpacityPressable from "../components/genericButtons/OpacityPressable";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Colors } from "../styling";
 import { ref, set } from "firebase/database";

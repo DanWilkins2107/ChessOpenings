@@ -1,6 +1,6 @@
 import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import Card from "../containers/Card";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import Body from "../text/Body";
 import { Colors } from "../../styling";
 

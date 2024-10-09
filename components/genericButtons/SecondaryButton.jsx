@@ -2,7 +2,7 @@ import { Colors } from "../../styling";
 import { StyleSheet } from "react-native";
 import Subheading2 from "../text/Subheading2";
 import IconFA6 from "react-native-vector-icons/FontAwesome6";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "./OpacityPressable";
 
 export default function SecondaryButton({ text, icon, style, onPress }) {
     return (

@@ -1,7 +1,7 @@
 import { View, StyleSheet, Text } from "react-native";
 import { Colors, Fonts } from "../../styling.js";
 import Card from "../containers/Card.jsx";
-import OpacityPressable from "../OpacityPressable.jsx";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import Subheading2 from "../text/Subheading2.jsx";
 import { useContext } from "react";
 import { ModalContext } from "../modal/ModalContextProvider.jsx";

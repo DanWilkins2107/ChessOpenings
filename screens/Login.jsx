@@ -1,17 +1,13 @@
 import { useContext, useState } from "react";
 import { AlertContext } from "../components/alert/AlertContextProvider";
-import { Image, StyleSheet, Pressable, View, Keyboard, KeyboardAvoidingView } from "react-native";
-import Container from "../components/Container";
-import Title from "../components/text/Title";
-import Subheading from "../components/text/Subheading";
+import { Image, StyleSheet, Pressable, View, Keyboard } from "react-native";
+import Container from "../components/containers/Container";
 import Card from "../components/containers/Card";
 import MainButton from "../components/genericButtons/MainButton";
-import FormField from "../components/FormField";
+import FormField from "../components/inputs/FormField";
 import Subheading2 from "../components/text/Subheading2";
-import SecondaryButton from "../components/genericButtons/SecondaryButton";
-import Body from "../components/text/Body";
 import AuthTextButton from "../components/auth/AuthTextButton";
-import PasswordField from "../components/auth/PasswordField";
+import PasswordField from "../components/inputs/PasswordField";
 import loginWithEmailAndPassword from "../functions/auth/loginWithEmailAndPassword";
 
 export default function Login({ navigation }) {

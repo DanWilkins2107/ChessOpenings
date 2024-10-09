@@ -1,11 +1,10 @@
 import Chessboard from "../components/chessboard/Chessboard";
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import { Chess } from "chess.js";
 import { ScrollView, StyleSheet, Text } from "react-native";
 import MessageBox from "../components/chessboard/MessageBox.jsx";
 import { Colors, Fonts } from "../styling";
 import BottomProgressBar from "../components/training/BottomProgressBar.jsx";
-import CurrentStudyViewer from "../components/training/CurrentStudyViewer.jsx";
 import HintAndSkipButtons from "../components/training/HintAndSkipButtons.jsx";
 import { useEffect, useState } from "react";
 import getStudyStringArray from "../functions/fetch/getStudyStringArray.js";

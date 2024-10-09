@@ -1,6 +1,6 @@
 import React from "react";
 import { TextInput, StyleSheet } from "react-native";
-import { Colors } from "../styling";
+import { Colors } from "../../styling";
 
 const FormField = ({ placeholder, value, onChangeText, style, ...props }) => {
     return (

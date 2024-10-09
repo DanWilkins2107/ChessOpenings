@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import Card from "../containers/Card";
 import { Colors, Fonts } from "../../styling";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import IconFA5 from "react-native-vector-icons/FontAwesome5";
 
 const CurrentStudyViewer = ({ study, chapter, style, isShown }) => {

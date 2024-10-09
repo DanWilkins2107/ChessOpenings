@@ -3,7 +3,7 @@ import ChooseSide from "../addstudy/ChooseSide";
 import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
 import Card from "../containers/Card";
-import FormField from "../FormField";
+import FormField from "../inputs/FormField";
 import { useState, useContext } from "react";
 import MainButton from "../genericButtons/MainButton";
 import SecondaryButton from "../genericButtons/SecondaryButton";

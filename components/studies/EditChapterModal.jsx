@@ -1,11 +1,10 @@
-import AuthButton from "../auth/AuthButton";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { useContext, useState } from "react";
 import { ModalContext } from "../modal/ModalContextProvider";
 import Subheading from "../text/Subheading";
 import Card from "../containers/Card";
 import Body from "../text/Body";
-import FormField from "../FormField";
+import FormField from "../inputs/FormField";
 import SecondaryButton from "../genericButtons/SecondaryButton";
 import MainButton from "../genericButtons/MainButton";
 

@@ -1,9 +1,7 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import FormField from "../FormField";
-import AuthButton from "../auth/AuthButton";
+import { View, Text, StyleSheet } from "react-native";
+import FormField from "../inputs/FormField";
 import { ModalContext } from "../modal/ModalContextProvider";
-import Title from "../text/Title";
 import Subheading from "../text/Subheading";
 import Body from "../text/Body";
 import MainButton from "../genericButtons/MainButton";

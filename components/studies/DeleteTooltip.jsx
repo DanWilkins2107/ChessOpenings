@@ -1,7 +1,7 @@
 import Tooltip from "react-native-walkthrough-tooltip";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 
 const DeleteTooltip = ({ isVisible, onDelete, onClose, children }) => {
     return (

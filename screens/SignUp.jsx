@@ -2,25 +2,18 @@ import { useContext, useState } from "react";
 import { AlertContext } from "../components/alert/AlertContextProvider";
 import {
     Image,
-    KeyboardAvoidingView,
-    Platform,
     Pressable,
     StyleSheet,
-    Text,
     View,
 } from "react-native";
-import Container from "../components/Container";
-import Title from "../components/text/Title";
-import Subheading from "../components/text/Subheading";
+import Container from "../components/containers/Container";
 import Card from "../components/containers/Card";
 import MainButton from "../components/genericButtons/MainButton";
-import FormField from "../components/FormField";
+import FormField from "../components/inputs/FormField";
 import Subheading2 from "../components/text/Subheading2";
-import SecondaryButton from "../components/genericButtons/SecondaryButton";
-import Body from "../components/text/Body";
 import AuthTextButton from "../components/auth/AuthTextButton";
 import { Keyboard } from "react-native";
-import PasswordField from "../components/auth/PasswordField";
+import PasswordField from "../components/inputs/PasswordField";
 import signUpWithEmailAndPassword from "../functions/auth/signUpWithEmailAndPassword";
 
 export default function SignUp({ navigation }) {

@@ -5,7 +5,7 @@ import Subheading2 from "../text/Subheading2";
 import Card from "../containers/Card";
 import { Colors } from "../../styling";
 import Body from "../text/Body";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import IconFA5 from "react-native-vector-icons/FontAwesome5";
 import ProgressBar from "./ProgressBar";
 

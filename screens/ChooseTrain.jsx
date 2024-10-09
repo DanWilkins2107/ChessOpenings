@@ -1,16 +1,12 @@
 import { StyleSheet, ActivityIndicator, ScrollView, View } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import Card from "../components/containers/Card";
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import Title from "../components/text/Title";
 import MainButton from "../components/genericButtons/MainButton";
 import Body from "../components/text/Body";
 import { AlertContext } from "../components/alert/AlertContextProvider";
 import StudyAndChapterSelector from "../components/chooseStudy/StudyAndChapterSelector";
-import getUserStudies from "../functions/fetch/getUserStudies";
-import getStudyDataFromStudyUUID from "../functions/fetch/getStudyDataFromStudyUUID";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Colors } from "../styling";
 import ChapterAndStudyToString from "../functions/test/chapterAndStudyToString";
 import getUserStudyData from "../functions/fetch/getUserStudyData";
 

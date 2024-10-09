@@ -2,7 +2,7 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import Card from "../containers/Card";
 import Subheading2 from "../text/Subheading2";
 import Body from "../text/Body";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import { Colors } from "../../styling";
 
 export default function StudyButton({ study, onPress }) {

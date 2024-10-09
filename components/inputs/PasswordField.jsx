@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
-import FormField from "../FormField";
+import FormField from "./FormField";
 import { useState } from "react";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import IconFA6 from "react-native-vector-icons/FontAwesome6";
 import { Colors } from "../../styling";
 

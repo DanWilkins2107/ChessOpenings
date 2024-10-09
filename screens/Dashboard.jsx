@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet } from "react-native";
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import Card from "../components/containers/Card";
 import Title from "../components/text/Title";
 import Subheading from "../components/text/Subheading";

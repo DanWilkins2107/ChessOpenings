@@ -1,7 +1,7 @@
 import { Colors } from "../../styling";
 import { StyleSheet, View } from "react-native";
 import Subheading2 from "../text/Subheading2";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 
 export default function ObjectiveButton({ text, completed, active, style }) {
     return (

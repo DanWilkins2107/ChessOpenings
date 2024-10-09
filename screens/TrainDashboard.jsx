@@ -1,4 +1,4 @@
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import { StyleSheet, ScrollView } from "react-native";
 import Title from "../components/text/Title";
 import DailyTestCard from "../components/dashboard/DailyTestCard";

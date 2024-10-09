@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import Title from "../components/text/Title";
-import Container from "../components/Container";
+import Container from "../components/containers/Container";
 import Card from "../components/containers/Card";
 import Subheading from "../components/text/Subheading";
 import SecondaryButton from "../components/genericButtons/SecondaryButton";

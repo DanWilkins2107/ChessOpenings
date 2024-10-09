@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Colors } from "../../styling";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 
 const DropdownList = ({
     topContent,

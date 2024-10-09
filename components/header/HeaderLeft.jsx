@@ -5,7 +5,6 @@ import { Colors } from "../../styling";
 
 const HeaderLeft = () => {
     const navigation = useNavigation();
-
     return (
         <>
             {navigation.canGoBack() ? (

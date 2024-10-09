@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet } from "react-native";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable";
 import { Colors, Fonts } from "../../styling";
 import IconFA5 from "react-native-vector-icons/FontAwesome5";
 

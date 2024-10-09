@@ -1,8 +1,7 @@
 import { StyleSheet, Image, View } from "react-native";
-import Colors from "../../colors";
 import DropdownList from "./DropdownList";
 import Checkbox from "./Checkbox";
-import OpacityPressable from "../OpacityPressable";
+import OpacityPressable from "../genericButtons/OpacityPressable.jsx";
 import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
 import { useState } from "react";
