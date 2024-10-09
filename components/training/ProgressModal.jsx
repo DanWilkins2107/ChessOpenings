@@ -1,5 +1,4 @@
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
-import Title from "../text/Title";
 import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
 import Card from "../containers/Card";
@@ -8,11 +7,24 @@ import Body from "../text/Body";
 import OpacityPressable from "../genericButtons/OpacityPressable";
 import IconFA5 from "react-native-vector-icons/FontAwesome5";
 import ProgressBar from "./ProgressBar";
+import resetConfidence from "../../functions/test/resetConfidence.js";
+import saveTreesToDb from "../../functions/test/saveTreesToDb";
+import { useState } from "react";
 
-export default function ProgressModal({ progressObj }) {
-    const handleReset = () => {
-        console.log("TODO: reset");
-    }
+export default function ProgressModal({
+    progressObj,
+    whiteCombinedTree,
+    blackCombinedTree,
+    onReset,
+}) {
+    const [forceRerender, setForceRerender] = useState(false);
+    const handleReset = (study, chapter) => {
+        const correctCombinedTree =
+            chapter.tree.color === "white" ? whiteCombinedTree : blackCombinedTree;
+
+        resetConfidence(chapter.tree.tree, correctCombinedTree);
+        saveTreesToDb(chapter.tree.tree, chapter.UUID);
+    };
     return (
         <View style={styles.container}>
             <Subheading style={styles.title}>Study Progress</Subheading>
@@ -21,17 +33,37 @@ export default function ProgressModal({ progressObj }) {
                     {Object.keys(progressObj).map((study) => {
                         return (
                             <Card key={study} style={styles.card}>
-                                <Subheading2 style={styles.subheading}>{progressObj[study].title}</Subheading2>
-                                {progressObj[study].chapters.map((chapter) => {
+                                <Subheading2 style={styles.subheading}>
+                                    {progressObj[study].title}
+                                </Subheading2>
+                                {progressObj[study].chapters.map((chapter, index) => {
                                     return (
                                         <View style={styles.line} key={chapter.UUID}>
                                             <Body>
                                                 {chapter.title} - {chapter.score}%
                                             </Body>
                                             <View style={styles.row}>
-                                                <ProgressBar progress={chapter.score} style={styles.bar} />
-                                                <OpacityPressable style={styles.reset}>
-                                                    <IconFA5 name="undo-alt" size={15} color={Colors.text} />
+                                                <ProgressBar
+                                                    progress={chapter.score}
+                                                    style={styles.bar}
+                                                    key={chapter.UUID + String(forceRerender)}
+                                                />
+                                                <OpacityPressable
+                                                    style={styles.reset}
+                                                    onPress={() => {
+                                                        handleReset(study, chapter);
+                                                        onReset();
+                                                        progressObj[study].chapters[
+                                                            index
+                                                        ].score = 0;
+                                                        setForceRerender(!forceRerender);
+                                                    }}
+                                                >
+                                                    <IconFA5
+                                                        name="undo-alt"
+                                                        size={15}
+                                                        color={Colors.text}
+                                                    />
                                                 </OpacityPressable>
                                             </View>
                                         </View>
@@ -82,5 +114,5 @@ const styles = StyleSheet.create({
     },
     bar: {
         backgroundColor: Colors.card3,
-    }
+    },
 });

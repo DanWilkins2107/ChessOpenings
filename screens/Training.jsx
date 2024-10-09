@@ -166,7 +166,7 @@ export default function Training({ navigation, route }) {
                 )
             ) {
                 setIsMoveCorrect(true);
-                console.log("branchObj1", branchObj)
+                console.log("branchObj1", branchObj);
                 const newBranchObj = updateBranchScores(
                     branchObj,
                     whiteCombinedTree,
@@ -327,6 +327,13 @@ export default function Training({ navigation, route }) {
                 progress={confidenceScore}
                 style={styles.progressBar}
                 progressObj={confidenceScoreObj}
+                whiteCombinedTree={whiteCombinedTree}
+                blackCombinedTree={blackCombinedTree}
+                onReset={() => {
+                    const confidenceObj = createConfidenceObj(trees);
+                    setConfidenceScore(confidenceObj.score);
+                    setConfidenceScoreObj(confidenceObj.confidenceObj);
+                }}
             />
         </Container>
     );

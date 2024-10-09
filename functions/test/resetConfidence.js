@@ -1,21 +1,23 @@
-export default function resetConfidence(tree, color) {
-    const moveNumber = -1;
-
-    const colorNumber = color === "white" ? 0 : 1;
-
-    const treeHelperFunction = (node, currentMoveNumber) => {
-        if (currentMoveNumber % 2 === colorNumber) {
-            node.confidence = 0;
-        } 
+export default function resetConfidence(tree, combinedTree) {
+    console.log(tree)
+    const treeHelperFunction = (node, combinedTreeNode) => {
+        // Edit confidence of the tree
+        node.confidence = 0;
+        combinedTreeNode.confidence = 0;
         if (!node.children || node.children.length === 0) {
             return;
         }
-        for (const child of node.children) {
-            treeHelperFunction(child, currentMoveNumber + 1);
-        }
-    }
 
-    treeHelperFunction(tree, moveNumber);
+        for (const child of node.children) {
+            // Find combined tree node (should always exist)
+            const combinedTreeChildNode = combinedTreeNode.children.find((treeChild) => {
+                return child.move === treeChild.move;
+            });
+            treeHelperFunction(child, combinedTreeChildNode);
+        }
+    };
+
+    treeHelperFunction(tree, combinedTree);
 
     return tree;
 }

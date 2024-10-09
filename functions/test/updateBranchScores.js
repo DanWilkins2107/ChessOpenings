@@ -16,8 +16,6 @@ export default function updateBranchScores(
     trees,
     color
 ) {
-    console.log("BRanchOBJ", branchObj)
-    console.log("TREES", trees)
     const treesToUpdate = updateBranchConfidenceScores(
         isCorrect,
         moveList,

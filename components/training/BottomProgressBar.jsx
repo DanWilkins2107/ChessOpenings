@@ -8,16 +8,33 @@ import { ModalContext } from "../modal/ModalContextProvider.jsx";
 import ProgressModal from "./ProgressModal.jsx";
 import ProgressBar from "./ProgressBar.jsx";
 
-export default function BottomProgressBar({ progress, progressObj, style }) {
+export default function BottomProgressBar({
+    progress,
+    progressObj,
+    style,
+    whiteCombinedTree,
+    blackCombinedTree,
+    onReset,
+}) {
     const { setModal } = useContext(ModalContext);
 
     return (
         <Card style={[styles.container, style]} padding={false}>
             <Subheading2 style={styles.text}>Progress:</Subheading2>
             <ProgressBar progress={progress} />
-            <OpacityPressable style={styles.button} onPress={() => {
-                setModal(<ProgressModal progressObj={progressObj} />)
-            }}>
+            <OpacityPressable
+                style={styles.button}
+                onPress={() => {
+                    setModal(
+                        <ProgressModal
+                            progressObj={progressObj}
+                            whiteCombinedTree={whiteCombinedTree}
+                            blackCombinedTree={blackCombinedTree}
+                            onReset={onReset}
+                        />
+                    );
+                }}
+            >
                 <Text style={styles.buttonText}>View</Text>
             </OpacityPressable>
         </Card>

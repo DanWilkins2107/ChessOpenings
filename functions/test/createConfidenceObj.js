@@ -18,6 +18,7 @@ export default function createConfidenceObj(trees) {
             UUID: tree.pgnUUID,
             title: tree.chapterName,
             score: obj.score,
+            tree: tree
         });
 
         objArray.push(obj);

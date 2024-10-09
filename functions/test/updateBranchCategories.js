@@ -1,7 +1,6 @@
 import findInitialBranchCategory from "./findInitialBranchCategory";
 
 export default function updateBranchCategories(branchObj, treesToUpdate, isCorrect) {
-    console.log(branchObj)
     const newBranchObj = {
         unselected: [],
         selected: [],
