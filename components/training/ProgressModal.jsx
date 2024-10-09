@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, Pressable } from "react-native";
+import { View, ScrollView, StyleSheet, Pressable, Dimensions } from "react-native";
 import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
 import Card from "../containers/Card";
@@ -25,8 +25,9 @@ export default function ProgressModal({
         resetConfidence(chapter.tree.tree, correctCombinedTree);
         saveTreesToDb(chapter.tree.tree, chapter.UUID);
     };
+    const deviceHeight = Dimensions.get("window").height;
     return (
-        <View style={styles.container}>
+        <View style={{ height: deviceHeight * 0.55 }}>
             <Subheading style={styles.title}>Study Progress</Subheading>
             <ScrollView style={styles.scrollView}>
                 <Pressable>
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     container: {
-        height: "95%",
+        // height: "90%",
     },
     line: {
         width: "100%",

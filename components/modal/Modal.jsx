@@ -43,7 +43,7 @@ const Modal = () => {
         return (
             <SafeAreaView style={styles.safeArea}>
                 <Pressable style={styles.overlay} onPress={handleDismiss}>
-                    <Animated.View style={[styles.modalContainer]}>
+                    <Animated.View style={styles.modalContainer}>
                         <Pressable style={styles.header} onPress={() => Keyboard.dismiss()}>
                             <TouchableOpacity onPress={handleDismiss} style={styles.closeButton}>
                                 <IconFA5 name="times" size={30} color={Colors.text} />
