@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Text, View, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, View, ScrollView, TouchableOpacity, StyleSheet, SectionList } from "react-native";
 import { AlertContext } from "../alert/AlertContextProvider";
 import Body from "../text/Body";
+import Subheading2 from "../text/Subheading2";
 import { Colors } from "../../styling";
+import OpacityPressable from "../genericButtons/OpacityPressable";
+import getMoveListFromNode from "../../functions/test/getMoveListFromNode";
+
 const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     const [rootNode, setRootNode] = useState(null);
     const { setAlert } = useContext(AlertContext);
@@ -15,123 +19,101 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
         setRootNode(tempNode);
     }, [currentNode]);
 
-    const renderTree = (node, moveNumber, moveIndex = 0) => {
-        if (!node) return null;
-        let moves = [];
-        let tempNode = node;
-        let afterVariation = false;
-        while (tempNode.children && tempNode.children.length > 0) {
-            tempNode = tempNode.children[0];
-            let move = (
-                <Text key={tempNode.move}>
-                    {renderMove(
-                        tempNode,
-                        moveNumber + Math.floor(moveIndex / 2),
-                        moveIndex % 2 === 0,
-                        moveIndex === 0,
-                        afterVariation
+    const renderTree = (node, moveNumber, isVariation, showFirstMove, key) => {
+        const noOfChildren = node.children?.length ?? 0;
+
+        if (noOfChildren === 0) {
+            return showFirstMove ? renderMove(node, moveNumber, isVariation) : null;
+        }
+
+        if (noOfChildren === 1) {
+            return (
+                <>
+                    {showFirstMove && renderMove(node, moveNumber, isVariation)}
+                    {renderTree(
+                        node.children[0],
+                        moveNumber + 1,
+                        false,
+                        true,
+                        `${key}${node.children[0].move}`
                     )}
-                    {tempNode.parent.children.length > 1 && (
-                        <Text key={`${tempNode.move}-variations`}>
+                </>
+            );
+        }
+
+        return (
+            <>
+                {showFirstMove && renderMove(node, moveNumber, isVariation)}
+                {renderMove(node.children[0], moveNumber + 1, false)}
+                {node.children.slice(1).map((child) => {
+                    return (
+                        <Body key={key}>
                             <View style={styles.bracketContainer}>
                                 <Body>(</Body>
                             </View>
-                            {tempNode.parent.children.slice(1).map((child, index) => (
-                                <Text key={child.move}>
-                                    {renderMove(
-                                        child,
-                                        moveNumber + Math.floor(moveIndex / 2),
-                                        moveIndex % 2 === 0,
-                                        index === 0
-                                    )}
-                                    {child.children && child.children.length > 0 && (
-                                        <Text>
-                                            {renderTree(
-                                                child,
-                                                moveNumber + Math.floor(moveIndex / 2),
-                                                (moveIndex + 1) % 2
-                                            )}
-                                        </Text>
-                                    )}
-                                </Text>
-                            ))}
+                            {renderTree(child, moveNumber + 1, true, true, `${key}${child.move}`)}
                             <View style={styles.bracketContainer}>
                                 <Body>)</Body>
                             </View>
-                        </Text>
-                    )}
-                </Text>
-            );
-            moves.push(move);
-            moveIndex++;
-            if (tempNode.parent.children.length > 1) {
-                afterVariation = true;
-            } else {
-                afterVariation = false;
-            }
-        }
-        return (
-            <Text style={styles.text}>
-                {moves.map((move, index) => (
-                    <Text key={index} style={styles.text}>
-                        {move}
-                    </Text>
-                ))}
-            </Text>
+                        </Body>
+                    );
+                })}
+                {renderTree(
+                    node.children[0],
+                    moveNumber + 1,
+                    false,
+                    false,
+                    `${key}${node.children[0].move}`
+                )}
+            </>
         );
     };
 
-    const renderMove = (
-        node,
-        moveNumber,
-        isWhiteMove,
-        isFirstVariationMove,
-        isAfterVariationMove
-    ) => {
-        const move = node.move;
-        const isActive = node === currentNode;
-        let prefix = "";
-        if (isFirstVariationMove || isAfterVariationMove) {
-            prefix = isWhiteMove ? `${moveNumber}.` : `${moveNumber}...`;
+    const renderMove = (node, moveNumber, isVariation) => {
+        let numberAnnotation;
+        const colorToPlay = moveNumber % 2 === 1 ? "white" : "black";
+        const pgnMoveNumber = Math.floor((moveNumber + 1) / 2);
+
+        if (node.move === "Start") {
+            return;
+        }
+
+        if (colorToPlay === "white") {
+            numberAnnotation = `${pgnMoveNumber}.`;
         } else {
-            prefix = isWhiteMove ? `${moveNumber}.` : "";
+            numberAnnotation = isVariation ? `${pgnMoveNumber}...` : "";
         }
 
+        const isActive = currentNode === node;
+
         return (
-            <TouchableOpacity
-                key={move}
-                onPress={() => handleMoveClick(node)}
+            <OpacityPressable
                 style={[styles.moveCircle, isActive && styles.activeMove]}
+                onPress={() => {
+                    handleMovePress(node);
+                }}
+                shadow={false}
             >
-                <Body style={[isActive && { color: Colors.background }, styles.text]}>
-                    {prefix + move}
-                </Body>
-            </TouchableOpacity>
+                <Subheading2 style={[isActive && styles.activeMoveText]}>
+                    {numberAnnotation}
+                    {node.move}
+                </Subheading2>
+            </OpacityPressable>
         );
     };
 
-    const handleMoveClick = (node) => {
-        let moves = [];
-        let tempNode = node;
-        while (tempNode.parent) {
-            moves.push(tempNode.move);
-            tempNode = tempNode.parent;
-        }
-        moves.reverse();
+    const handleMovePress = (node) => {
+        const moveList = getMoveListFromNode(node);
         chess.reset();
-        moves.forEach((move) => {
-            try {
-                chess.move(move);
-            } catch (error) {
-                setAlert("We ran into an error.", "red");
-            }
-        });
+        for (const moveObj of moveList) {
+            chess.move(moveObj.move);
+        }
         setCurrentNode(node);
     };
 
     return (
         <ScrollView style={styles.container}>
-            {rootNode && <Text>{renderTree(rootNode, 1)}</Text>}
+            {rootNode && <Text>{renderTree(rootNode, 0, false, true, "")}</Text>}
         </ScrollView>
     );
 };
@@ -139,6 +121,9 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
 const styles = StyleSheet.create({
     activeMove: {
         backgroundColor: Colors.primaryButton,
+    },
+    activeMoveText: {
+        color: Colors.background,
     },
     container: {
         paddingVertical: 4,
