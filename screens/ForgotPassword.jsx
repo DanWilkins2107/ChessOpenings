@@ -23,7 +23,6 @@ export default function ForgotPassword({ navigation }) {
             <Pressable
                 style={styles.pressable}
                 onPress={() => Keyboard.dismiss()}
-                behavior={Platform.OS === "ios" ? "height" : "padding"}
             >
                 <Image source={require("../assets/logo.png")} style={styles.image} />
                 <Card style={styles.card}>

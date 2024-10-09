@@ -168,7 +168,6 @@ export default function Training({ navigation, route }) {
                 setIsMoveCorrect(true);
                 const newBranchObj = updateBranchScores(
                     branchObj,
-                    trackedBranchObj,
                     whiteCombinedTree,
                     blackCombinedTree,
                     splitObj,

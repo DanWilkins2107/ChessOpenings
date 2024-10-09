@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import Subheading2 from "../text/Subheading2";
 import { Colors } from "../../styling";
 

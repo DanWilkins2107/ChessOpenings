@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import Title from "../components/text/Title";
 import Container from "../components/containers/Container";
 import Card from "../components/containers/Card";

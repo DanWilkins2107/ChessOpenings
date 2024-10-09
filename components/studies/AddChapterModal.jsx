@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import FormField from "../inputs/FormField";
 import { ModalContext } from "../modal/ModalContextProvider";
 import Subheading from "../text/Subheading";

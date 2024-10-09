@@ -29,6 +29,7 @@ import deleteChapter from "../functions/set/deleteChapter";
 import addChapterToStudy from "../functions/set/addChapterToStudy";
 import { ModalContext } from "../components/modal/ModalContextProvider";
 import StudyOptionsModal from "../components/studies/StudyOptionsModal";
+import saveTreesToDb from "../functions/test/saveTreesToDb";
 
 export default function ViewStudy({ navigation, route }) {
     const studyUUID = route.params.studyUUID;
@@ -146,6 +147,25 @@ export default function ViewStudy({ navigation, route }) {
         }
     };
 
+    const moveFunction = async (from, to) => {
+        let move;
+        try {
+            move = chess.move({ from: from, to: to });
+        } catch {
+            return;
+        }
+        const updateNeeded = navigateToChildNode(
+            move.san,
+            currentNode,
+            setCurrentNode,
+            chess,
+            false
+        );
+        if (updateNeeded) {
+            saveTreesToDb(currentNode, studyData.chapters[currentChapter].pgn);
+        }
+    };
+
     return (
         <Container theme="light" style={styles.container}>
             <View style={styles.subheadingView}>
@@ -172,7 +192,7 @@ export default function ViewStudy({ navigation, route }) {
                 chess={chess}
                 chessboardLoading={boardLoading}
                 pov={pov}
-                moveFunction={() => {}}
+                moveFunction={moveFunction}
                 onTopHeight={46}
                 style={styles.chessboard}
             />

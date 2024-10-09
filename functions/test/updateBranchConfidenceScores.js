@@ -1,18 +1,14 @@
-// This should update the confidence scores and return array of PGNs that have changed confidence scores and need to be updated in the database.
-import checkForFullConfidenceMoveList from "./checkForFullConfidenceMoveList";
-import getMoveListFromNode from "./getMoveListFromNode";
 import saveTreesToDb from "./saveTreesToDb";
 
 export default function updateBranchConfidenceScores(
-    trackedBranchObj,
-    branchObj,
     isCorrect,
     moveList,
     moveIndex,
     trees,
     color
 ) {
-    // Update the confidence scores in the trees
+    const treesToUpdate = [];
+
     trees.forEach((tree) => {
         if (tree.color !== color) {
             return;
@@ -44,111 +40,9 @@ export default function updateBranchConfidenceScores(
 
         if (needsSaving) {
             saveTreesToDb(tree.tree, tree.pgnUUID);
+            treesToUpdate.push(tree);
         }
     });
 
-    const moveBranches = (branch, arrayIfBecomingUntracked, testFunction) => {
-        const lastMoveMoveNumber = branch.moveNumber;
-
-        if (moveIndex > lastMoveMoveNumber) {
-            return;
-        }
-
-        let currentNode = branch.endNode;
-        const nodesToMoveBack = lastMoveMoveNumber - moveIndex;
-
-        for (let i = 0; i < nodesToMoveBack; i++) {
-            currentNode = currentNode.parent;
-        }
-
-        if (currentNode.move === moveList[moveIndex].move) {
-            if (moveIndex !== 0) {
-                const parentNode = currentNode.parent;
-                if (parentNode.move === moveList[moveIndex - 1].move) {
-                    testFunction(currentNode, branch, isCorrect);
-                } else {
-                    arrayIfBecomingUntracked.push(branch);
-                }
-            }
-        }
-    };
-
-    // Possible changes: unselected -> finished, unselected -> selected, selected -> finished, finished -> selected
-    const unselectedToFinished = [];
-    const unselectedToSelected = [];
-    const selectedToFinished = [];
-    const finishedToSelected = [];
-
-    branchObj.unselected.forEach((branch) => {
-        moveBranches(branch, nodesToRemoveFromTrackedUnselected, (branch) => {
-            // Unselected can move to finished if it is fully confident
-            const branchMoves = getMoveListFromNode(branch.endNode, branch.color);
-            if (checkForFullConfidenceMoveList(branchMoves) === -1) {
-                unselectedToFinished.push(branch);
-            } else {
-                // Unselected can move to selected if it is already being fully trained (+1 as if there's another wrong colour move it is untrainable)
-                if (branchMoves.length <= moveIndex + 1) {
-                    unselectedToSelected.push(branch);
-                }
-            }
-        });
-    });
-
-    branchObj.selected.forEach((branch) => {
-        moveBranches(branch, nodesToRemoveFromTrackedSelected, (currentNode, branch) => {
-            // Selected can move to finished if it is fully confident
-            const branchMoves = getMoveListFromNode(branch.endNode, branch.color);
-            if (checkForFullConfidenceMoveList(branchMoves) === -1) {
-                selectedToFinished.push(branch);
-            }
-        });
-    });
-
-    branchObj.finished.forEach((branch) => {
-        moveBranches(branch, nodesToRemoveFromTrackedFinished, (branch, isCorrect) => {
-            // Finished can move to selected if it is no longer fully confident
-            if (!isCorrect) {
-                const branchMoves = getMoveListFromNode(branch.endNode, branch.color);
-                if (checkForFullConfidenceMoveList(branchMoves) !== -1) {
-                    finishedToSelected.push(branch);
-                }
-            }
-        });
-    });
-
-    // Perform list filtering
-    const newUnselectedBranches = branchObj.unselected.filter(
-        (branch) => !unselectedToFinished.includes(branch) && !unselectedToSelected.includes(branch)
-    );
-
-    const newSelectedBranches = branchObj.selected.filter(
-        (branch) => !selectedToFinished.includes(branch)
-    );
-
-    const newFinishedBranches = branchObj.finished.filter(
-        (branch) => !finishedToSelected.includes(branch)
-    );
-
-    // Perform adding of nodes
-    unselectedToFinished.forEach((branch) => {
-        newFinishedBranches.push(branch);
-    });
-
-    unselectedToSelected.forEach((branch) => {
-        newSelectedBranches.push(branch);
-    });
-
-    selectedToFinished.forEach((branch) => {
-        newFinishedBranches.push(branch);
-    });
-
-    finishedToSelected.forEach((branch) => {
-        newSelectedBranches.push(branch);
-    });
-
-    return {
-        newUnselectedBranches,
-        newSelectedBranches,
-        newFinishedBranches,
-    };
+    return treesToUpdate;
 }

@@ -20,6 +20,7 @@ export const navigateToChildNode = (move, currentNode, setCurrentNode, chess, ma
             if (makeMove) {
                 chess.move(move);
             }
+            return true;
         }
     } else {
         if (currentNode.children.length > 0) {
@@ -30,6 +31,7 @@ export const navigateToChildNode = (move, currentNode, setCurrentNode, chess, ma
             }
         }
     }
+    return false;
 };
 
 export const handleDoubleRightPress = (currentNode, setCurrentNode, chess) => {

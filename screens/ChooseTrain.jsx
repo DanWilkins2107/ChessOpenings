@@ -1,4 +1,4 @@
-import { StyleSheet, ActivityIndicator, ScrollView, View } from "react-native";
+import { StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import Card from "../components/containers/Card";
 import Container from "../components/containers/Container";

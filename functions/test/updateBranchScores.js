@@ -1,5 +1,6 @@
 import findOtherBranchCategory from "./findOtherBranchCategory";
 import findSplitCategory from "./findSplitCategory";
+import updateBranchCategories from "./updateBranchCategories";
 import updateBranchConfidenceScores from "./updateBranchConfidenceScores";
 import updateCombinedTree from "./updateCombinedTree";
 
@@ -15,12 +16,8 @@ export default function updateBranchScores(
     trees,
     color
 ) {
-    const {
-        newUnselectedBranches,
-        newSelectedBranches,
-        newFinishedBranches,
-    } = updateBranchConfidenceScores(
-        branchObj,
+    console.log(trees)
+    const treesToUpdate = updateBranchConfidenceScores(
         isCorrect,
         moveList,
         moveIndex,
@@ -28,11 +25,15 @@ export default function updateBranchScores(
         color
     );
 
-    const newBranchObj = {
-        unselected: newUnselectedBranches,
-        selected: newSelectedBranches,
-        finished: newFinishedBranches,
-    };
+    const newBranchObj = updateBranchCategories(branchObj, treesToUpdate);
+
+    return branchObj;
+
+    // const newBranchObj = {
+    //     unselected: newUnselectedBranches,
+    //     selected: newSelectedBranches,
+    //     finished: newFinishedBranches,
+    // };
 
     const validTree = color === "white" ? whiteCombinedTree : blackCombinedTree;
     updateCombinedTree(validTree, moveList, moveIndex);

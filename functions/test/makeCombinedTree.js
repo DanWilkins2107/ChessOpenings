@@ -14,7 +14,6 @@ export default function makeCombinedTree({ branchArray }) {
         while (currentBranchNode.parent) {
             currentBranchNode = currentBranchNode.parent;
         }
-        console.log(currentBranchNode);
         let currentTreeNode = combinedTree;
         branchMoveList.forEach((moveObj) => {
             let found = false;
@@ -46,12 +45,7 @@ export default function makeCombinedTree({ branchArray }) {
                 };
                 currentTreeNode.children.push(newTreeNode);
                 currentTreeNode = newTreeNode;
-                console.log(
-                    "Added new node: move:",
-                    moveObj.move,
-                    "confidence:",
-                    moveObj.confidence || 0
-                );
+
             }
         });
     });

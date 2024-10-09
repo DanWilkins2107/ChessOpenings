@@ -5,6 +5,7 @@ import OpacityPressable from "../genericButtons/OpacityPressable.jsx";
 import Subheading from "../text/Subheading";
 import Subheading2 from "../text/Subheading2";
 import { useState } from "react";
+import { Colors } from "../../styling.js";
 
 export default function StudyAndChapterSelector({
     studyObj,
@@ -108,7 +109,7 @@ export default function StudyAndChapterSelector({
                                                 <Checkbox
                                                     style={styles.checkbox}
                                                     checked={chosenChapters[studyUUID][index]}
-                                                    color={Colors.primary}
+                                                    color={Colors.primaryButton}
                                                     onPress={() => onChapterPress(studyUUID, index)}
                                                 />
                                             </OpacityPressable>

@@ -10,7 +10,6 @@ export default function validateBranchMove(
     streak,
     setStreak
 ) {
-    console.log("VALIDATING MOVE");
     const move = chess.move({ from: from, to: to });
 
     const currentMove = moveList[moveIndex].move;
@@ -22,7 +21,6 @@ export default function validateBranchMove(
             textColor: Colors.correctMoveText,
         });
         setStreak((streak) => streak + 1);
-        console.log("RETURNING TRUE");
         return true;
     } else {
         chess.undo();
@@ -32,7 +30,6 @@ export default function validateBranchMove(
             backgroundColor: Colors.incorrectMove,
             textColor: Colors.incorrectMoveText,
         });
-        console.log("RETURNING FALSE");
         return false;
     }
 }
