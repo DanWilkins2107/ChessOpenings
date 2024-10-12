@@ -8,6 +8,7 @@ import BoardLoading from "./BoardLoading";
 import ActivePiece from "./ActivePiece";
 import ValidMoveSquares from "./ValidMoveSquares";
 import DraggingOverSquare from "./DraggingOverSquare";
+import KingHighlights from "./KingHighlights";
 
 const Chessboard = ({ chess, moveFunction, chessboardLoading, pov, onTopHeight = 10, style }) => {
     const screenDetails = useWindowDimensions();
@@ -139,6 +140,12 @@ const Chessboard = ({ chess, moveFunction, chessboardLoading, pov, onTopHeight =
             {chessboardLoading && <BoardLoading />}
             {!chessboardLoading && (
                 <>
+                    <KingHighlights
+                        chess={chess}
+                        squareWidth={squareWidth}
+                        rows={rows}
+                        cols={columns}
+                    />
                     <ValidMoveSquares
                         chessboard={chessboard}
                         validMoves={activeMoveSquares}
