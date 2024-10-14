@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Text, View, ScrollView, StyleSheet } from "react-native";
+import { Text, View, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import OpeningMove from "./OpeningMove";
 import { Colors } from "../../styling";
 import Body from "../text/Body";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import Subheading2 from "../text/Subheading2";
 
 export default function OpeningExplorer({ chess, onPress }) {
     const [fen, setFen] = useState("");
@@ -35,8 +37,9 @@ export default function OpeningExplorer({ chess, onPress }) {
 
     if (error) {
         return (
-            <View style={styles.wrapper}>
-                <Text>Could Not fetch Data</Text>
+            <View style={styles.errorWrapper}>
+                <Icon name="exclamation-triangle" size={20} color={Colors.text} />
+                <Subheading2 style={styles.errorText}>Could not fetch opening data</Subheading2>
             </View>
         );
     }
@@ -44,7 +47,7 @@ export default function OpeningExplorer({ chess, onPress }) {
     if (loading) {
         return (
             <View style={styles.wrapper}>
-                <Text>Loading...</Text>
+                <ActivityIndicator color={Colors.text} />
             </View>
         );
     }
@@ -58,7 +61,14 @@ export default function OpeningExplorer({ chess, onPress }) {
             </View>
             <ScrollView>
                 {moveData.moves.map((moveObj, index) => {
-                    return <OpeningMove moveObj={moveObj} key={index} index={index} onPress={onPress}/>;
+                    return (
+                        <OpeningMove
+                            moveObj={moveObj}
+                            key={index}
+                            index={index}
+                            onPress={onPress}
+                        />
+                    );
                 })}
             </ScrollView>
         </View>
@@ -69,6 +79,12 @@ const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
         width: "100%",
+        justifyContent: "center",
+    },
+    errorWrapper: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
     header: {
         backgroundColor: Colors.card2,
@@ -87,5 +103,8 @@ const styles = StyleSheet.create({
     },
     rightText: {
         width: 60,
+    },
+    errorText: {
+        marginTop: 5,
     },
 });

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function EngineAnalysis({ chess }) {
     const [fen, setFen] = useState("");
@@ -10,9 +10,15 @@ export default function EngineAnalysis({ chess }) {
         setFen(chess.fen());
     }, [chess.fen()]);
     return (
-        <View>
+        <View style={styles.wrapper}>
             <Text>Engine Analysis</Text>
             <Text>{JSON.stringify(fen)}</Text>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    wrapper: {
+        flex: 1,
+    }
+});
