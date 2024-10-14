@@ -1,24 +1,36 @@
 import { View, StyleSheet, Image } from "react-native";
 import { useMemo } from "react";
+import bb from "../../assets/pieces/bb.png";
+import bk from "../../assets/pieces/bk.png";
+import bn from "../../assets/pieces/bn.png";
+import bp from "../../assets/pieces/bp.png";
+import bq from "../../assets/pieces/bq.png";
+import br from "../../assets/pieces/br.png";
+import wb from "../../assets/pieces/wb.png";
+import wk from "../../assets/pieces/wk.png";
+import wn from "../../assets/pieces/wn.png";
+import wp from "../../assets/pieces/wp.png";
+import wq from "../../assets/pieces/wq.png";
+import wr from "../../assets/pieces/wr.png";
 
 export default function ChessPieces({ chessboard, activePiece, squareWidth, rows, cols }) {
     const pieceImages = useMemo(
         () => ({
             b: {
-                b: require("../../assets/pieces/bb.png"),
-                k: require("../../assets/pieces/bk.png"),
-                n: require("../../assets/pieces/bn.png"),
-                p: require("../../assets/pieces/bp.png"),
-                q: require("../../assets/pieces/bq.png"),
-                r: require("../../assets/pieces/br.png"),
+                b: bb,
+                k: bk,
+                n: bn,
+                p: bp,
+                q: bq,
+                r: br,
             },
             w: {
-                b: require("../../assets/pieces/wb.png"),
-                k: require("../../assets/pieces/wk.png"),
-                n: require("../../assets/pieces/wn.png"),
-                p: require("../../assets/pieces/wp.png"),
-                q: require("../../assets/pieces/wq.png"),
-                r: require("../../assets/pieces/wr.png"),
+                b: wb,
+                k: wk,
+                n: wn,
+                p: wp,
+                q: wq,
+                r: wr,
             },
         }),
         []
@@ -33,7 +45,10 @@ export default function ChessPieces({ chessboard, activePiece, squareWidth, rows
                 return (
                     <View key={i} style={styles.row}>
                         {row.map((piece, j) => {
-                            if (piece === null || (activeSquareRow === rows[i] && activeSquareCol === cols[j])) {
+                            if (
+                                piece === null ||
+                                (activeSquareRow === rows[i] && activeSquareCol === cols[j])
+                            ) {
                                 return (
                                     <View
                                         key={j}
