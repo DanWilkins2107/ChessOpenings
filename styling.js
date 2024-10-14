@@ -7,12 +7,15 @@ export const Colors = {
     buttonDeselected: "#9196A1",
     primaryLogo: "#4577E2",
     text: "#4F3824",
-    activePiece: "#f7a414",
+    activePiece: "#e69512",
     correctMove: "#CFEED3",
     correctMoveText: "#244F36",
     incorrectMove: "#EED0CF",
     incorrectMoveText: "#4F2424",
-    black: "#2A1C12"
+    black: "#2A1C12",
+    inCheck: "#4C52D3",
+    inStalemate: "#8C9293",
+    inCheckmate: "#D34C4C",
 };
 
 export const Fonts = {

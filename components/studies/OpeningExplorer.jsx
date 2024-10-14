@@ -59,18 +59,24 @@ export default function OpeningExplorer({ chess, onPress }) {
                 <Body style={styles.centerText}>Results</Body>
                 <Body style={styles.rightText}>Games</Body>
             </View>
-            <ScrollView>
-                {moveData.moves.map((moveObj, index) => {
-                    return (
-                        <OpeningMove
-                            moveObj={moveObj}
-                            key={index}
-                            index={index}
-                            onPress={onPress}
-                        />
-                    );
-                })}
-            </ScrollView>
+            {moveData.moves.length === 0 ? (
+                <View style={styles.errorWrapper}>
+                    <Body>No opening data found for this position</Body>
+                </View>
+            ) : (
+                <ScrollView>
+                    {moveData.moves.map((moveObj, index) => {
+                        return (
+                            <OpeningMove
+                                moveObj={moveObj}
+                                key={index}
+                                index={index}
+                                onPress={onPress}
+                            />
+                        );
+                    })}
+                </ScrollView>
+            )}
         </View>
     );
 }

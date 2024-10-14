@@ -1,13 +1,18 @@
 import { StyleSheet, Text, View } from "react-native";
+import { Colors } from "../../styling";
 
-export default function KingHighlights({ chess, squareWidth, rows, cols }) {
+export default function KingHighlights({ chess, squareWidth, rows, cols, pov }) {
     const sideToMove = chess.turn();
     const otherSide = sideToMove === "w" ? "b" : "w";
     const isCheck = chess.inCheck();
     const isCheckmate = chess.isCheckmate();
     const isStalemate = chess.isStalemate();
     const isGameOver = chess.isGameOver();
-    const chessboard = chess.board();
+    let chessboard = chess.board();
+
+    if (pov !== "white") {
+        chessboard = chessboard.reverse().map((row) => row.reverse());
+    }
 
     const sidesToHighlight = [];
     let highlightType;
@@ -40,11 +45,11 @@ export default function KingHighlights({ chess, squareWidth, rows, cols }) {
                             const squareName = cols[j] + rows[i];
                             let color = "transparent";
                             if (highlightType === "draw") {
-                                color = "grey";
+                                color = Colors.inStalemate;
                             } else if (highlightType === "check") {
-                                color = "blue";
+                                color = Colors.inCheck;
                             } else if (highlightType === "checkmate") {
-                                color = "red";
+                                color = Colors.inCheckmate;
                             }
 
                             return (
@@ -57,7 +62,9 @@ export default function KingHighlights({ chess, squareWidth, rows, cols }) {
                                 >
                                     {square?.type === "k" &&
                                         sidesToHighlight.includes(square?.color) && (
-                                            <View style={[styles.circle, {backgroundColor: color}]} />
+                                            <View
+                                                style={[styles.circle, { backgroundColor: color }]}
+                                            />
                                         )}
                                 </View>
                             );

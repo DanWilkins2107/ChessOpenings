@@ -145,6 +145,7 @@ const Chessboard = ({ chess, moveFunction, chessboardLoading, pov, onTopHeight =
                         squareWidth={squareWidth}
                         rows={rows}
                         cols={columns}
+                        pov={pov}
                     />
                     <ValidMoveSquares
                         chessboard={chessboard}
