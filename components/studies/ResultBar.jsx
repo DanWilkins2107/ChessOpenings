@@ -8,9 +8,21 @@ export default function ResultBar({ white, draws, black }) {
     const drawPercent = (draws / total) * 100;
     const blackPercent = (black / total) * 100;
 
+    // const whitePercent = 0
+    // const drawPercent = 0
+    // const blackPercent = 100
+
     const roundedWhite = Math.round(whitePercent);
     const roundedDraw = Math.round(drawPercent);
     const roundedBlack = 100 - roundedWhite - roundedDraw;
+
+    let centrePoint = roundedWhite + roundedDraw / 2 - 3;
+    if (roundedWhite === 0 && !(roundedBlack === 0)) {
+        centrePoint = 1;
+    }
+    if (roundedBlack === 0 && !(roundedWhite === 0)) {
+        centrePoint = 86;
+    }
 
     return (
         <View style={styles.wrapper}>
@@ -21,10 +33,12 @@ export default function ResultBar({ white, draws, black }) {
                 <Body style={[styles.smallText, { left: 1 }]}>{roundedWhite}%</Body>
             )}
             {drawPercent >= 10 && (
-                <Body style={[styles.smallText, { left: `${roundedWhite + roundedDraw / 2 - 3}%` }]}>{roundedDraw}%</Body>
+                <Body style={[styles.smallText, { left: `${centrePoint}%` }]}>{roundedDraw}%</Body>
             )}
             {blackPercent >= 10 && (
-                <Body style={[styles.smallText, { right: 1, color: Colors.background }]}>{roundedBlack}%</Body>
+                <Body style={[styles.smallText, { right: 1, color: Colors.background }]}>
+                    {roundedBlack}%
+                </Body>
             )}
         </View>
     );
