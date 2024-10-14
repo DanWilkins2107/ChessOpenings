@@ -30,6 +30,8 @@ import addChapterToStudy from "../functions/set/addChapterToStudy";
 import { ModalContext } from "../components/modal/ModalContextProvider";
 import StudyOptionsModal from "../components/studies/StudyOptionsModal";
 import saveTreesToDb from "../functions/test/saveTreesToDb";
+import OpeningExplorer from "../components/studies/OpeningExplorer";
+import EngineAnalysis from "../components/studies/EngineAnalysis";
 
 export default function ViewStudy({ navigation, route }) {
     const studyUUID = route.params.studyUUID;
@@ -147,6 +149,26 @@ export default function ViewStudy({ navigation, route }) {
         }
     };
 
+    const moveWithSanFunction = async (san) => {
+        let move;
+        try {
+            move = chess.move(san);
+        } catch {
+            return;
+        }
+
+        const updateNeeded = navigateToChildNode(
+            move.san,
+            currentNode,
+            setCurrentNode,
+            chess,
+            false
+        );
+        if (updateNeeded) {
+            saveTreesToDb(currentNode, studyData.chapters[currentChapter].pgn);
+        }
+    };
+
     const moveFunction = async (from, to) => {
         let move;
         try {
@@ -217,8 +239,10 @@ export default function ViewStudy({ navigation, route }) {
                         chess={chess}
                     />
                 )}
-                {selectedTabIndex === 1 && <Text>Opening Exp</Text>}
-                {selectedTabIndex === 2 && <Text>Engine Analysis</Text>}
+                {selectedTabIndex === 1 && (
+                    <OpeningExplorer chess={chess} onPress={moveWithSanFunction} />
+                )}
+                {selectedTabIndex === 2 && <EngineAnalysis chess={chess} />}
                 {selectedTabIndex === 3 && (
                     <ChapterSelector
                         chapters={studyData.chapters}

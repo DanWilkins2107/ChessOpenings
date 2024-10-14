@@ -12,6 +12,7 @@ export const Colors = {
     correctMoveText: "#244F36",
     incorrectMove: "#EED0CF",
     incorrectMoveText: "#4F2424",
+    black: "#2A1C12"
 };
 
 export const Fonts = {
