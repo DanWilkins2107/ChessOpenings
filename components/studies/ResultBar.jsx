@@ -26,20 +26,21 @@ export default function ResultBar({ white, draws, black }) {
 
     return (
         <View style={styles.wrapper}>
-            <View style={[styles.whiteBar, { width: `${whitePercent}%` }]} />
-            <View style={[styles.drawBar, { width: `${drawPercent}%` }]} />
-            <View style={[styles.blackBar, { width: `${blackPercent}%` }]} />
-            {whitePercent >= 10 && (
-                <Body style={[styles.smallText, { left: 1 }]}>{roundedWhite}%</Body>
-            )}
-            {drawPercent >= 10 && (
-                <Body style={[styles.smallText, { left: `${centrePoint}%` }]}>{roundedDraw}%</Body>
-            )}
-            {blackPercent >= 10 && (
-                <Body style={[styles.smallText, { right: 1, color: Colors.background }]}>
-                    {roundedBlack}%
-                </Body>
-            )}
+            <View style={[styles.whiteBar, { width: `${whitePercent}%` }]}>
+                {whitePercent >= 10 && (
+                    <Body style={[styles.smallText, styles.whitePercentText]}>{roundedWhite}%</Body>
+                )}
+            </View>
+            <View style={[{ width: `${drawPercent}%` }, styles.drawBar]}>
+                {drawPercent >= 10 && (
+                    <Body style={[styles.smallText, styles.drawPercentText]}>{roundedDraw}%</Body>
+                )}
+            </View>
+            <View style={[styles.blackBar, { width: `${blackPercent}%` }]}>
+                {blackPercent >= 10 && (
+                    <Body style={[styles.smallText, styles.blackPercentText]}>{roundedBlack}%</Body>
+                )}
+            </View>
         </View>
     );
 }
@@ -56,17 +57,36 @@ const styles = StyleSheet.create({
     whiteBar: {
         height: 20,
         backgroundColor: Colors.background,
+        display: "flex",
+        justifyContent: "center",
     },
     drawBar: {
         height: 20,
         backgroundColor: Colors.card3,
+        display: "flex",
+        justifyContent: "center",
     },
     blackBar: {
         height: 20,
+        display: "flex",
+        flexDirectionL: "row",
         backgroundColor: Colors.black,
+        justifyContent: "center",
+    },
+    whitePercentText: {
+        textAlign: "left",
+    },
+    drawPercentText: {
+        textAlign: "center",
+    },
+    blackPercentText: {
+        color: Colors.background,
+        textAlign: "right",
     },
     smallText: {
-        position: "absolute",
         fontSize: 12,
+        marginHorizontal: 2,
+        height: 15,
+        justifyContent: "center",
     },
 });
