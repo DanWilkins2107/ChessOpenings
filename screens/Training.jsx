@@ -1,4 +1,4 @@
-import Chessboard from "../components/chessboard/Chessboard";
+import Chessboard from "../components/chessboard/Chessboard.jsx";
 import Container from "../components/containers/Container";
 import { Chess } from "chess.js";
 import { ScrollView, StyleSheet, Text } from "react-native";
@@ -38,11 +38,6 @@ export default function Training({ navigation, route }) {
 
     // Branch Array contains all branches
     const [branchObj, setBranchObj] = useState({ unselected: [], selected: [], finished: [] });
-    const [trackedBranchObj, setTrackedBranchObj] = useState({
-        unselected: [],
-        selected: [],
-        finished: [],
-    });
     const [splitObj, setSplitObj] = useState({ unselected: [], selected: [], finished: [] });
     const [otherBranchObj, setOtherBranchObj] = useState({
         unselected: [],
@@ -117,6 +112,7 @@ export default function Training({ navigation, route }) {
         );
         setTypeOfTraining(typeOfTraining);
         setCurrentItem(chosenItem);
+        console.log("Type of Training: ", typeOfTraining);
         const { score, confidenceObj } = createConfidenceObj(trees);
         setConfidenceScoreObj(confidenceObj);
         setConfidenceScore(score);
@@ -128,11 +124,6 @@ export default function Training({ navigation, route }) {
         if (typeOfTraining === "branch") {
             setUpBranchTest(chosenItem, chess, setPermMessage, setPov, setMoveList, setMoveIndex);
             setCurrentItem(chosenItem);
-            setTrackedBranchObj({
-                unselected: [...branchObj.unselected],
-                selected: [...branchObj.selected],
-                finished: [...branchObj.finished],
-            });
         } else if (typeOfTraining === "split") {
             setUpSplitTest(chosenItem, chess, setPermMessage, setPov, setMoveList);
             setIsMoveCorrect(true);
@@ -166,7 +157,6 @@ export default function Training({ navigation, route }) {
                 )
             ) {
                 setIsMoveCorrect(true);
-                console.log("branchObj1", branchObj);
                 const newBranchObj = updateBranchScores(
                     branchObj,
                     whiteCombinedTree,

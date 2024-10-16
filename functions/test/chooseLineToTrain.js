@@ -2,6 +2,7 @@ import branchMinConfScore from "./branchMinConfScore";
 import otherBranchMinConfScore from "./otherBranchMinConfScore";
 import randomItem from "./randomItem";
 import splitMinConfScore from "./splitMinConfScore";
+import swapObjList from "./swapObjList";
 
 export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, minMoveValue = 15) {
     const branchMinConfObj = {
@@ -22,21 +23,72 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
         1: [],
     };
 
+    branchObj.unselected.map((branch) => {
+        if (branchMinConfScore(branch) !== 0) {
+            swapObjList(branch, branchObj.unselected, branchObj.selected);
+        }
+    });
+
+    branchObj.finished.map((branch) => {
+        const confidence = branchMinConfScore(branch);
+        if (confidence !== 5) {
+            swapObjList(branch, branchObj.finished, branchObj.selected);
+        }
+    });
+
     branchObj.selected.map((branch) => {
         const confidence = branchMinConfScore(branch);
         if (confidence === 5) {
-            console.log("TODO: FIX/REMOVE MOI")
+            swapObjList(branch, branchObj.selected, branchObj.finished);
+            return;
         }
         branchMinConfObj[confidence].push(branch);
     });
 
+    splitObj.unselected.map((split) => {
+        const confidence = splitMinConfScore(split);
+        if (confidence !== 0) {
+            swapObjList(split, splitObj.unselected, splitObj.selected);
+        }
+    });
+
+    splitObj.finished.map((split) => {
+        const confidence = splitMinConfScore(split);
+        if (confidence !== 2) {
+            swapObjList(split, splitObj.finished, splitObj.selected);
+        }
+    });
+
     splitObj.selected.map((split) => {
         const confidence = splitMinConfScore(split);
+        if (confidence === 2) {
+            swapObjList(split, splitObj.selected, splitObj.finished);
+            return;
+        }
         splitMinConfObj[confidence].push(split);
+    });
+
+    otherBranchObj.unselected.map((branch) => {
+        const confidence = otherBranchMinConfScore(branch);
+        if (confidence !== 0) {
+            swapObjList(branch, otherBranchObj.unselected, otherBranchObj.selected);
+        }
+    });
+
+    otherBranchObj.finished.map((branch) => {
+        const confidence = otherBranchMinConfScore(branch);
+        if (confidence !== 2) {
+            swapObjList(branch, otherBranchObj.finished, otherBranchObj.selected);
+        }
     });
 
     otherBranchObj.selected.map((branch) => {
         const confidence = otherBranchMinConfScore(branch);
+        console.log("ConfidenceOB", confidence);
+        if (confidence === 2) {
+            swapObjList(branch, otherBranchObj.selected, otherBranchObj.finished);
+            return;
+        }
         otherBranchMinConfObj[confidence].push(branch);
     });
 
@@ -77,12 +129,27 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
     }
 
     if (total === 0 && branchObj.selected.length === 0) {
-        console.log("Finished");
-        console.log("Total", total);
+        const totalToPickFrom =
+            branchObj.finished.length + splitObj.finished.length + otherBranchObj.finished.length;
+        const randomValue = Math.floor(Math.random() * totalToPickFrom);
+        let chosenItem = null;
+        let typeOfTraining = "";
+
+        if (randomValue < branchObj.finished.length) {
+            chosenItem = randomItem(branchObj.finished);
+            typeOfTraining = "branch";
+        } else if (randomValue < branchObj.finished.length + splitObj.finished.length) {
+            chosenItem = randomItem(splitObj.finished);
+            typeOfTraining = "split";
+        } else {
+            chosenItem = randomItem(otherBranchObj.finished);
+            typeOfTraining = "otherBranch";
+        }
+
+        return { typeOfTraining, chosenItem };
     } else {
         console.log("Total", total);
     }
-
 
     const pickingProbabilities = {
         branch: {
@@ -154,9 +221,24 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
         }
     }
 
-    console.log("Branch", branchObj.unselected.length, branchObj.selected.length, branchObj.finished.length);
-    console.log("Split", splitObj.unselected.length, splitObj.selected.length, splitObj.finished.length);
-    console.log("OtherBranch", otherBranchObj.unselected.length, otherBranchObj.selected.length, otherBranchObj.finished.length);
+    console.log(
+        "Branch",
+        branchObj.unselected.length,
+        branchObj.selected.length,
+        branchObj.finished.length
+    );
+    console.log(
+        "Split",
+        splitObj.unselected.length,
+        splitObj.selected.length,
+        splitObj.finished.length
+    );
+    console.log(
+        "OtherBranch",
+        otherBranchObj.unselected.length,
+        otherBranchObj.selected.length,
+        otherBranchObj.finished.length
+    );
 
     return { typeOfTraining, chosenItem };
 }

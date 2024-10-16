@@ -11,10 +11,11 @@ export default function setUpBranchTest(
     setMoveIndex
 ) {
     const moveList = getMoveListFromNode(branch.endNode, branch.color);
-    const moveIndex = checkForFullConfidenceMoveList(moveList, branch.color, 5);
+    let moveIndex = checkForFullConfidenceMoveList(moveList, branch.color, 5);
 
     if (moveIndex === -1) {
-        console.log("Fully Confident. TODO");
+        console.log("Fully confident branch training")
+        moveIndex = 0;
     }
 
     chess.reset();

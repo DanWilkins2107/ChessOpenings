@@ -26,6 +26,7 @@ export default function setUpOtherBranchTest(
         const childNode = currentNode.children.find((child) => child.move === moveObj.move);
         const noOfChildren = currentNode.children.length;
 
+        
         if (moveNo % 2 === colorMoveNumber && noOfChildren === 1) {
             otherBranchMoveList.push({
                 move: moveObj.move,
