@@ -6,10 +6,14 @@ import Subheading2 from "../text/Subheading2";
 import { Colors } from "../../styling";
 import OpacityPressable from "../genericButtons/OpacityPressable";
 import getMoveListFromNode from "../../functions/test/getMoveListFromNode";
+import { ModalContext } from "../modal/ModalContextProvider";
+import MoveOptionsModal from "./MoveOptionsModal";
+import removeChildNode from "../../functions/tree/removeChildNode";
 
 const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     const [rootNode, setRootNode] = useState(null);
     const { setAlert } = useContext(AlertContext);
+    const { setModal } = useContext(ModalContext);
 
     useEffect(() => {
         let tempNode = currentNode;
@@ -92,6 +96,17 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                 onPress={() => {
                     handleMovePress(node);
                 }}
+                onLongPress={() => {
+                    const moveName = `${numberAnnotation}${node.move}`;
+                    setModal(
+                        <MoveOptionsModal
+                            onDelete={() => {
+                                deleteMove(node, moveName);
+                            }}
+                            move={moveName}
+                        />
+                    );
+                }}
                 shadow={false}
             >
                 <Subheading2 style={[isActive && styles.activeMoveText]}>
@@ -100,6 +115,47 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                 </Subheading2>
             </OpacityPressable>
         );
+    };
+
+    const deleteMove = (node, moveName) => {
+        console.log("Deleting", node.move);
+
+        if (node === currentNode) {
+            const newCurrentNode = currentNode.parent;
+            chess.undo();
+            setCurrentNode(newCurrentNode);
+            removeChildNode(node.parent, node);
+            setModal(null);
+            setAlert(`Deleted move ${moveName}.`, "green");
+            return;
+        }
+
+        let parentOfCurrent = false;
+        let tempNode = currentNode;
+        let movesToUndo = 1;
+        while (tempNode.parent) {
+            movesToUndo++;
+            if (tempNode.parent === node) {
+                parentOfCurrent = true;
+                break;
+            }
+            tempNode = tempNode.parent;
+        }
+
+        if (parentOfCurrent) {
+            const newCurrentNode = node.parent;
+            console.log("Moves to undo", movesToUndo);
+            for (let i = 0; i < movesToUndo; i++) {
+                chess.undo();
+            }
+            removeChildNode(node.parent, node);
+            setCurrentNode(newCurrentNode);
+        } else {
+            removeChildNode(node.parent, node);
+        }
+
+        setAlert(`Deleted move ${moveName}.`, "green");
+        setModal(null);
     };
 
     const handleMovePress = (node) => {
