@@ -1,5 +1,6 @@
 import findOtherBranchCategory from "./findOtherBranchCategory";
 import findSplitCategory from "./findSplitCategory";
+import swapObjList from "./swapObjList";
 import updateBranchCategories from "./updateBranchCategories";
 import updateBranchConfidenceScores from "./updateBranchConfidenceScores";
 import updateCombinedTree from "./updateCombinedTree";
@@ -16,15 +17,7 @@ export default function updateBranchScores(
     trees,
     color
 ) {
-    const treesToUpdate = updateBranchConfidenceScores(
-        isCorrect,
-        moveList,
-        moveIndex,
-        trees,
-        color
-    );
-
-    const newBranchObj = updateBranchCategories(branchObj, treesToUpdate, isCorrect);
+    updateBranchConfidenceScores(isCorrect, moveList, moveIndex, trees, color);
 
     const validTree = color === "white" ? whiteCombinedTree : blackCombinedTree;
     updateCombinedTree(validTree, moveList, moveIndex);
@@ -32,30 +25,18 @@ export default function updateBranchScores(
     splitObj.unselected.map((split) => {
         const category = findSplitCategory(split.splitNode, "unselected", 2);
         if (category === "selected") {
-            splitObj.selected.push(split);
+            swapObjList(split, splitObj.unselected, splitObj.selected);
         } else if (category === "finished") {
-            splitObj.finished.push(split);
-        }
-
-        if (category !== "unselected") {
-            const index = splitObj.unselected.indexOf(split);
-            splitObj.unselected.splice(index, 1);
+            swapObjList(split, splitObj.unselected, splitObj.finished);
         }
     });
 
     otherBranchObj.unselected.map((branch) => {
         const category = findOtherBranchCategory(branch, "unselected");
         if (category === "selected") {
-            otherBranchObj.selected.push(branch);
+            swapObjList(branch, otherBranchObj.unselected, otherBranchObj.selected);
         } else if (category === "finished") {
-            otherBranchObj.finished.push(branch);
-        }
-
-        if (category !== "unselected") {
-            const index = otherBranchObj.unselected.indexOf(branch);
-            otherBranchObj.unselected.splice(index, 1);
+            swapObjList(branch, otherBranchObj.unselected, otherBranchObj.finished);
         }
     });
-
-    return newBranchObj;
 }

@@ -75,6 +75,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
 
     const renderMove = (node, moveNumber, isVariation) => {
         let numberAnnotation;
+        let extendedAnnotation;
         const colorToPlay = moveNumber % 2 === 1 ? "white" : "black";
         const pgnMoveNumber = Math.floor((moveNumber + 1) / 2);
 
@@ -84,8 +85,10 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
 
         if (colorToPlay === "white") {
             numberAnnotation = `${pgnMoveNumber}.`;
+            extendedAnnotation = `${pgnMoveNumber}. ${node.move}`;
         } else {
             numberAnnotation = isVariation ? `${pgnMoveNumber}...` : "";
+            extendedAnnotation = `${pgnMoveNumber}... ${node.move}`;
         }
 
         const isActive = currentNode === node;
@@ -101,7 +104,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                     setModal(
                         <MoveOptionsModal
                             onDelete={() => {
-                                deleteMove(node, moveName);
+                                deleteMove(node, extendedAnnotation);
                             }}
                             move={moveName}
                         />

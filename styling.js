@@ -5,7 +5,6 @@ export const Colors = {
     card3: "#D0D8E5",
     primaryButton: "#4E5E55",
     buttonDeselected: "#9196A1",
-    primaryLogo: "#4577E2",
     text: "#4F3824",
     activePiece: "#e69512",
     correctMove: "#CFEED3",

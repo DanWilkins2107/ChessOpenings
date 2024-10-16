@@ -41,7 +41,7 @@ const Alert = () => {
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
-        onPanResponderMove: (evt, gestureState) => {
+        onPanResponderMove: (_evt, gestureState) => {
             if (gestureState.vy < -0.5) {
                 resetAlert();
             }

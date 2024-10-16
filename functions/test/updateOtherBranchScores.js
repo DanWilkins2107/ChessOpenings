@@ -22,7 +22,6 @@ export default function updateOtherBranchScores(
             }
         }
 
-
         // Update the confidence score
         const currentConfidence = currentNode.confidence || 0;
 
