@@ -47,7 +47,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                 {renderMove(node.children[0], moveNumber + 1, false)}
                 {node.children.slice(1).map((child) => {
                     return (
-                        <Body key={key}>
+                        <Body key={`${key}${child.move}`}>
                             <View style={styles.bracketContainer}>
                                 <Body>(</Body>
                             </View>

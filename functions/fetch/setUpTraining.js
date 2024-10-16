@@ -52,8 +52,8 @@ export default async function setUpTraining(treeArray) {
         editReachedTree(relevantTree, branch);
     });
 
-    const whiteSplits = getBranchSplits(whiteCombinedTree);
-    const blackSplits = getBranchSplits(blackCombinedTree);
+    const whiteSplits = getBranchSplits(whiteCombinedTree, "white");
+    const blackSplits = getBranchSplits(blackCombinedTree, "black");
 
     // Deal with splits
     const splitObj = {
@@ -87,6 +87,6 @@ export default async function setUpTraining(treeArray) {
         const category = findOtherBranchCategory(end, "unselected");
         otherBranchObj[category].push(end);
     });
-    
+
     return { branchObj, splitObj, otherBranchObj, whiteCombinedTree, blackCombinedTree };
 }

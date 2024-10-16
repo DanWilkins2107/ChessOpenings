@@ -1,5 +1,6 @@
 function getBranchSplits(combinedTree, color) {
     const splits = [];
+    console.log("COLOR:", color);
     const colorNumber = color === "white" ? 0 : 1;
     const initialMoveNumber = -1;
 
@@ -8,6 +9,7 @@ function getBranchSplits(combinedTree, color) {
             return;
         }
         if (node.children.length > 1) {
+            console.log(node.children.length, moveNumber, colorNumber);
             if (moveNumber % 2 === colorNumber) {
                 splits.push(node);
             }
@@ -18,6 +20,7 @@ function getBranchSplits(combinedTree, color) {
     };
 
     combinedTreeHelper(combinedTree, initialMoveNumber);
+    console.log("Splits:", splits);
     return splits;
 }
 
