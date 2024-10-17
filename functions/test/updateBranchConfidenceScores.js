@@ -1,20 +1,16 @@
-import saveTreesToDb from "./saveTreesToDb";
-
 export default function updateBranchConfidenceScores(
     isCorrect,
     moveList,
     moveIndex,
     trees,
-    color
+    color,
+    treesToUpdate
 ) {
-    const treesToUpdate = [];
-
     trees.forEach((tree) => {
         if (tree.color !== color) {
             return;
         }
         let currentNode = tree.tree;
-        let needsSaving = false;
 
         for (let i = 0; i < moveIndex + 1; i++) {
             const move = moveList[i].move;
@@ -29,20 +25,19 @@ export default function updateBranchConfidenceScores(
         if (isCorrect) {
             if ((currentNode.confidence || 0) < 5) {
                 currentNode.confidence = (currentNode.confidence || 0) + 1;
-                needsSaving = true;
+                if (!treesToUpdate.includes(tree.pgnUUID)) {
+                    treesToUpdate.push(tree.pgnUUID);
+                    return;
+                }
             }
         } else {
             if ((currentNode.confidence || 0) > 0) {
                 currentNode.confidence = (currentNode.confidence || 0) - 1;
-                needsSaving = true;
+                if (!treesToUpdate.includes(tree.pgnUUID)) {
+                    treesToUpdate.push(tree.pgnUUID);
+                    return;
+                }
             }
         }
-
-        if (needsSaving) {
-            saveTreesToDb(tree.tree, tree.pgnUUID);
-            treesToUpdate.push(tree.pgnUUID);
-        }
     });
-
-    return treesToUpdate;
 }

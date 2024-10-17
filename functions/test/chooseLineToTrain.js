@@ -84,7 +84,6 @@ export default function chooseLineToTrain(branchObj, splitObj, otherBranchObj, m
 
     otherBranchObj.selected.map((branch) => {
         const confidence = otherBranchMinConfScore(branch);
-        console.log("ConfidenceOB", confidence);
         if (confidence === 2) {
             swapObjList(branch, otherBranchObj.selected, otherBranchObj.finished);
             return;

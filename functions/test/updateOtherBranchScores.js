@@ -7,7 +7,8 @@ export default function updateOtherBranchScores(
     trees,
     whiteCombinedTree,
     blackCombinedTree,
-    color
+    color,
+    treesToUpdate
 ) {
     const movesPlayed = moveList.slice(0, moveIndex + 1);
     trees.forEach((tree) => {
@@ -28,12 +29,16 @@ export default function updateOtherBranchScores(
         if (isCorrect) {
             if (currentConfidence < 2) {
                 currentNode.confidence = currentConfidence + 1;
-                saveTreesToDb(tree.tree, tree.pgnUUID);
+                if (!treesToUpdate.includes(tree.pgnUUID)) {
+                    treesToUpdate.push(tree.pgnUUID);
+                }
             }
         } else {
             if (currentConfidence > 0) {
                 currentNode.confidence = currentConfidence - 1;
-                saveTreesToDb(tree.tree, tree.pgnUUID);
+                if (!treesToUpdate.includes(tree.pgnUUID)) {
+                    treesToUpdate.push(tree.pgnUUID);
+                }
             }
         }
     });

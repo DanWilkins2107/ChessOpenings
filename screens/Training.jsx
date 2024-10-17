@@ -27,6 +27,7 @@ import updateSplitScores from "../functions/test/updateSplitScores.js";
 import updateOtherBranchScores from "../functions/test/updateOtherBranchScores.js";
 import checkAllSplits from "../functions/test/checkAllSplits.js";
 import createConfidenceObj from "../functions/test/createConfidenceObj.js";
+import saveTreesToDb from "../functions/test/saveTreesToDb.js";
 
 export default function Training({ navigation, route }) {
     const [chess, setChess] = useState(new Chess());
@@ -35,6 +36,7 @@ export default function Training({ navigation, route }) {
     const [forceRerender, setForceRerender] = useState(false);
 
     const [trees, setTrees] = useState([]);
+    const [treesToUpdate, setTreesToUpdate] = useState([]);
 
     // Branch Array contains all branches
     const [branchObj, setBranchObj] = useState({ unselected: [], selected: [], finished: [] });
@@ -104,6 +106,10 @@ export default function Training({ navigation, route }) {
         blackCombinedTree,
         trees
     ) => {
+        treesToUpdate.forEach((treePGN) => {
+            const treeToUpdate = trees.find((t) => t.pgnUUID === treePGN);
+            saveTreesToDb(treeToUpdate.tree, treeToUpdate.pgnUUID);
+        });
         const { typeOfTraining, chosenItem } = chooseLineToTrain(
             branchObj,
             splitObj,
@@ -112,10 +118,10 @@ export default function Training({ navigation, route }) {
         );
         setTypeOfTraining(typeOfTraining);
         setCurrentItem(chosenItem);
-        console.log("Type of Training: ", typeOfTraining);
         const { score, confidenceObj } = createConfidenceObj(trees);
         setConfidenceScoreObj(confidenceObj);
         setConfidenceScore(score);
+        setTreesToUpdate([]);
 
         setupBoard(typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree);
     };
@@ -157,8 +163,7 @@ export default function Training({ navigation, route }) {
                 )
             ) {
                 setIsMoveCorrect(true);
-                const newBranchObj = updateBranchScores(
-                    branchObj,
+                updateBranchScores(
                     whiteCombinedTree,
                     blackCombinedTree,
                     splitObj,
@@ -167,9 +172,9 @@ export default function Training({ navigation, route }) {
                     moveList,
                     moveIndex,
                     trees,
-                    currentItem.color
+                    currentItem.color,
+                    treesToUpdate
                 );
-                setBranchObj(newBranchObj);
                 if (moveIndex + 2 < moveList.length) {
                     await pause(200);
                     chess.move(moveList[moveIndex + 1].move);
@@ -214,7 +219,8 @@ export default function Training({ navigation, route }) {
                             moveList,
                             trees,
                             whiteCombinedTree,
-                            blackCombinedTree
+                            blackCombinedTree,
+                            treesToUpdate
                         );
                         // Check split status and move
                         const newSplitObj = checkAllSplits(splitObj);
@@ -258,7 +264,8 @@ export default function Training({ navigation, route }) {
                     trees,
                     whiteCombinedTree,
                     blackCombinedTree,
-                    currentItem.color
+                    currentItem.color,
+                    treesToUpdate
                 );
                 if (moveIndex + 2 < moveList.length) {
                     const newMoveIndex = await otherBranchSkipMoves(
@@ -286,7 +293,8 @@ export default function Training({ navigation, route }) {
                         otherBranchObj,
                         whiteCombinedTree,
                         blackCombinedTree,
-                        trees
+                        trees,
+                        treesToUpdate
                     );
                 }
             } else {

@@ -1,12 +1,10 @@
 import findOtherBranchCategory from "./findOtherBranchCategory";
 import findSplitCategory from "./findSplitCategory";
 import swapObjList from "./swapObjList";
-import updateBranchCategories from "./updateBranchCategories";
 import updateBranchConfidenceScores from "./updateBranchConfidenceScores";
 import updateCombinedTree from "./updateCombinedTree";
 
 export default function updateBranchScores(
-    branchObj,
     whiteCombinedTree,
     blackCombinedTree,
     splitObj,
@@ -15,9 +13,10 @@ export default function updateBranchScores(
     moveList,
     moveIndex,
     trees,
-    color
+    color, 
+    treesToUpdate
 ) {
-    updateBranchConfidenceScores(isCorrect, moveList, moveIndex, trees, color);
+    updateBranchConfidenceScores(isCorrect, moveList, moveIndex, trees, color, treesToUpdate);
 
     const validTree = color === "white" ? whiteCombinedTree : blackCombinedTree;
     updateCombinedTree(validTree, moveList, moveIndex);

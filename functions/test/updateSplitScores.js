@@ -6,7 +6,8 @@ export default function updateSplitScores(
     splitObj,
     trees,
     whiteCombinedTree,
-    blackCombinedTree
+    blackCombinedTree,
+    treesToUpdate
 ) {
     const moves = getMoveListFromNode(split.splitNode, split.color);
 
@@ -26,7 +27,6 @@ export default function updateSplitScores(
         }
 
         // Update the confidence score
-        let needsSaving = false;
         splitObj.forEach((splitMoveObj) => {
             currentNode.children?.forEach((child) => {
                 if (child.move === splitMoveObj.move) {
@@ -35,21 +35,21 @@ export default function updateSplitScores(
                     if (splitMoveObj.correct) {
                         if (currentConfidence < 2) {
                             child.confidence = currentConfidence + 1;
-                            needsSaving = true;
+                            if (!treesToUpdate.includes(tree.pgnUUID)) {
+                                treesToUpdate.push(tree.pgnUUID);
+                            }
                         }
                     } else {
                         if (currentConfidence > 0) {
                             child.confidence = currentConfidence - 1;
-                            needsSaving = true;
+                            if (!treesToUpdate.includes(tree.pgnUUID)) {
+                                treesToUpdate.push(tree.pgnUUID);
+                            }
                         }
                     }
                 }
             });
         });
-
-        if (needsSaving) {
-            saveTreesToDb(tree.tree, tree.pgnUUID);
-        }
     });
 
     const relevantTree = split.color === "white" ? whiteCombinedTree : blackCombinedTree;
