@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import Subheading2 from "../text/Subheading2";
 import OpacityPressable from "../genericButtons/OpacityPressable";
 
-export default function ObjectiveButton({ text, completed, active, style }) {
+export default function ObjectiveButton({ text, completed, active, style, onPress }) {
     return (
         <OpacityPressable
             style={[
@@ -12,6 +12,7 @@ export default function ObjectiveButton({ text, completed, active, style }) {
                 !completed && styles.notComplete,
                 active && styles.active,
             ]}
+            onPress={onPress}
         >
             <Subheading2 style={!completed && styles.text}>{text}</Subheading2>
             <View style={styles.circle}></View>

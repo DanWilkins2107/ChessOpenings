@@ -28,6 +28,7 @@ import updateOtherBranchScores from "../functions/test/updateOtherBranchScores.j
 import checkAllSplits from "../functions/test/checkAllSplits.js";
 import createConfidenceObj from "../functions/test/createConfidenceObj.js";
 import saveTreesToDb from "../functions/test/saveTreesToDb.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Training({ navigation, route }) {
     const [chess, setChess] = useState(new Chess());
@@ -72,6 +73,11 @@ export default function Training({ navigation, route }) {
                 textColor: Colors.text,
             });
             const studyStringArray = route?.params?.chosenPGNs || (await getStudyStringArray());
+
+            const date = new Date();
+            AsyncStorage.setItem("training/lastDate", date.toISOString());
+            AsyncStorage.setItem("training/lastString", JSON.stringify(studyStringArray));
+
             const trees = await getTrainingTrees(studyStringArray);
             setTrees(trees);
 
