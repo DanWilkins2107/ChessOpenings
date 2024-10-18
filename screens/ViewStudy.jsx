@@ -237,6 +237,9 @@ export default function ViewStudy({ navigation, route }) {
                         currentNode={currentNode}
                         setCurrentNode={setCurrentNode}
                         chess={chess}
+                        onSave={() => {
+                            saveTreesToDb(currentNode, studyData.chapters[currentChapter].pgn);
+                        }}
                     />
                 )}
                 {selectedTabIndex === 1 && (

@@ -40,14 +40,16 @@ const StudyOptionsModal = ({ study, studyUUID, setStudy, navigation }) => {
     const handleDeleteStudy = () => {
         const studyRef = ref(db, `studies/${studyUUID}`);
         const userRef = ref(db, `users/${auth.currentUser.uid}/studies/${studyUUID}`);
+        const chapterRefArray = study.chapters.map((chapter) => ref(db, `pgns/${chapter.pgn}`));
         try {
             set(studyRef, null);
             set(userRef, null);
+            chapterRefArray.forEach((chapterRef) => set(chapterRef, null));
             setModal(null);
             navigation.navigate("StudyDashboard");
         } catch (error) {
             console.log(error.message);
-            setAlert("Error deleting study", "error");
+            setAlert("Error deleting study", "red");
         }
     };
 

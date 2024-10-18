@@ -10,7 +10,7 @@ import { ModalContext } from "../modal/ModalContextProvider";
 import MoveOptionsModal from "./MoveOptionsModal";
 import removeChildNode from "../../functions/tree/removeChildNode";
 
-const MoveList = ({ currentNode, chess, setCurrentNode }) => {
+const MoveList = ({ currentNode, chess, setCurrentNode, onSave }) => {
     const [rootNode, setRootNode] = useState(null);
     const { setAlert } = useContext(AlertContext);
     const { setModal } = useContext(ModalContext);
@@ -105,6 +105,7 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
                         <MoveOptionsModal
                             onDelete={() => {
                                 deleteMove(node, extendedAnnotation);
+                                onSave()
                             }}
                             move={moveName}
                         />
@@ -121,8 +122,6 @@ const MoveList = ({ currentNode, chess, setCurrentNode }) => {
     };
 
     const deleteMove = (node, moveName) => {
-        console.log("Deleting", node.move);
-
         if (node === currentNode) {
             const newCurrentNode = currentNode.parent;
             chess.undo();
