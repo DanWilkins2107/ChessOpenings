@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { StyleSheet, useWindowDimensions, PanResponder } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Card from "../containers/Card";
@@ -53,82 +53,96 @@ const Chessboard = ({ chess, moveFunction, chessboardLoading, pov, onTopHeight =
         return moveSquares;
     };
 
-    const onPanResponderGrant = (event) => {
-        const { pageX, pageY } = event.nativeEvent;
-        const { columnIndex, rowIndex } = getIndexes(pageX, pageY);
+    const onPanResponderGrant = useCallback(
+        (event) => {
+            const { pageX, pageY } = event.nativeEvent;
+            const { columnIndex, rowIndex } = getIndexes(pageX, pageY);
 
-        const square = columns[columnIndex] + rows[rowIndex];
-        const piece = chessboard[rowIndex][columnIndex];
-
-        setCoordinates({ x: pageX - xBoardValue, y: pageY - yBoardValue });
-
-        if (piece && piece.color === turnToMove) {
-            if (activePiece && piece.square === activePiece.square) {
-                // Clicked on the same piece, activate startSquare logic
-                setStartSquare(square);
-            } else {
-                // Clicked on a different piece
-                setDraggingOverSquare(square);
-                setActivePiece(piece);
-                setActiveMoveSquares(findMoveSquares(piece.square));
-            }
-        } else if (activePiece) {
-            // Clicked on an empty square/opponent piece when piece is active
-            if (activeMoveSquares.includes(square)) {
-                moveFunction(activePiece.square, square);
-                setActivePiece(null);
-                setActiveMoveSquares([]);
-            } else {
-                // Made an invalid move
-                setActivePiece(null);
-                setActiveMoveSquares([]);
-            }
-        } // If empty square is clicked when no piece is active, do nothing
-    };
-
-    const onPanResponderMove = (event) => {
-        const { pageX, pageY } = event.nativeEvent;
-        const { columnIndex, rowIndex } = getIndexes(pageX, pageY);
-
-        setCoordinates({ x: pageX - xBoardValue, y: pageY - yBoardValue });
-        if (columnIndex >= 0 && columnIndex <= 7 && rowIndex >= 0 && rowIndex <= 7 && activePiece) {
             const square = columns[columnIndex] + rows[rowIndex];
-            setDraggingOverSquare(square);
-        } else {
-            setDraggingOverSquare(null);
-        }
-    };
+            const piece = chessboard[rowIndex][columnIndex];
 
-    const onPanResponderRelease = (event) => {
-        const { pageX, pageY } = event.nativeEvent;
-        const { columnIndex, rowIndex } = getIndexes(pageX, pageY);
-        setCoordinates(null);
-        setDraggingOverSquare(null);
+            setCoordinates({ x: pageX - xBoardValue, y: pageY - yBoardValue });
 
-        if (columnIndex >= 0 && columnIndex <= 7 && rowIndex >= 0 && rowIndex <= 7) {
-            const square = columns[columnIndex] + rows[rowIndex];
-            if (activePiece && square !== activePiece.square) {
+            if (piece && piece.color === turnToMove) {
+                if (activePiece && piece.square === activePiece.square) {
+                    setStartSquare(square);
+                } else {
+                    setDraggingOverSquare(square);
+                    setActivePiece(piece);
+                    setActiveMoveSquares(findMoveSquares(piece.square));
+                }
+            } else if (activePiece) {
                 if (activeMoveSquares.includes(square)) {
-                    // Made a valid move
                     moveFunction(activePiece.square, square);
                     setActivePiece(null);
                     setActiveMoveSquares([]);
+                } else {
+                    setActivePiece(null);
+                    setActiveMoveSquares([]);
                 }
-            } else if (startSquare === square) {
-                setActivePiece(null);
-                setActiveMoveSquares([]);
-                setStartSquare(null);
             }
-        }
-    };
+        },
+        [chess, chessboard, turnToMove, activePiece, activeMoveSquares, columns, rows]
+    );
 
-    const panResponder = PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onStartShouldSetPanResponderCapture: () => true,
-        onPanResponderGrant,
-        onPanResponderMove,
-        onPanResponderRelease,
-    });
+    const onPanResponderMove = useCallback(
+        (event) => {
+            const { pageX, pageY } = event.nativeEvent;
+            const { columnIndex, rowIndex } = getIndexes(pageX, pageY);
+
+            setCoordinates({ x: pageX - xBoardValue, y: pageY - yBoardValue });
+            if (
+                columnIndex >= 0 &&
+                columnIndex <= 7 &&
+                rowIndex >= 0 &&
+                rowIndex <= 7 &&
+                activePiece
+            ) {
+                const square = columns[columnIndex] + rows[rowIndex];
+                setDraggingOverSquare(square);
+            } else {
+                setDraggingOverSquare(null);
+            }
+        },
+        [columns, rows, activePiece, xBoardValue, yBoardValue]
+    );
+
+    const onPanResponderRelease = useCallback(
+        (event) => {
+            const { pageX, pageY } = event.nativeEvent;
+            const { columnIndex, rowIndex } = getIndexes(pageX, pageY);
+            setCoordinates(null);
+            setDraggingOverSquare(null);
+
+            if (columnIndex >= 0 && columnIndex <= 7 && rowIndex >= 0 && rowIndex <= 7) {
+                const square = columns[columnIndex] + rows[rowIndex];
+                if (activePiece && square !== activePiece.square) {
+                    if (activeMoveSquares.includes(square)) {
+                        moveFunction(activePiece.square, square);
+                        setActivePiece(null);
+                        setActiveMoveSquares([]);
+                    }
+                } else if (startSquare === square) {
+                    setActivePiece(null);
+                    setActiveMoveSquares([]);
+                    setStartSquare(null);
+                }
+            }
+        },
+        [columns, rows, activePiece, activeMoveSquares, moveFunction]
+    );
+
+    const panResponder = useMemo(
+        () =>
+            PanResponder.create({
+                onStartShouldSetPanResponder: () => true,
+                onStartShouldSetPanResponderCapture: () => true,
+                onPanResponderGrant,
+                onPanResponderMove,
+                onPanResponderRelease,
+            }),
+        [onPanResponderGrant, onPanResponderMove, onPanResponderRelease]
+    );
 
     return (
         <Card

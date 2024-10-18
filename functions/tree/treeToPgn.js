@@ -3,37 +3,55 @@ function treeToPgn(currentNode) {
         currentNode = currentNode.parent;
     }
 
-    function addPGNNode(node) {
-        let pgn = [];
-        while (node.children.length > 0) {
-            firstChildNode = node.children[0];
-            if (firstChildNode.confidence !== undefined) {
-                pgn.push({ move: firstChildNode.move, confidence: firstChildNode.confidence });
-            } else {
-                pgn.push({ move: firstChildNode.move });
-            }
+    console.log("StarterMove", currentNode.move);
 
-            if (node.children.length > 1) {
-                pgn[pgn.length - 1].ravs = [];
-                for (let i = 1; i < node.children.length; i++) {
-                    ravsNode = node.children[i];
-                    let ravToAdd;
-                    if (ravsNode.confidence !== undefined) {
-                        ravToAdd = [
-                            { move: ravsNode.move, confidence: ravsNode.confidence },
-                        ].concat(addPGNNode(ravsNode));
-                    } else {
-                        ravToAdd = [{ move: ravsNode.move }].concat(addPGNNode(ravsNode));
-                    }
-                    pgn[pgn.length - 1].ravs.push({ moves: ravToAdd });
-                }
-            }
-            node = firstChildNode;
+    const pgn = [];
+
+    function createPGNTree(node, pgnList) {
+        const noOfChildren = node.children?.length || 0;
+        console.log("No of Children", noOfChildren);
+        console.log("Node", node.move);
+        console.log("Node", node.children);
+        if (noOfChildren === 0) {
+            return;
         }
-        return pgn;
+
+        if (noOfChildren === 1) {
+            pgnList.push({
+                move: node.children[0].move,
+                confidence: node.children[0].confidence || null,
+                comment: node.children[0].comment || null,
+            });
+            createPGNTree(node.children[0], pgnList);
+            return;
+        }
+
+        if (noOfChildren > 1) {
+            const ravsArray = [];
+            pgnList.push({
+                move: node.children[0].move,
+                confidence: node.children[0].confidence || null,
+                comment: node.children[0].comment || null,
+                ravs: ravsArray,
+            });
+            createPGNTree(node.children[0], pgnList);
+            for (let i = 1; i < noOfChildren; i++) {
+                const addMoveToArray = [
+                    {
+                        move: node.children[i].move,
+                        confidence: node.children[i].confidence || null,
+                        comment: node.children[i].comment || null,
+                    },
+                ];
+                const ravsObj = { moves: addMoveToArray };
+                ravsArray.push(ravsObj);
+                createPGNTree(node.children[i], addMoveToArray);
+            }
+            return;
+        }
     }
 
-    const pgn = addPGNNode(currentNode);
+    createPGNTree(currentNode, pgn);
     return pgn;
 }
 
