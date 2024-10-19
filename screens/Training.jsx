@@ -1,7 +1,7 @@
 import Chessboard from "../components/chessboard/Chessboard.jsx";
 import Container from "../components/containers/Container";
 import { Chess } from "chess.js";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import MessageBox from "../components/chessboard/MessageBox.jsx";
 import { Colors, Fonts } from "../styling";
 import BottomProgressBar from "../components/training/BottomProgressBar.jsx";
@@ -29,6 +29,9 @@ import checkAllSplits from "../functions/test/checkAllSplits.js";
 import createConfidenceObj from "../functions/test/createConfidenceObj.js";
 import saveTreesToDb from "../functions/test/saveTreesToDb.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BranchInfo from "../components/training/BranchInfo.jsx";
+import SplitInfo from "../components/training/SplitInfo.jsx";
+import OtherBranchInfo from "../components/training/OtherBranchInfo.jsx";
 
 export default function Training({ navigation, route }) {
     const [chess, setChess] = useState(new Chess());
@@ -321,12 +324,21 @@ export default function Training({ navigation, route }) {
             />
             <MessageBox tempObj={temp} permObj={permMessage} style={styles.messageBox} />
             <HintAndSkipButtons style={styles.hintAndSkipButtons} />
-
-            {/* <CurrentStudyViewer style={styles.studyViewer} /> */}
-            <ScrollView>
-                <Text>{JSON.stringify(moveList)}</Text>
-            </ScrollView>
-
+            <View style={styles.infoWrapper}>
+                {typeOfTraining === "branch" && (
+                    <BranchInfo branch={currentItem} moveList={moveList} moveIndex={moveIndex} />
+                )}
+                {typeOfTraining === "split" && (
+                    <SplitInfo split={currentItem} splitObj={moveList} />
+                )}
+                {typeOfTraining === "otherBranch" && (
+                    <OtherBranchInfo
+                        branch={currentItem}
+                        moveList={moveList}
+                        moveIndex={moveIndex}
+                    />
+                )}
+            </View>
             <BottomProgressBar
                 progress={confidenceScore}
                 style={styles.progressBar}
@@ -373,6 +385,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     progressBar: {
+        marginTop: 10,
+    },
+    infoWrapper: {
+        flex: 1,
+        backgroundColor: Colors.card2,
         marginTop: 10,
     },
 });

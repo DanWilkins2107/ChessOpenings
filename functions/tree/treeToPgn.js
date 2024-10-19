@@ -9,9 +9,6 @@ function treeToPgn(currentNode) {
 
     function createPGNTree(node, pgnList) {
         const noOfChildren = node.children?.length || 0;
-        console.log("No of Children", noOfChildren);
-        console.log("Node", node.move);
-        console.log("Node", node.children);
         if (noOfChildren === 0) {
             return;
         }
