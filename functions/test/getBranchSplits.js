@@ -8,7 +8,7 @@ function getBranchSplits(combinedTree, color) {
             return;
         }
         if (node.children.length > 1) {
-            if (moveNumber % 2 === colorNumber) {
+            if ((moveNumber + 2) % 2 === colorNumber) {
                 splits.push(node);
             }
         }

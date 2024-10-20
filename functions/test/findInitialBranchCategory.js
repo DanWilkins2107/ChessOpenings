@@ -1,12 +1,16 @@
 import branchMinConfScore from "./branchMinConfScore";
 
 export default function findInitialBranchCategory(branch) {
-    const moves = branch.lastMoveNumber;
+    const noOfMoves = branch.lastMoveNumber;
     const colorValue = branch.color === "white" ? 0 : 1;
 
+    if (noOfMoves < colorValue) {
+        return "untrainable";
+    }
+
     let currentMove = branch.endNode;
-    let currentMoveNo = moves;
-    if (moves % 2 !== colorValue) {
+    let currentMoveNo = noOfMoves;
+    if (noOfMoves % 2 !== colorValue) {
         currentMove = currentMove.parent;
         currentMoveNo--;
     }

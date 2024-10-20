@@ -27,6 +27,7 @@ export default async function setUpTraining(treeArray) {
     const branchObj = { unselected: [], selected: [], finished: [] };
     allBranchEnds.forEach((end) => {
         const category = findInitialBranchCategory(end);
+        if (category === "untrainable") return;
         branchObj[category].push(end);
     });
 
@@ -80,11 +81,13 @@ export default async function setUpTraining(treeArray) {
 
     otherWhiteBranches.forEach((end) => {
         const category = findOtherBranchCategory(end, "unselected");
+        if (category === "untrainable") return;
         otherBranchObj[category].push(end);
     });
 
     otherBlackBranches.forEach((end) => {
         const category = findOtherBranchCategory(end, "unselected");
+        if (category === "untrainable") return;
         otherBranchObj[category].push(end);
     });
 

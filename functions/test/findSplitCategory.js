@@ -2,13 +2,7 @@ export default function findSplitCategory(split, previousStatus, threshold) {
     let status = previousStatus;
 
     if (previousStatus === "unselected") {
-        let reached = true;
-        split.children.forEach((child) => {
-            if (!child.reached) {
-                reached = false;
-            }
-        });
-        if (reached) {
+        if (split.reached) {
             status = "selected";
         }
     }

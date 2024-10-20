@@ -5,6 +5,7 @@ export default function makeCombinedTree({ branchArray }) {
         children: [],
         parent: null,
         move: "Start",
+        reached: true,
     };
 
     branchArray.forEach((branch) => {
@@ -45,7 +46,6 @@ export default function makeCombinedTree({ branchArray }) {
                 };
                 currentTreeNode.children.push(newTreeNode);
                 currentTreeNode = newTreeNode;
-
             }
         });
     });

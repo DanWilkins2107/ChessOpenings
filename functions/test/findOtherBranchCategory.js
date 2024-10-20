@@ -1,6 +1,20 @@
 import getMoveListFromNode from "./getMoveListFromNode";
 
 export default function findOtherBranchCategory(endNode, previousCategory) {
+    const moveList = getMoveListFromNode(endNode.endNode);
+
+    let allSkipped = true;
+    for (let i = 0; i < moveList.length; i++) {
+        if (moveList[i].skip === false) {
+            allSkipped = false;
+            break;
+        }
+    }
+
+    if (allSkipped) {
+        return "untrainable";
+    }
+
     let status = previousCategory;
     if (previousCategory === "unselected") {
         // Check whether branch should be selected
@@ -15,7 +29,6 @@ export default function findOtherBranchCategory(endNode, previousCategory) {
     }
 
     // Check whether branch should be finished
-    const moveList = getMoveListFromNode(endNode.endNode);
     let finished = true;
     let currentNode = endNode.endNode;
     while (currentNode.parent) {
