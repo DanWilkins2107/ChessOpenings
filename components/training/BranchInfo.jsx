@@ -3,7 +3,7 @@ import Card from "../containers/Card";
 import Subheading2 from "../text/Subheading2";
 
 export default function BranchInfo({ branch, moveList, moveIndex }) {
-    const moveArray = moveList.slice(0, moveIndex - 1).map((moveObj, index) => {
+    const moveArray = moveList.slice(0, moveIndex).map((moveObj, index) => {
         const isMoveShown = index % 2 === 0;
         const move = moveObj.move;
         const moveNumber = Math.floor(index / 2) + 1;

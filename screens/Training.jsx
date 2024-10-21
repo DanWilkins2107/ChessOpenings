@@ -131,6 +131,7 @@ export default function Training({ navigation, route }) {
         setConfidenceScoreObj(confidenceObj);
         setConfidenceScore(score);
         setTreesToUpdate([]);
+        setMoveIndex(0)
 
         setupBoard(typeOfTraining, chosenItem, whiteCombinedTree, blackCombinedTree);
     };
@@ -185,10 +186,11 @@ export default function Training({ navigation, route }) {
                     treesToUpdate
                 );
                 if (moveIndex + 2 < moveList.length) {
+                    setMoveIndex((moveIndex) => moveIndex + 1)
                     await pause(200);
                     chess.move(moveList[moveIndex + 1].move);
                     setForceRerender(!forceRerender);
-                    setMoveIndex(moveIndex + 2);
+                    setMoveIndex((moveIndex) => moveIndex + 1)
                 } else {
                     createTraining(
                         branchObj,
@@ -281,10 +283,10 @@ export default function Training({ navigation, route }) {
                         chess,
                         moveList,
                         moveIndex,
+                        setMoveIndex,
                         forceRerender,
                         setForceRerender
                     );
-                    setMoveIndex(newMoveIndex);
                     if (!newMoveIndex) {
                         createTraining(
                             branchObj,

@@ -4,6 +4,7 @@ export default async function otherBranchSkipMoves(
     chess,
     moveList,
     moveIndex,
+    setMoveIndex,
     forceRerender,
     setForceRerender
 ) {
@@ -24,8 +25,10 @@ export default async function otherBranchSkipMoves(
         return false;
     }
     let renderValue = forceRerender;
+    setMoveIndex(moveIndex => moveIndex + 1)
     for (let i = moveIndex + 1; i < newIndex; i++) {
         await pause(200);
+        setMoveIndex(moveIndex => moveIndex + 1)
         chess.move(moveList[i].move);
         setForceRerender(!renderValue);
         renderValue = !renderValue;
