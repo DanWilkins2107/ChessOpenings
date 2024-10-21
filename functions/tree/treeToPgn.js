@@ -2,9 +2,6 @@ function treeToPgn(currentNode) {
     while (currentNode.parent) {
         currentNode = currentNode.parent;
     }
-
-    console.log("StarterMove", currentNode.move);
-
     const pgn = [];
 
     function createPGNTree(node, pgnList) {

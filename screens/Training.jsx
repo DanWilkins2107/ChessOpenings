@@ -87,7 +87,6 @@ export default function Training({ navigation, route }) {
             const { branchObj, splitObj, otherBranchObj, whiteCombinedTree, blackCombinedTree } =
                 await setUpTraining(trees);
 
-            console.log(branchObj, splitObj, otherBranchObj);
             createTraining(
                 branchObj,
                 splitObj,
@@ -325,7 +324,7 @@ export default function Training({ navigation, route }) {
             />
             <MessageBox tempObj={temp} permObj={permMessage} style={styles.messageBox} />
             <HintAndSkipButtons style={styles.hintAndSkipButtons} />
-            {/* <View style={styles.infoWrapper}>
+            <View style={styles.infoWrapper}>
                 {typeOfTraining === "branch" && (
                     <BranchInfo branch={currentItem} moveList={moveList} moveIndex={moveIndex} />
                 )}
@@ -339,8 +338,8 @@ export default function Training({ navigation, route }) {
                         moveIndex={moveIndex}
                     />
                 )}
-            </View> */}
-            <Text>{JSON.stringify(moveList)}</Text>
+            </View>
+            {/* <Text>{JSON.stringify(moveList)}</Text> */}
             <BottomProgressBar
                 progress={confidenceScore}
                 style={styles.progressBar}
